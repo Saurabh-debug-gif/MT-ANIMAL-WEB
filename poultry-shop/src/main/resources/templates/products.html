@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <title>Products</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;   /* prevent horizontal scroll */
+            background: #f9fafb;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 32px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .brand-logo {
+            height: 34px;
+            width: auto;
+            border-radius: 6px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #111827;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .right-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Login + User */
+        .login-btn, .user-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            color: #111;
+            font-weight: 500;
+            background: #fff;
+        }
+
+        .login-btn:hover, .user-btn:hover {
+            background: #f3f4f6;
+        }
+
+        /* User Dropdown */
+        .user-dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 120%;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            min-width: 140px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: #111;
+            font-size: 14px;
+        }
+
+        .dropdown-menu a:hover {
+            background: #f3f4f6;
+        }
+        .dropdown-menu {
+            transition: all 0.2s ease;
+        }
+
+
+
+        /* Cart Button */
+        .cart-btn {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            min-height: 36px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+        .cart-btn:hover {
+            background: #1e40af;
+        }
+        .cart-badge {
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            line-height: 1;
+        }
+
+        /* WhatsApp Button */
+        .whatsapp-btn {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            min-height: 36px;
+            border-radius: 50%;
+            background: #25D366;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .whatsapp-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        }
+
+        .whatsapp-icon {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero-section {
+            position: relative;
+            width: 100%;
+            min-height: 65vh;
+            max-height: 80vh;
+            overflow: hidden;
+            background: #0b0b0b;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .hero-section::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                    90deg,
+                    rgba(0,0,0,0.75) 0%,
+                    rgba(0,0,0,0.55) 40%,
+                    rgba(0,0,0,0.25) 70%,
+                    rgba(0,0,0,0.1) 100%
+            );
+            z-index: 1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            bottom: 48px;
+            left: 48px;
+            z-index: 2;
+            color: #ffffff;
+            max-width: 520px;
+        }
+
+        .hero-overlay h1 {
+            font-size: clamp(28px, 4vw, 44px);
+            line-height: 1.1;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        .hero-overlay p {
+            font-size: 15px;
+            margin-bottom: 18px;
+            opacity: 0.95;
+        }
+
+        /* CTA */
+        .hero-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: #111827;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.45);
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.55);
+        }
+        body {
+            background: #ffffff;   /* full page white */
+        }
+
+        /* ===== PAGE CONTENT ===== */
+        /* ===== PAGE CONTENT ===== */
+        .page {
+            padding: 32px;
+            background: #ffffff;   /* 🔥 black hata ke white */
+        }
+        .page h1 {
+            color: #8b0000;          /* dark red */
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 28px;
+            align-items: stretch;
+            justify-items: center;   /* cards center align */
+        }
+
+
+        .product-card {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+            background: linear-gradient(145deg, #7a0000, #b11212, #ffcc66);
+            border: 2px solid #f5c16c;
+            box-shadow:
+                    0 8px 25px rgba(0,0,0,0.5),
+                    inset 0 0 0 1px rgba(255,215,0,0.3);
+            color: #fff;
+            transition: transform .25s ease, box-shadow .25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top left, rgba(255,215,0,0.25), transparent 60%);
+            pointer-events: none;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow:
+                    0 14px 40px rgba(255, 204, 102, 0.6),
+                    0 0 0 2px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Product image */
+        .product-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #fff;
+            padding: 8px;
+            margin-bottom: 12px;
+        }
+
+        /* Product name */
+        .product-card h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffd700;   /* gold */
+            margin: 10px 0 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Description */
+        .product-card p {
+            font-size: 13px;
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+
+        /* Price */
+        .price {
+            font-size: 18px;
+            font-weight: 900;
+            color: #ffdf8a;
+            margin: 8px 0;
+        }
+
+        /* Stock */
+        .stock {
+            font-size: 13px;
+            font-weight: 600;
+            color: #b6ffb6;  /* greenish for stock */
+        }
+
+        /* ===== Qty Controls ===== */
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        /* 🔥 Gold buttons */
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(145deg, #ffb703, #ffd166);
+            color: #3b0a0a;
+            font-size: 18px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 200, 0, 0.6);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .qty-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.9);
+        }
+
+        .qty-value {
+            min-width: 24px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        /* Know More Button (if you have it inside card) */
+        .product-card .know-more-btn {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: linear-gradient(145deg, #ffd700, #ff9f1c);
+            color: #3b0a0a;
+            font-weight: 800;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.6);
+            transition: transform .2s ease;
+        }
+
+        .product-card .know-more-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+        }
+        .image-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-modal img {
+            max-width: 85%;
+            max-height: 85%;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            background: #fff;
+            padding: 10px;
+        }
+
+        .image-modal .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 36px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .about-section {
+            margin: 60px auto;
+            max-width: 900px;
+            padding: 40px;
+            background: linear-gradient(135deg, #7a0c0c, #b8860b);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            color: #fff;
+            text-align: center;
+        }
+
+        .about-section h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #ffd700; /* Gold */
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .about-section p {
+            font-size: 17px;
+            line-height: 1.8;
+            color: #f9f9f9;
+            text-align: justify;
+        }
+        .about-section {
+            border: 2px solid #ffd700;
+            background: #7a0c0c;
+        }
+
+        .contact-section {
+            margin: 80px auto;
+            padding: 50px 30px;
+            background: linear-gradient(135deg, #7a0c0c, #b8860b);
+            border-top: 4px solid #ffd700;
+            color: #fff;
+            text-align: center;
+        }
+
+        .contact-section h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #ffd700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .contact-card {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.5);
+        }
+
+        .contact-card h3 {
+            color: #ffd700;
+            margin-bottom: 12px;
+        }
+
+        .contact-card p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #f5f5f5;
+        }
+        .highlight {
+            background: #ffd700;
+            color: #7a0000;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .product-card.dim {
+            opacity: 0.35;
+            filter: grayscale(40%);
+        }
+
+    </style>
+    <script>
+        function updateQty(productId, action) {
+            fetch(`/cart/${action}/${productId}`, { method: 'POST' })
+                .then(res => {
+                    if (res.redirected || res.status === 401 || res.status === 403) {
+                        window.location.href = "/login";
+                        return null;
+                    }
+
+                    if (!res.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+
+                    return res.text();
+                })
+                .then(qty => {
+                    if (!qty) return;
+
+                    qty = parseInt(qty);
+
+                    if (isNaN(qty)) return;
+
+
+                    const qtyEl = document.getElementById(`qty-${productId}`);
+                    if (qtyEl) qtyEl.innerText = qty;
+
+
+                    const badge = document.getElementById("cartCountBadge");
+                    let currentCount = badge ? parseInt(badge.innerText || "0") : 0;
+
+                    if (action === "increase") {
+                        currentCount += 1;
+                    } else if (action === "decrease" && currentCount > 0) {
+                        currentCount -= 1;
+                    }
+
+                    if (badge) {
+                        if (currentCount <= 0) {
+                            badge.style.display = "none";
+                        } else {
+                            badge.style.display = "inline-block";
+                            badge.innerText = currentCount;
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error("Cart update failed:", err);
+                    alert("⚠️ Cart update failed. Check console.");
+                });
+        }
+
+        function openDetailImage(url) {
+            const modal = document.getElementById("imageModal");
+            const img = document.getElementById("modalImg");
+
+            img.src = url;
+            modal.style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+    </script>
+
+</head>
+
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<div class="navbar">
+
+    <!-- LEFT -->
+    <a href="/products" style="text-decoration:none; color:inherit;">
+        <div class="brand">
+            <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo">
+            <span>MT ANIMAL CARE</span>
+        </div>
+    </a>
+
+    <!-- CENTER -->
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="#shop">Shop</a>
+
+        <a href="#about">About</a>
+
+        <a href="#contact">Contact</a>
+        <a href="javascript:void(0)" onclick="openEnquiryModal()" class="login-btn">
+            Enquiry
+        </a>
+        <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
+
+
+
+    </div>
+
+    <!-- RIGHT -->
+    <form action="/products/search" method="get" style="display:flex; gap:6px;">
+        <input type="text"
+               id="liveSearch"
+               placeholder="Search products..."
+               oninput="liveSearchProducts(this.value)"
+               style="
+           padding:6px 10px;
+           border-radius:6px;
+           border:1px solid #ddd;
+           outline:none;
+       " />
+
+
+        <button type="submit"
+                style="
+                padding:6px 12px;
+                border:none;
+                border-radius:6px;
+                background:#8b0000;
+                color:white;
+                cursor:pointer;
+            ">
+            🔍
+        </button>
+    </form>
+
+
+
+
+    <div class="right-actions">
+
+        <!-- WhatsApp -->
+        <a href="https://wa.me/919021466362"
+           target="_blank"
+           class="whatsapp-btn"
+           title="Chat on WhatsApp">
+            <img src="/images/whatsapp.png" alt="WhatsApp" class="whatsapp-icon">
+        </a>
+
+        <!-- Login -->
+        <a sec:authorize="!isAuthenticated()"
+           href="/oauth2/authorization/google"
+           class="login-btn">
+            Login
+        </a>
+
+        <!-- User -->
+        <div class="user-dropdown" sec:authorize="isAuthenticated()">
+            <div class="user-btn" onclick="toggleUserMenu()">
+                👤 <span sec:authentication="name"></span> ⌄
+            </div>
+            <div class="dropdown-menu" id="userMenu">
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+
+        <!-- Cart -->
+        <a href="/cart" class="cart-btn" title="Cart">
+            🛒
+            <span class="cart-count"
+                  id="cartCountBadge"
+                  th:if="${cartCount > 0}"
+                  th:text="${cartCount}">
+            </span>
+            <span id="cartCountBadge" class="cart-badge">0</span>
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- ===== HOME HERO SECTION ===== -->
+<section class="hero-section">
+    <img src="/images/home-banner.png" alt="MT Animal Care Banner" class="hero-image">
+
+    <div class="hero-overlay">
+        <h1>Leading Name in Contract Manufacturing</h1>
+        <p>WHO • GMP • ISO Certified Manufacturing Facility & Global Export</p>
+
+        <a href="/pdf/mt-animal-care-brochure.pdf"
+           target="_blank"
+           class="hero-btn">
+            📄 Know More
+        </a>
+    </div>
+</section>
+
+
+<!-- ===== PAGE CONTENT ===== -->
+<div class="page">
+
+    <!--  Search Result Heading -->
+    <h1 th:if="${searchQuery != null}">
+        Search Results for "<span th:text="${searchQuery}"></span>"
+    </h1>
+
+    <h1 th:if="${searchQuery == null}">
+        Available Products
+    </h1>
+
+    <!-- Empty result handling -->
+    <div th:if="${#lists.isEmpty(products)}"
+         style="text-align:center; padding:40px; color:#8b0000; font-weight:700;">
+        ❌ No products found.
+    </div>
+
+    <!-- 🛍 Product Grid -->
+    <!-- 🛍 Product Grid -->
+    <div id="shop" class="product-grid" th:if="${!#lists.isEmpty(products)}">
+
+
+    <div class="product-card"
+             th:each="product : ${products}"
+             th:attr="data-name=${product.name}, data-desc=${product.description}">
+
+
+        <img th:src="${product.imageUrl}"
+                 alt="Product Image"
+                 onerror="this.src='/images/no-image.png'">
+            <h3 class="product-name" th:text="${product.name}"></h3>
+            <p class="product-desc" th:text="${product.description}"></p>
+
+
+            <div class="price">
+                ₹ <span th:text="${product.price}"></span>
+            </div>
+
+            <div class="stock"
+                 th:text="${product.stock > 0 ? 'In Stock' : 'Out of Stock'}">
+            </div>
+
+            <div class="qty-controls">
+                <button type="button"
+                        class="qty-btn"
+                        th:attr="onclick=|updateQty(${product.id}, 'decrease')|">
+                    −
+                </button>
+
+                <span class="qty-value"
+                      th:id="'qty-' + ${product.id}"
+                      th:text="${cart[product.id] != null ? cart[product.id] : 0}">
+                0
+            </span>
+
+                <button type="button"
+                        class="qty-btn"
+                        th:attr="onclick=|updateQty(${product.id}, 'increase')|">
+                    +
+                </button>
+            </div>
+            <a href="javascript:void(0)"
+               class="know-more-btn"
+               th:attr="data-img=${product.knowMoreImageUrl}"
+               onclick="openKnowMoreFromBtn(this)">
+                🔍 Know More
+            </a>
+
+        </div>
+
+
+
+
+</div>
+
+<!-- Know More Modal -->
+<div id="knowMoreModal" class="modal-overlay">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeKnowMore()">✖</span>
+        <img id="knowMoreImg" src="" alt="Know More Image"/>
+    </div>
+</div>
+
+<style>
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .modal-box {
+        background: linear-gradient(135deg, #7a0000, #ffcc70);
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 20px 50px rgba(255,215,0,0.5);
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    .modal-box img {
+        max-width: 100%;
+        max-height: 70vh;
+        border-radius: 12px;
+        border: 4px solid gold;
+    }
+
+    .close-btn {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        font-size: 24px;
+        cursor: pointer;
+        color: white;
+    }
+</style>
+
+<script>
+    function openKnowMoreFromBtn(btn) {
+        const imgUrl = btn.getAttribute("data-img");
+        document.getElementById("knowMoreImg").src = imgUrl;
+        document.getElementById("knowMoreModal").style.display = "flex";
+    }
+
+    function closeKnowMore() {
+        document.getElementById("knowMoreModal").style.display = "none";
+    }
+</script>
+
+<section id="about" class="about-section">
+    <h2>About Our Manufacturing Unit</h2>
+    <p>
+        We are a quality-driven manufacturing unit specializing in poultry nutrition, veterinary medicines,
+        and animal healthcare products designed to enhance growth, immunity, and overall farm productivity.
+        Our facility follows strict industrial standards, modern production processes, and quality control systems
+        to ensure every product meets safety, performance, and regulatory requirements. From poultry feed supplements
+        and disease-prevention formulations to healthcare solutions for other livestock and animals, we are committed
+        to delivering reliable, effective, and scientifically developed products that support farmers, integrators,
+        and veterinary professionals across the industry. Our focus on innovation, hygiene, and consistency helps
+        build healthier flocks and sustainable farming outcomes.
+    </p>
+</section>
+<section id="contact" class="contact-section">
+    <h2>Contact Us</h2>
+
+    <div class="contact-grid">
+        <!-- Address -->
+        <div class="contact-card">
+            <h3>Registered Address</h3>
+            <p>
+                B/201, Mauli Apartment 3, Manvel Pada Road,<br>
+                Nearby Landmark: Jaydeep English Primary School,<br>
+                Kargil Nagar, Vasai Virar, District: Palghar,<br>
+                Maharashtra – 401305
+            </p>
+        </div>
+
+        <!-- Phone & Email -->
+        <div class="contact-card">
+            <h3>Contact</h3>
+            <p>
+                📞 9503569405<br>
+                📞 97734 05980<br><br>
+                ✉️ mtanimalhealthcare@gmail.com
+            </p>
+        </div>
+
+        <!-- Registrations -->
+        <div class="contact-card">
+            <h3>Registrations</h3>
+            <p>
+                MSME: UDYAM-MH-19-0395860<br>
+                GST: 27ACFFM7590J1ZN
+            </p>
+        </div>
+    </div>
+</section>
+    <script>
+        function liveSearchProducts(query) {
+            query = query.toLowerCase().trim();
+
+            const cards = document.querySelectorAll(".product-card");
+            let firstMatch = null;
+
+            cards.forEach(card => {
+                const nameEl = card.querySelector(".product-name");
+                const descEl = card.querySelector(".product-desc");
+
+                const name = nameEl.innerText.toLowerCase();
+                const desc = descEl.innerText.toLowerCase();
+
+                // Reset previous highlights
+                nameEl.innerHTML = nameEl.innerText;
+                descEl.innerHTML = descEl.innerText;
+
+                if (!query) {
+                    card.classList.remove("dim");
+                    return;
+                }
+
+                if (name.includes(query) || desc.includes(query)) {
+                    card.classList.remove("dim");
+
+                    // Highlight text
+                    highlightText(nameEl, query);
+                    highlightText(descEl, query);
+
+                    if (!firstMatch) {
+                        firstMatch = card;
+                    }
+                } else {
+                    card.classList.add("dim");
+                }
+            });
+
+            // Auto scroll to first match
+            if (firstMatch) {
+                firstMatch.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+        }
+
+        function highlightText(element, query) {
+            const text = element.innerText;
+            const regex = new RegExp(`(${query})`, "ig");
+            element.innerHTML = text.replace(regex, `<span class="highlight">$1</span>`);
+        }
+    </script>
+
+    <!-- 🤖 AI Chatbot -->
+
+    <!-- 🤖 AI Chatbot -->
+    <div id="ai-chatbot">
+        <div id="ai-header">
+            🤖 Ask MT Assistant <span style="float:right; cursor:move;">⠿</span>
+        </div>
+        <div id="ai-body"></div>
+        <input type="text" id="ai-input" placeholder="Ask about products, GST, delivery..." />
+    </div>
+
+    <style>
+
+    #ai-chatbot {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    overflow: hidden;
+    z-index: 9999;
+    font-family: Arial;
+    }
+
+    #ai-header {
+    background: linear-gradient(135deg, #7a0000, #ffcc66);
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+    cursor: move;
+    user-select: none;
+    }
+
+    #ai-body {
+    height: 240px;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 13px;
+    background: #fafafa;
+    }
+
+    .msg-user {
+    margin: 6px 0;
+    text-align: right;
+    color: #333;
+    }
+
+    .msg-ai {
+    margin: 6px 0;
+    text-align: left;
+    color: green;
+    }
+
+    .typing {
+    font-style: italic;
+    color: gray;
+    }
+
+    #ai-input {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #eee;
+    padding: 10px;
+    outline: none;
+    }
+
+
+    </style>
+
+    <script>
+        const aiBody = document.getElementById("ai-body");
+        const aiInput = document.getElementById("ai-input");
+
+        aiInput.addEventListener("keydown", function(e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const msg = aiInput.value.trim();
+            if (!msg) return;
+
+            aiBody.innerHTML += `<div class="msg-user"><b>You:</b> ${escapeHtml(msg)}</div>`;
+            aiInput.value = "";
+
+            const typingEl = document.createElement("div");
+            typingEl.className = "typing";
+            typingEl.innerText = "AI is typing...";
+            aiBody.appendChild(typingEl);
+            aiBody.scrollTop = aiBody.scrollHeight;
+
+            fetch("/ai-chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/plain"
+                },
+                body: msg   // ✅ FIXED: send the actual message
+            })
+                .then(res => res.text())
+                .then(reply => {
+                    typingEl.remove();
+                    aiBody.innerHTML += `<div class="msg-ai"><b>AI:</b> ${escapeHtml(reply)}</div>`;
+                    aiBody.scrollTop = aiBody.scrollHeight;
+                })
+                .catch(err => {
+                    typingEl.innerText = "AI is not available right now.";
+                    console.error("AI call failed", err);
+                });
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/[&<>"']/g, function (m) {
+                return ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                })[m];
+            });
+        }
+    </script>
+
+
+    <script>
+        function toggleUserMenu() {
+            const menu = document.getElementById("userMenu");
+            menu.style.display = (menu.style.display === "block") ? "none" : "block";
+        }
+
+        // Prevent dropdown from closing when clicking inside it
+        document.getElementById("userMenu").addEventListener("click", function (e) {
+            e.stopPropagation();
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (e) {
+            const dropdown = document.querySelector(".user-dropdown");
+            const menu = document.getElementById("userMenu");
+
+            if (!dropdown.contains(e.target)) {
+                menu.style.display = "none";
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const aiBody = document.getElementById("ai-body");
+            const aiInput = document.getElementById("ai-input");
+            const chatbot = document.getElementById("ai-chatbot");
+            const header = document.getElementById("ai-header");
+
+            if (!chatbot || !header) {
+                console.error("Chatbot elements not found in DOM");
+                return;
+            }
+
+            // Chat input
+            aiInput.addEventListener("keydown", function(e) {
+                if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            function sendMessage() {
+                const msg = aiInput.value.trim();
+                if (!msg) return;
+
+                aiBody.innerHTML += `<div class="msg-user"><b>You:</b> ${escapeHtml(msg)}</div>`;
+                aiInput.value = "";
+
+                const typingEl = document.createElement("div");
+                typingEl.className = "typing";
+                typingEl.innerText = "AI is typing...";
+                aiBody.appendChild(typingEl);
+                aiBody.scrollTop = aiBody.scrollHeight;
+
+                fetch("/ai-chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain" },
+                    body: msg
+                })
+                    .then(res => res.text())
+                    .then(reply => {
+                        typingEl.remove();
+                        aiBody.innerHTML += `<div class="msg-ai"><b>AI:</b> ${escapeHtml(reply)}</div>`;
+                        aiBody.scrollTop = aiBody.scrollHeight;
+                    })
+                    .catch(() => {
+                        typingEl.innerText = "AI is not available right now.";
+                    });
+            }
+
+            function escapeHtml(text) {
+                return text.replace(/[&<>"']/g, function (m) {
+                    return ({
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    })[m];
+                });
+            }
+
+
+            let isDragging = false;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            header.addEventListener("mousedown", (e) => {
+                isDragging = true;
+                const rect = chatbot.getBoundingClientRect();
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+                e.preventDefault();
+            });
+
+            document.addEventListener("mousemove", (e) => {
+                if (!isDragging) return;
+                chatbot.style.left = (e.clientX - offsetX) + "px";
+                chatbot.style.top = (e.clientY - offsetY) + "px";
+                chatbot.style.right = "auto";
+                chatbot.style.bottom = "auto";
+                chatbot.style.position = "fixed";
+            });
+
+            document.addEventListener("mouseup", () => {
+                isDragging = false;
+            });
+
+        });
+    </script>
+    <!-- 📨 Enquiry Modal -->
+    <div id="enquiryModal" class="enquiry-modal" onclick="backdropClose(event)">
+        <div class="enquiry-box">
+            <span class="close-btn" onclick="closeEnquiryModal()">✖</span>
+
+            <h2>📩 Custom Product Enquiry</h2>
+            <p>Tell us your requirement and we will design a custom solution for your animals.</p>
+
+            <form id="enquiryForm" onsubmit="submitEnquiry(event)">
+                <label>Animal Type</label>
+                <select name="animalType" required>
+                    <option value="">Select Animal</option>
+                    <option value="Chicken">Chicken</option>
+                    <option value="Cow">Cow</option>
+                    <option value="Goat">Goat</option>
+                    <option value="Pig">Pig</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <label>Requirement (Medicine / Supplement)</label>
+                <textarea name="requirement" placeholder="Describe the problem or supplement needed..." required></textarea>
+
+                <label>Your Name</label>
+                <input type="text" name="name" required />
+
+                <label>Contact Number</label>
+                <input type="tel" name="phone" required />
+
+                <label>Number of Animals</label>
+                <input type="number" name="animalCount" placeholder="e.g. 500" min="1" required />
+
+                <label>Expected Monthly Requirement</label>
+                <input type="text" name="monthlyRequirement" placeholder="e.g. 10 kg / 100 bottles" required />
+
+                <button type="submit">Send Enquiry</button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .enquiry-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .enquiry-modal.show {
+            display: flex;
+        }
+
+        .enquiry-box {
+            background: linear-gradient(135deg, #7a0000, #ffcc66);
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 420px;
+            color: #fff;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            position: relative;
+        }
+
+        .enquiry-box h2 {
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .enquiry-box p {
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .enquiry-box label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .enquiry-box input,
+        .enquiry-box select,
+        .enquiry-box textarea {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: none;
+            outline: none;
+        }
+
+        .enquiry-box textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .enquiry-box button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: #ffd700;
+            color: #7a0000;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .enquiry-box button:hover {
+            background: #ffea00;
+        }
+
+        .enquiry-box .close-btn {
+            position: absolute;
+            right: 14px;
+            top: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+
+    <script>
+        function openEnquiryModal() {
+            document.getElementById("enquiryModal").classList.add("show");
+        }
+
+        function closeEnquiryModal() {
+            document.getElementById("enquiryModal").classList.remove("show");
+        }
+
+        function backdropClose(e) {
+            if (e.target.id === "enquiryModal") {
+                closeEnquiryModal();
+            }
+        }
+
+        function submitEnquiry(e) {
+            e.preventDefault();
+
+            const form = document.getElementById("enquiryForm");
+            const data = new FormData(form);
+
+            const whatsappMsg = encodeURIComponent(
+                `Hello, I submitted an enquiry on MT Animal Care.\n\n` +
+                `Animal: ${data.get("animalType")}\n` +
+                `Number of Animals: ${data.get("animalCount")}\n` +
+                `Monthly Requirement: ${data.get("monthlyRequirement")}\n` +
+                `Requirement: ${data.get("requirement")}\n` +
+                `Name: ${data.get("name")}\n` +
+                `Contact: ${data.get("phone")}`
+            );
+
+            const whatsappNumber = "919021466362";
+
+            // Optional backend call (won't break if API not present)
+            fetch("/enquiry", { method: "POST", body: data }).catch(() => {});
+
+            alert("✅ Your enquiry has been sent.\n👉 Chat instantly with our expert on WhatsApp.");
+
+            window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, "_blank");
+
+            form.reset();
+            closeEnquiryModal();
+        }
+
+        // 🔥 Auto popup on page load (only once per session)
+        document.addEventListener("DOMContentLoaded", function () {
+            if (!sessionStorage.getItem("enquiryPopupShown")) {
+                setTimeout(() => {
+                    openEnquiryModal();
+                    sessionStorage.setItem("enquiryPopupShown", "true");
+                }, 1200);
+            }
+        });
+    </script>
+
+</body>
+</html>

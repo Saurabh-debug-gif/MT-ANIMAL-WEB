@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pay Now</title>
+
+    <!-- Sandbox SDK (use prod SDK later) -->
+    <script src="https://sdk.cashfree.com/js/ui/2.0.0/cashfree.sandbox.js"></script>
+</head>
+<body>
+<h2>Redirecting to payment...</h2>
+
+<script>
+    const sessionId = "[[${sessionId}]]";
+    const cashfree = new Cashfree(sessionId);
+    cashfree.redirect();
+</script>
+</body>
+</html>

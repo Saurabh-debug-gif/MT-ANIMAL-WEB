@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Checkout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9fafb;
+            margin: 0;
+            padding: 0;
+        }
+
+        .checkout-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+        }
+
+        h2 {
+            color: #8b0000;
+            margin-bottom: 20px;
+        }
+
+        .cart-box {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .total {
+            font-size: 18px;
+            font-weight: 800;
+            margin-top: 15px;
+            color: #7a0000;
+            text-align: right;
+        }
+
+        .checkout-form label {
+            display: block;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+
+        .checkout-form input,
+        .checkout-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .checkout-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .place-order-btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, #7a0000, #ffcc66);
+            color: #fff;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .place-order-btn:hover {
+            opacity: 0.9;
+        }
+
+        .error {
+            background: #ffe5e5;
+            color: #b30000;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .whatsapp-btn {
+            display: block;
+            margin-top: 15px;
+            width: 100%;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            background: #25D366;
+            color: #fff;
+            font-weight: 800;
+            font-size: 16px;
+            text-decoration: none;
+        }
+        .whatsapp-btn:hover {
+            opacity: 0.9;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="checkout-container">
+
+    <!-- 🛒 CART SUMMARY -->
+    <div class="cart-box">
+        <h2>🛒 Order Summary</h2>
+
+        <div th:each="item : ${cart}" class="cart-item">
+            <div>
+                <b th:text="${item.product.name}"></b><br>
+                Qty: <span th:text="${item.quantity}"></span>
+            </div>
+            <div>
+                ₹ <span th:text="${item.totalPrice}"></span>
+            </div>
+        </div>
+
+        <div class="total">
+            Total: ₹ <span th:text="${total}"></span>
+        </div>
+    </div>
+
+    <!-- 📦 CUSTOMER DETAILS -->
+    <div>
+        <h2>📦 Delivery Details</h2>
+
+        <!-- Error message if payment failed -->
+        <div th:if="${param.error}" class="error">
+            ❌ Payment failed. Please try again.
+        </div>
+
+        <form class="checkout-form" action="/checkout/place-order" method="post">
+
+            <label>Full Name</label>
+            <input type="text" name="name" placeholder="Your Name" required>
+
+            <label>Phone Number</label>
+            <input type="tel" name="phone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+
+            <label>Email</label>
+            <input type="email" name="email" placeholder="you@example.com" required>
+
+            <label>Full Address</label>
+            <textarea name="address" placeholder="House no, Street, Area" required></textarea>
+
+            <label>City</label>
+            <input type="text" name="city" required>
+
+            <label>State</label>
+            <input type="text" name="state" required>
+
+            <label>Pincode</label>
+            <input type="text" name="pincode" required pattern="[0-9]{6}" placeholder="6-digit pincode">
+
+            <button type="submit" class="place-order-btn">
+                💳 Pay & Place Order
+            </button>
+
+
+        </form>
+        <a id="whatsappOrderBtn" class="whatsapp-btn" target="_blank">
+            📲 Order via WhatsApp (COD / Partial Payment)
+        </a>
+
+    </div>
+
+</div>
+<script th:inline="javascript">
+    const adminPhone = "919999999999"; // 👈 replace with your WhatsApp number (country code + number)
+
+    const cart = [[${cart}]];
+    const total = [[${total}]];
+
+    function buildWhatsAppMessage() {
+        let msg = "🛒 *New Order Request (COD / Partial Payment)*\n\n";
+        msg += "*Items:*\n";
+
+        cart.forEach(item => {
+            msg += `• ${item.product.name} (Qty: ${item.quantity}) - ₹${item.totalPrice}\n`;
+        });
+
+        msg += `\n*Total:* ₹${total}\n\n`;
+        msg += "Customer wants to discuss COD / Partial Payment.\n";
+        msg += "Please confirm availability and final price.\n";
+
+        return encodeURIComponent(msg);
+    }
+
+    const waBtn = document.getElementById("whatsappOrderBtn");
+    waBtn.href = `https://wa.me/${adminPhone}?text=${buildWhatsAppMessage()}`;
+</script>
+
+</body>
+</html>

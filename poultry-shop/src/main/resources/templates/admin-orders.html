@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin - Orders</title>
+    <style>
+        body { font-family: Arial, sans-serif; background:#f7f7f7; padding:30px; }
+        h1 { color:#8b0000; }
+        table { width:100%; border-collapse: collapse; background:#fff; }
+        th, td { padding:12px; border:1px solid #ddd; text-align:left; }
+        th { background:#8b0000; color:#fff; }
+    </style>
+</head>
+<body>
+
+<h1>Customer Orders</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Total</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Tracking</th>
+        <th>Update</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.customerName}"></td>
+        <td th:text="${order.phone}"></td>
+        <td th:text="${order.address}"></td>
+        <td>₹ <span th:text="${order.totalAmount}"></span></td>
+        <td th:text="${order.createdAt}"></td>
+        <td th:text="${order.status}"></td>
+        <td th:text="${order.trackingId != null ? order.trackingId : '-'}"></td>
+        <td>
+            <a th:href="@{/admin/orders/update/{id}(id=${order.id})}">✏ Update</a>
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

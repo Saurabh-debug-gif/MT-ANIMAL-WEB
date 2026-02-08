@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Update Order</title>
+    <style>
+        body { font-family: Arial; background:#f5f7fb; padding:40px; }
+        .card { max-width:500px; margin:auto; background:#fff; padding:25px; border-radius:12px; }
+        label { font-weight:600; margin-top:10px; display:block; }
+        input, select, textarea {
+            width:100%; padding:8px; margin-top:6px; border-radius:6px; border:1px solid #ddd;
+        }
+        button {
+            margin-top:15px;
+            padding:10px 14px;
+            background:#8b0000;
+            color:#fff;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Update Order Status</h2>
+
+    <form th:action="@{/admin/orders/update}" method="post">
+        <input type="hidden" name="id" th:value="${order.id}"/>
+
+        <label>Status</label>
+        <select name="status">
+            <option th:selected="${order.status == 'PLACED'}">PLACED</option>
+            <option th:selected="${order.status == 'SHIPPED'}">SHIPPED</option>
+            <option th:selected="${order.status == 'OUT_FOR_DELIVERY'}">OUT_FOR_DELIVERY</option>
+            <option th:selected="${order.status == 'DELIVERED'}">DELIVERED</option>
+        </select>
+
+        <label>Tracking ID</label>
+        <input type="text" name="trackingId" th:value="${order.trackingId}"/>
+
+        <label>Message to Customer</label>
+        <textarea name="adminMessage" rows="4"
+                  th:text="${order.adminMessage}"></textarea>
+
+        <button type="submit">Save Update</button>
+    </form>
+</div>
+
+</body>
+</html>

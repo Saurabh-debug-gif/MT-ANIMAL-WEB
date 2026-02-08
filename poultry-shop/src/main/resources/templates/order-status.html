@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order Status</title>
+    <style>
+        body {
+            font-family: Arial;
+            background:#f9fafb;
+            padding:40px;
+        }
+        .box {
+            max-width:600px;
+            margin:auto;
+            background:#fff;
+            padding:30px;
+            border-radius:12px;
+            box-shadow:0 6px 20px rgba(0,0,0,0.1);
+            text-align:center;
+        }
+        .status {
+            font-size:20px;
+            font-weight:bold;
+            color:#8b0000;
+        }
+        .msg {
+            background:#fef3c7;
+            padding:12px;
+            border-radius:6px;
+            margin-top:10px;
+        }
+        .continue-btn {
+            display:inline-block;
+            margin-top:25px;
+            padding:12px 22px;
+            background: linear-gradient(135deg, #7a0000, #ffcc66);
+            color:#fff;
+            font-weight:700;
+            text-decoration:none;
+            border-radius:8px;
+            transition: 0.2s ease;
+        }
+        .continue-btn:hover {
+            opacity:0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>✅ Order Status</h2>
+
+    <p><b>Order ID:</b> <span th:text="${order.id}"></span></p>
+    <p><b>Status:</b> <span class="status" th:text="${order.status}"></span></p>
+
+    <p><b>Tracking ID:</b>
+        <span th:text="${order.trackingId != null ? order.trackingId : 'Will be shared soon'}"></span>
+    </p>
+
+    <div th:if="${order.adminMessage != null}" class="msg">
+        <b>Message from Seller:</b>
+        <p th:text="${order.adminMessage}"></p>
+    </div>
+
+    <!-- ✅ Continue Shopping Button -->
+    <a href="/products" class="continue-btn">
+        🛒 Continue Shopping
+    </a>
+</div>
+
+</body>
+</html>

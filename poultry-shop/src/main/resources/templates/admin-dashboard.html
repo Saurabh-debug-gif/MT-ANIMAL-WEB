@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 40px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .card {
+            display: inline-block;
+            width: 250px;
+            margin: 10px;
+            padding: 20px;
+            border-radius: 6px;
+            background: #eef2ff;
+            text-align: center;
+        }
+        a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #1d4ed8;
+        }
+        .logout {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Admin Dashboard</h1>
+
+    <div class="card">
+        <p>📦 Manage Products</p>
+        <a href="/admin/products">Go</a>
+    </div>
+
+    <div class="card">
+        <p>📑 View Orders</p>
+        <a href="#">Coming Soon</a>
+    </div>
+
+    <div class="card">
+        <p>👤 Admin Profile</p>
+        <a href="#">Coming Soon</a>
+    </div>
+
+    <div class="logout">
+        <a href="/logout">🚪 Logout</a>
+    </div>
+</div>
+
+</body>
+</html>
