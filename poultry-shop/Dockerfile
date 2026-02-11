@@ -1,16 +1,16 @@
-# Use Java 17 (good for Spring Boot)
+# Use Java 17
 FROM eclipse-temurin:17-jdk-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy everything into container
+# Copy project files
 COPY . .
 
-# Build the app
+# Build the app (skip tests for faster build)
 RUN ./mvnw clean package -DskipTests
 
-# Expose port (Render uses 10000 internally)
+# Expose Spring Boot port
 EXPOSE 8080
 
 # Run the jar
