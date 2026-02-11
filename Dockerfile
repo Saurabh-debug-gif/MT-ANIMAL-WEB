@@ -5,10 +5,13 @@ WORKDIR /app
 # Copy everything
 COPY . .
 
-# Move into project folder
+# Go into project folder
 WORKDIR /app/poultry-shop
 
-# Build app
+# ✅ Fix permissions for mvnw
+RUN chmod +x mvnw
+
+# Build the app
 RUN ./mvnw clean package -DskipTests
 
 EXPOSE 8080
