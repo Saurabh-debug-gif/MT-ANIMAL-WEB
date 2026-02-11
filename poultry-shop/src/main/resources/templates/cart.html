@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Your Cart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 
     <style>
         body {
@@ -121,6 +123,102 @@
             text-decoration: none;
         }
     </style>
+    <style>
+    /* ================= MOBILE CART POLISH ================= */
+    @media (max-width: 768px) {
+
+    body {
+    background: #fff6e5;
+    }
+
+    .cart-container {
+    margin: 12px;
+    padding: 14px;
+    border-radius: 16px;
+    }
+
+    .cart-title {
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 12px;
+    }
+
+    /* Make table horizontally scrollable but visually compact */
+    .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+    }
+
+    table {
+    min-width: 680px;     /* keeps columns readable */
+    font-size: 12px;
+    }
+
+    th {
+    font-size: 11px;
+    padding: 10px 8px;
+    letter-spacing: 0.4px;
+    }
+
+    td {
+    padding: 10px 8px;
+    font-size: 12px;
+    }
+
+    .remove-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 999px;
+    }
+
+    /* Footer stack & spacing */
+    .cart-footer {
+    margin-top: 16px;
+    flex-direction: column;
+    gap: 12px;
+    }
+
+    .bill-box {
+    width: 100%;
+    min-width: unset;
+    padding: 14px 16px;
+    border-radius: 14px;
+    }
+
+    .bill-box p {
+    font-size: 14px;
+    line-height: 1.5;
+    }
+
+    .bill-box h3 {
+    font-size: 18px;
+    margin-top: 8px;
+    }
+
+    .checkout-btn {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 12px;
+    }
+
+    .continue-link {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 13px;
+    }
+
+    /* Reduce wasted vertical space below */
+    .cart-container::after {
+    content: "";
+    display: block;
+    height: 8px;
+    }
+    }
+</style>
 </head>
 
 <body>
@@ -128,7 +226,7 @@
 <div class="cart-container">
 
     <div class="cart-title">🛒 Your Cart</div>
-
+    <div class="table-wrap">
     <table>
         <tr>
             <th>Product</th>

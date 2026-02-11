@@ -39,7 +39,8 @@ public class SecurityConfig {
                                 "/login/oauth2/**"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/cart/**", "/checkout/**").authenticated()
+                        .requestMatchers("/cart/**", "/checkout/**", "/my-orders").authenticated()
+
                         .anyRequest().permitAll()   // 🔥 TEMPORARY: allow everything else
                 )
                 .oauth2Login(oauth -> oauth

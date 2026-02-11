@@ -4,6 +4,7 @@
 
 <head>
     <title>Products</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
         body {
@@ -39,6 +40,57 @@
             height: 34px;
             width: auto;
             border-radius: 6px;
+        }
+        /* ===== DESKTOP NAV LINKS ===== */
+        .desktop-nav {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .desktop-nav a {
+            position: relative;
+            text-decoration: none;
+            color: #111827;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 6px 4px;
+            transition: color 0.25s ease;
+        }
+
+        /* Hover underline animation */
+        .desktop-nav a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, #8b0000, #ffcc66);
+            transition: width 0.3s ease;
+        }
+
+        .desktop-nav a:hover {
+            color: #8b0000;
+        }
+
+        .desktop-nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Enquiry CTA button style */
+        .desktop-nav a.enquiry-link {
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #8b0000, #ffcc66);
+            color: #111;
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(255, 204, 102, 0.5);
+        }
+
+        .desktop-nav a.enquiry-link:hover {
+            color: #111;
+            transform: translateY(-1px);
         }
 
         .nav-links {
@@ -527,6 +579,156 @@
             opacity: 0.35;
             filter: grayscale(40%);
         }
+        /* ================= MOBILE RESPONSIVE (DO NOT BREAK DESKTOP) ================= */
+        @media (max-width: 768px) {
+
+            .navbar {
+                flex-wrap: wrap;
+                padding: 10px 12px;
+                gap: 10px;
+            }
+
+            .brand {
+                flex: 1;
+            }
+
+
+
+            /* Mobile menu panel */
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                background: #ffffff;
+                border-top: 1px solid #eee;
+                padding: 12px 0;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 10px 16px;
+                font-size: 15px;
+                border-bottom: 1px solid #f1f1f1;
+            }
+
+            .right-actions {
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: space-between;
+            }
+
+            .right-actions form {
+                width: 100%;
+                display: flex;
+            }
+
+            .right-actions input {
+                flex: 1;
+            }
+        }
+
+
+
+            /* Hero */
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: 30vh;
+            }
+
+            .hero-overlay {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+            }
+
+            .hero-overlay h1 {
+                font-size: 18px;
+            }
+
+            .hero-overlay p {
+                font-size: 12px;
+            }
+        }
+
+
+        .hero-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            /* Products */
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .product-card {
+                padding: 10px;
+            }
+
+            .product-card img {
+                height: 110px;
+            }
+
+            .product-card h3 {
+                font-size: 14px;
+            }
+
+            .price {
+                font-size: 14px;
+            }
+        }
+
+
+        .product-card p {
+                font-size: 12px;
+            }
+
+            .qty-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+
+            /* Contact */
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+        @media (max-width: 768px) {
+            .cart-btn {
+                position: fixed;
+                bottom: 16px;
+                right: 16px;
+                width: 48px;
+                height: 48px;
+                z-index: 9999;
+            }
+        }
+
+
+        /* Chatbot reposition */
+            #ai-chatbot {
+                width: 90%;
+                right: 5%;
+                bottom: 80px;
+            }
+        }
+
+
+        @media (max-width: 768px) {
+            .page h1 {
+                text-align: center;
+                font-size: 20px;
+            }
+        }
+
 
     </style>
     <script>
@@ -597,65 +799,79 @@
 
 <body>
 
-<!-- ===== NAVBAR ===== -->
 <div class="navbar">
 
     <!-- LEFT -->
     <a href="/products" style="text-decoration:none; color:inherit;">
         <div class="brand">
-            <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo">
+            <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="MT Animal Care">
             <span>MT ANIMAL CARE</span>
         </div>
     </a>
-
-    <!-- CENTER -->
-    <div class="nav-links">
+    <!-- DESKTOP NAV -->
+    <div class="nav-links desktop-nav">
         <a href="/">Home</a>
         <a href="#shop">Shop</a>
-
         <a href="#about">About</a>
-
         <a href="#contact">Contact</a>
-        <a href="javascript:void(0)" onclick="openEnquiryModal()" class="login-btn">
+
+        <a href="javascript:void(0)"
+           class="enquiry-link"
+           onclick="openEnquiryModal()">
             Enquiry
         </a>
+
         <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
-
-
-
     </div>
 
+    <!-- HAMBURGER -->
+    <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- MOBILE OVERLAY -->
+    <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
+
+    <!-- MOBILE DRAWER MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="brand">
+                <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="MT Animal Care">
+                <span>MT ANIMAL CARE</span>
+            </div>
+            <span class="close-menu" onclick="toggleMenu()">✖</span>
+        </div>
+
+        <a href="/">Home</a>
+        <a href="#shop">Shop</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="javascript:void(0)" onclick="openEnquiryModal()">Enquiry</a>
+        <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
+    </div>
+
+
+
     <!-- RIGHT -->
-    <form action="/products/search" method="get" style="display:flex; gap:6px;">
-        <input type="text"
-               id="liveSearch"
-               placeholder="Search products..."
-               oninput="liveSearchProducts(this.value)"
-               style="
-           padding:6px 10px;
-           border-radius:6px;
-           border:1px solid #ddd;
-           outline:none;
-       " />
-
-
-        <button type="submit"
-                style="
-                padding:6px 12px;
-                border:none;
-                border-radius:6px;
-                background:#8b0000;
-                color:white;
-                cursor:pointer;
-            ">
-            🔍
-        </button>
-    </form>
-
-
-
-
     <div class="right-actions">
+
+        <!-- Search -->
+        <div style="display:flex; gap:6px;">
+            <input type="text"
+                   id="liveSearch"
+                   placeholder="Search products..."
+                   oninput="liveSearchProducts(this.value)"
+                   style="padding:6px 10px;border-radius:6px;border:1px solid #ddd;outline:none;" />
+
+            <button type="button"
+                    onclick="alert('Live search is enabled. Just start typing! 🔍')"
+                    style="padding:6px 12px;border:none;border-radius:6px;background:#8b0000;color:white;cursor:pointer;">
+                🔍
+            </button>
+        </div>
+
 
         <!-- WhatsApp -->
         <a href="https://wa.me/919021466362"
@@ -690,14 +906,82 @@
                   th:if="${cartCount > 0}"
                   th:text="${cartCount}">
             </span>
-            <span id="cartCountBadge" class="cart-badge">0</span>
-
         </a>
 
     </div>
-
 </div>
 
+</section>
+<style>
+.why-choose-us {
+padding: 60px 20px;
+background: linear-gradient(135deg, #7a0c0c, #b8860b);
+color: white;
+text-align: center;
+}
+
+.why-choose-us h2 {
+font-size: 32px;
+margin-bottom: 30px;
+color: #ffd700;
+letter-spacing: 1px;
+text-transform: uppercase;
+}
+
+.why-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+gap: 20px;
+max-width: 1000px;
+margin: auto;
+}
+
+.why-card {
+background: rgba(0,0,0,0.25);
+padding: 20px;
+border-radius: 12px;
+border: 1px solid rgba(255,215,0,0.6);
+font-weight: 600;
+box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.why-card:hover {
+transform: translateY(-5px) scale(1.02);
+box-shadow: 0 10px 24px rgba(255,215,0,0.4);
+}
+
+@media (max-width: 768px) {
+
+    .why-choose-us {
+        padding: 40px 14px;
+    }
+
+    .why-choose-us h2 {
+        font-size: 22px;
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+
+    .why-grid {
+        grid-template-columns: 1fr;   /* 🔥 Single column on mobile */
+        gap: 12px;
+    }
+
+    .why-card {
+        font-size: 14px;
+        padding: 14px;
+        border-radius: 10px;
+        text-align: left;           /* More readable on mobile */
+    }
+    .why-card::before {
+        content: "✔";
+        margin-right: 8px;
+        color: #ffd700;
+        font-weight: bold;
+    }
+}
+</style>
 
 <!-- ===== HOME HERO SECTION ===== -->
 <section class="hero-section">
@@ -715,7 +999,16 @@
     </div>
 </section>
 
+<section class="why-choose-us" id="why-us">
+    <h2>Why Choose MT Animal Care?</h2>
 
+    <div class="why-grid">
+        <div class="why-card">✅ WHO-GMP Certified Facility</div>
+        <div class="why-card">✅ Custom Formulation for Poultry & Livestock</div>
+        <div class="why-card">✅ Bulk Manufacturing & Export Support</div>
+        <div class="why-card">✅ Experienced Veterinary Team</div>
+
+    </div>
 <!-- ===== PAGE CONTENT ===== -->
 <div class="page">
 
@@ -956,7 +1249,7 @@
     <!-- 🤖 AI Chatbot -->
     <div id="ai-chatbot">
         <div id="ai-header">
-            🤖 Ask MT Assistant <span style="float:right; cursor:move;">⠿</span>
+            🤖 Ask MT Assistant <span onclick="toggleChatbot()" style="float:right; cursor:pointer;">➖</span>
         </div>
         <div id="ai-body"></div>
         <input type="text" id="ai-input" placeholder="Ask about products, GST, delivery..." />
@@ -1114,7 +1407,7 @@
                 return;
             }
 
-            // Chat input
+            /* ================= Chat Input ================= */
             aiInput.addEventListener("keydown", function(e) {
                 if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -1163,34 +1456,56 @@
                 });
             }
 
+            /* ================= Drag Logic (Desktop + Mobile) ================= */
 
             let isDragging = false;
-            let offsetX = 0;
-            let offsetY = 0;
+            let offsetX = 0, offsetY = 0;
 
-            header.addEventListener("mousedown", (e) => {
-                isDragging = true;
+            function startDrag(x, y) {
                 const rect = chatbot.getBoundingClientRect();
-                offsetX = e.clientX - rect.left;
-                offsetY = e.clientY - rect.top;
-                e.preventDefault();
-            });
+                offsetX = x - rect.left;
+                offsetY = y - rect.top;
+                isDragging = true;
+            }
 
-            document.addEventListener("mousemove", (e) => {
+            function moveDrag(x, y) {
                 if (!isDragging) return;
-                chatbot.style.left = (e.clientX - offsetX) + "px";
-                chatbot.style.top = (e.clientY - offsetY) + "px";
+                chatbot.style.left = (x - offsetX) + "px";
+                chatbot.style.top = (y - offsetY) + "px";
                 chatbot.style.right = "auto";
                 chatbot.style.bottom = "auto";
                 chatbot.style.position = "fixed";
+            }
+
+            function stopDrag() {
+                isDragging = false;
+            }
+
+            // 🖱️ Desktop
+            header.addEventListener("mousedown", e => {
+                startDrag(e.clientX, e.clientY);
+                e.preventDefault();
             });
 
-            document.addEventListener("mouseup", () => {
-                isDragging = false;
+            document.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
+            document.addEventListener("mouseup", stopDrag);
+
+            // 📱 Mobile (Touch support)
+            header.addEventListener("touchstart", e => {
+                const t = e.touches[0];
+                startDrag(t.clientX, t.clientY);
             });
+
+            document.addEventListener("touchmove", e => {
+                const t = e.touches[0];
+                moveDrag(t.clientX, t.clientY);
+            });
+
+            document.addEventListener("touchend", stopDrag);
 
         });
     </script>
+
     <!-- 📨 Enquiry Modal -->
     <div id="enquiryModal" class="enquiry-modal" onclick="backdropClose(event)">
         <div class="enquiry-box">
@@ -1367,6 +1682,230 @@
             }
         });
     </script>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById("mobileMenu");
+            const overlay = document.getElementById("mobileOverlay");
+            const burger = document.getElementById("hamburgerBtn");
+
+            menu.classList.toggle("active");
+            overlay.classList.toggle("active");
+            burger.classList.toggle("active");
+        }
+    </script>
+
+
+    </script>
+   <style>
+
+
+       @media (max-width: 768px) {
+        #ai-chatbot {
+            width: 92%;
+            right: 4%;
+            bottom: 70px;     /* above cart button */
+            max-height: 300px;
+        }
+
+        #ai-body {
+            height: 140px;
+        }
+    }
+
+
+   </style>
+    <script>
+        let chatbotMinimized = false;
+
+        function toggleChatbot() {
+            const body = document.getElementById("ai-body");
+            const input = document.getElementById("ai-input");
+
+            chatbotMinimized = !chatbotMinimized;
+
+            if (chatbotMinimized) {
+                body.style.display = "none";
+                input.style.display = "none";
+            } else {
+                body.style.display = "block";
+                input.style.display = "block";
+            }
+        }
+    </script>
+<style>
+    /* ===== MOBILE DRAWER MENU ===== */
+    .mobile-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 998;
+    }
+
+    .mobile-overlay.active {
+        display: block;
+    }
+
+    .mobile-menu {
+        position: fixed;
+        top: 0;
+        left: -80%;
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        background: #ffffff;
+        z-index: 999;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+        transition: left 0.3s ease;
+    }
+
+    .mobile-menu.active {
+        left: 0;
+    }
+
+
+</style>
+    <style>
+        .navbar {
+            min-height: 64px;
+        }
+
+        /* ===== HAMBURGER (DESKTOP HIDDEN BY DEFAULT) ===== */
+        .hamburger {
+            display: none;              /* ❌ hidden on desktop */
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .hamburger span {
+            width: 22px;
+            height: 2px;
+            background: #111;
+            border-radius: 2px;
+            transition: 0.3s ease;
+        }
+
+        /* ===== MOBILE ONLY ===== */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;          /* ✅ visible only on mobile */
+                margin-left: auto;
+            }
+        }
+
+        /* Hamburger animation */
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (!sessionStorage.getItem("enquiryShown")) {
+                setTimeout(() => {
+                    openEnquiryModal();
+                    sessionStorage.setItem("enquiryShown", "true");
+                }, 1000);
+            }
+        });
+    </script>
+
+    <!-- 📞 Floating Talk to an Expert -->
+    <!-- 📞 Floating Talk to an Expert -->
+    <a href="tel:+919503569405" id="talkExpertFloat" title="Call Poultry Expert">
+        📞 Talk to an Expert
+    </a>
+
+    <style>
+        /* ===== Floating Talk to an Expert (Right Side) ===== */
+        #talkExpertFloat {
+            position: fixed;        /* floating */
+            top: 110px;             /* 🔼 move up/down by changing this */
+            right: 20px;
+            z-index: 9999;
+
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            color: #ffffff;
+            text-decoration: none;
+
+            padding: 12px 18px;
+            border-radius: 999px;
+
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            box-shadow:
+                    0 10px 24px rgba(0,0,0,0.35),
+                    0 0 0 0 rgba(34, 197, 94, 0.6);
+
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: expertPulse 2.2s infinite;
+        }
+
+        #talkExpertFloat:hover {
+            transform: translateY(-2px) scale(1.06);
+            box-shadow:
+                    0 14px 32px rgba(0,0,0,0.45),
+                    0 0 0 8px rgba(34, 197, 94, 0.25);
+        }
+
+        /* Subtle pulse glow */
+        @keyframes expertPulse {
+            0% {
+                box-shadow: 0 10px 24px rgba(0,0,0,0.35), 0 0 0 0 rgba(34, 197, 94, 0.5);
+            }
+            70% {
+                box-shadow: 0 12px 30px rgba(0,0,0,0.45), 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+            100% {
+                box-shadow: 0 10px 24px rgba(0,0,0,0.35), 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+
+        /* 📱 Mobile tweak */
+        @media (max-width: 768px) {
+            #talkExpertFloat {
+                top: 90px;        /* a bit higher on mobile */
+                right: 10px;
+                padding: 10px 14px;
+                font-size: 11px;
+            }
+        }
+
+    </style>
+    <script>
+        // Optional: adjust position dynamically if navbar height changes
+        window.addEventListener("load", function () {
+            const btn = document.getElementById("talkExpertFloat");
+            const navbar = document.querySelector(".navbar");
+
+            if (btn && navbar) {
+                const navHeight = navbar.offsetHeight || 80;
+                btn.style.top = (navHeight + 20) + "px"; // keeps it just below navbar
+            }
+        });
+    </script>
+
 
 </body>
 </html>

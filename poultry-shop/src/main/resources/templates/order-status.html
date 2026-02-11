@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Order Status</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
         body {
             font-family: Arial;
@@ -66,6 +68,53 @@
         🛒 Continue Shopping
     </a>
 </div>
+/* ================= MOBILE FRIENDLY: ORDER STATUS ================= */
 
+<style>
+@media (max-width: 768px) {
+
+body {
+padding: 16px 10px;
+background: #f9fafb;
+}
+
+.box {
+padding: 18px 14px;
+border-radius: 14px;
+}
+
+h2 {
+font-size: 20px;
+margin-bottom: 10px;
+}
+
+.status {
+font-size: 18px;
+}
+
+.msg {
+padding: 10px;
+font-size: 13px;
+border-radius: 8px;
+}
+
+.continue-btn {
+width: 100%;                 /* full-width CTA */
+text-align: center;
+padding: 14px 16px;
+font-size: 14px;
+border-radius: 10px;
+margin-top: 18px;
+}
+
+p {
+font-size: 14px;
+line-height: 1.5;
+}
+    .continue-btn:active {
+        transform: scale(0.98);
+    }
+}
+</style>
 </body>
 </html>

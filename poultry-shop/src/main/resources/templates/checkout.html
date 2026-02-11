@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Checkout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -209,5 +211,79 @@
     waBtn.href = `https://wa.me/${adminPhone}?text=${buildWhatsAppMessage()}`;
 </script>
 
+<style>
+@media (max-width: 768px) {
+
+body {
+background: #f9fafb;
+}
+
+.checkout-container {
+margin: 12px;
+padding: 14px;
+grid-template-columns: 1fr;   /* 🔥 stack columns */
+gap: 16px;
+border-radius: 16px;
+}
+
+h2 {
+font-size: 20px;
+margin-bottom: 12px;
+text-align: center;
+}
+
+.cart-box {
+padding: 14px;
+border-radius: 12px;
+}
+
+.cart-item {
+padding: 8px 0;
+font-size: 13px;
+}
+
+.total {
+font-size: 16px;
+text-align: left;  /* easier to read on mobile */
+margin-top: 10px;
+}
+
+.checkout-form label {
+font-size: 13px;
+}
+
+.checkout-form input,
+.checkout-form textarea {
+padding: 12px;          /* bigger tap targets */
+font-size: 14px;
+border-radius: 8px;
+}
+
+.place-order-btn {
+margin-top: 16px;
+padding: 14px;
+font-size: 15px;
+border-radius: 10px;
+}
+
+.whatsapp-btn {
+margin-top: 12px;
+padding: 14px;
+font-size: 15px;
+border-radius: 10px;
+}
+
+.error {
+font-size: 13px;
+padding: 10px;
+}
+    .cart-box {
+        position: sticky;
+        top: 10px;
+        background: #fff;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+}
+</style>
 </body>
 </html>
