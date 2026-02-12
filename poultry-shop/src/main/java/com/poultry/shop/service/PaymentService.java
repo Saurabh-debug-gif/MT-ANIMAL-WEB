@@ -42,9 +42,11 @@ public class PaymentService {
         payload.put("order_currency", "INR");
 
         payload.put("order_meta", Map.of(
-                "return_url", "http://localhost:8080/payment/success?order_id={order_id}",
-                "notify_url", "http://localhost:8080/payment/webhook"
+                "return_url", "https://www.mt-animal-care.shop/payment/success?order_id={order_id}",
+                "notify_url", "https://www.mt-animal-care.shop/payment/webhook"
         ));
+
+
 
         Map<String, String> customer = new HashMap<>();
         customer.put("customer_id", "CUST_" + System.currentTimeMillis());
