@@ -583,14 +583,15 @@
         @media (max-width: 768px) {
 
             .navbar {
-                flex-wrap: nowrap;
+                flex-wrap: wrap;
                 padding: 10px 12px;
-
+                gap: 10px;
             }
 
-            .brand span {
-                font-size: 14px;
+            .brand {
+                flex: 1;
             }
+
 
 
             /* Mobile menu panel */
@@ -1904,59 +1905,40 @@ box-shadow: 0 10px 24px rgba(255,215,0,0.4);
             }
         });
     </script>
+
 <style>
+    /* 🔥 Remove weird white line / stray element near hamburger */
     @media (max-width: 768px) {
+        .mobile-menu-header::before,
+        .mobile-menu-header::after {
+            content: none !important;
+            display: none !important;
+        }
 
-    /* 🔥 Hide any accidental close icon / white mark on the left */
-    .mobile-menu .close-left,
-    .mobile-menu .x-left,
-    .mobile-menu .close-icon,
-    .mobile-menu .left-x {
-    display: none !important;
-    }
-
-    /* 🔥 If that white line is coming from a ::before pseudo-element */
-    .mobile-menu-header::before {
-    content: none !important;
-    }
-        /* 🔥 Mobile drawer menu links - premium look */
+        .mobile-menu-header {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        /* ===== MOBILE DRAWER MENU LINKS (CLEAN UI) ===== */
         .mobile-menu a {
+            padding: 14px 16px;
             text-decoration: none;
-            color: #7a0000;              /* brand red */
-            font-weight: 700;
+            color: #8b0000;
             font-size: 16px;
-
-            padding: 12px 16px;
+            font-weight: 700;
             border-radius: 10px;
-
-            display: flex;
-            align-items: center;
-            gap: 10px;
-
-            margin: 4px 8px;
-
-            background: linear-gradient(135deg, #fff7e6, #fff1cc);
-            border: 1px solid rgba(255, 204, 102, 0.6);
-
+            background: linear-gradient(135deg, #fff7ed, #fff1c1);
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+            transition: all 0.2s ease;
         }
 
-        /* Hover / tap effect */
         .mobile-menu a:hover {
-            transform: translateX(4px);
-            background: linear-gradient(135deg, #ffe08a, #ffd166);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
-        }
-
-        /* Optional: active item highlight */
-        .mobile-menu a.active {
-            background: linear-gradient(135deg, #ffd700, #ffb703);
-            color: #3b0a0a;
+            transform: translateX(6px);
+            background: linear-gradient(135deg, #8b0000, #ffcc66);
+            color: white;
         }
 
     }
-
 </style>
-</body>
+    </body>
 </html>
