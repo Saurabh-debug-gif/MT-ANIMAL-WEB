@@ -3,7 +3,7 @@
 MT Animal Care is a full-stack web application built for showcasing and selling poultry & animal healthcare products.  
 It includes product listings, cart functionality, Google OAuth login, admin management, enquiry system, and deployment on Render with PostgreSQL.
 
-🔗 **Live Demo:** https://mt-animal-care.onrender.com
+🔗 **Live Demo:** https://mt-animal-care.shop
 
 ---
 
