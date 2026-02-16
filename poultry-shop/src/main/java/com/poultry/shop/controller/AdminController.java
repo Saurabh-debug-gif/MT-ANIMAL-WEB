@@ -42,11 +42,16 @@ public class AdminController {
             @RequestParam("image") MultipartFile image,
             @RequestParam("knowMoreImage") MultipartFile knowMoreImage
     ) {
-
         try {
             File uploadDir = new File(UPLOAD_DIR);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
+            }
+
+            // 👉 Fetch existing product if editing
+            Product existing = null;
+            if (product.getId() != null) {
+                existing = productService.getById(product.getId());
             }
 
             // ✅ Main product image
@@ -55,6 +60,9 @@ public class AdminController {
                 File destination = new File(uploadDir, fileName);
                 image.transferTo(destination);
                 product.setImageUrl("/uploads/products/" + fileName);
+            } else if (existing != null) {
+                // 🔥 KEEP OLD IMAGE
+                product.setImageUrl(existing.getImageUrl());
             }
 
             // ✅ Know More image
@@ -63,6 +71,9 @@ public class AdminController {
                 File destination2 = new File(uploadDir, fileName2);
                 knowMoreImage.transferTo(destination2);
                 product.setKnowMoreImageUrl("/uploads/products/" + fileName2);
+            } else if (existing != null) {
+                // 🔥 KEEP OLD IMAGE
+                product.setKnowMoreImageUrl(existing.getKnowMoreImageUrl());
             }
 
             product.setActive(true);
@@ -74,7 +85,6 @@ public class AdminController {
 
         return "redirect:/admin/products";
     }
-
 
     // 4️⃣ EDIT PRODUCT
     @GetMapping("/products/edit/{id}")

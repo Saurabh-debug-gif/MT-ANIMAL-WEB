@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Add / Edit Product</title>
+    <title th:text="${product.id == null ? 'Add Product' : 'Edit Product'}">Add / Edit Product</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 30px;
+            background: #f5f7fb;
+        }
+
+        .container {
+            max-width: 480px;
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
         }
 
         h2 {
             margin-bottom: 20px;
-        }
-
-        form {
-            width: 420px;
+            color: #166534;
+            text-align: center;
         }
 
         label {
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 12px;
             display: block;
         }
 
@@ -28,18 +35,47 @@
             width: 100%;
             padding: 10px;
             margin-bottom: 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
             box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .preview {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .preview img {
+            width: 110px;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 10px;
         }
 
         button {
-            padding: 10px;
+            padding: 12px;
             width: 100%;
             background: #16a34a;
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
+            margin-top: 8px;
         }
 
         button:hover {
@@ -50,71 +86,62 @@
 
 <body>
 
-<h2 th:text="${product.id == null ? 'Add New Product' : 'Edit Product'}"></h2>
+<div class="container">
 
-<!-- ✅ enctype is MUST for file upload -->
-<form th:action="@{/admin/products/save}"
-      method="post"
-      enctype="multipart/form-data"
-      th:object="${product}">
+    <h2 th:text="${product.id == null ? 'Add New Product' : 'Edit Product'}"></h2>
 
-    <!-- 🔑 Hidden ID (for edit mode) -->
-    <input type="hidden" th:field="*{id}">
+    <form th:action="@{/admin/products/save}"
+          method="post"
+          enctype="multipart/form-data"
+          th:object="${product}">
 
-    <!-- ===== BASIC INFO ===== -->
+        <!-- Hidden ID -->
+        <input type="hidden" th:field="*{id}">
 
-    <label>Product Name</label>
-    <input type="text"
-           th:field="*{name}"
-           placeholder="Product Name"
-           required>
+        <!-- BASIC INFO -->
+        <label>Product Name</label>
+        <input type="text" th:field="*{name}" placeholder="Product Name" required>
 
-    <label>Description</label>
-    <textarea th:field="*{description}"
-              placeholder="Product Description"></textarea>
+        <label>Description</label>
+        <textarea th:field="*{description}" placeholder="Product Description"></textarea>
 
-    <!-- ===== PRICING ===== -->
+        <!-- PRICING -->
+        <label>Price (MRP without GST)</label>
+        <input type="number" th:field="*{price}" step="0.01" placeholder="Enter Price" required>
 
-    <label>Price (MRP without GST)</label>
-    <input type="number"
-           th:field="*{price}"
-           placeholder="Enter Price"
-           step="0.01"
-           required>
+        <label>GST %</label>
+        <input type="number" th:field="*{gstPercent}" min="0" max="28" placeholder="GST %" required>
 
-    <label>GST %</label>
-    <input type="number"
-           th:field="*{gstPercent}"
-           placeholder="Enter GST % (e.g. 5, 12, 18)"
-           min="0"
-           max="28"
-           required>
+        <!-- INVENTORY -->
+        <label>Stock</label>
+        <input type="number" th:field="*{stock}" min="0" placeholder="Available Stock" required>
 
-    <!-- ===== INVENTORY ===== -->
+        <!-- IMAGE PREVIEWS -->
+        <div class="preview" th:if="${product.id != null}">
+            <div th:if="${product.imageUrl != null}">
+                <label>Current Product Image</label>
+                <img th:src="${product.imageUrl}" alt="Product Image">
+            </div>
 
-    <label>Stock</label>
-    <input type="number"
-           th:field="*{stock}"
-           placeholder="Available Stock"
-           min="0"
-           required>
+            <div th:if="${product.knowMoreImageUrl != null}">
+                <label>Current Know More Image</label>
+                <img th:src="${product.knowMoreImageUrl}" alt="Know More Image">
+            </div>
+        </div>
 
-    <!-- ===== IMAGES ===== -->
+        <!-- IMAGE UPLOAD -->
+        <label>Replace Product Image (optional)</label>
+        <input type="file" name="image" accept="image/*">
+        <div class="hint">Leave empty to keep existing product image</div>
 
-    <label>Product Image (Card Image)</label>
-    <input type="file"
-           name="image"
-           accept="image/*">
+        <label>Replace Know More Image (optional)</label>
+        <input type="file" name="knowMoreImage" accept="image/*">
+        <div class="hint">Leave empty to keep existing detail image</div>
 
-    <label>Know More Image (Detail View)</label>
-    <input type="file"
-           name="knowMoreImage"
-           accept="image/*">
+        <button type="submit">Save Product</button>
+    </form>
 
-    <br>
-
-    <button type="submit">Save Product</button>
-</form>
+</div>
 
 </body>
 </html>
