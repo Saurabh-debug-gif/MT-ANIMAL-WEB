@@ -36,12 +36,13 @@ public class SecurityConfig {
                                 "/error",
                                 "/oauth2/**",
                                 "/login/**",
-                                "/login/oauth2/**"
+                                "/login/oauth2/**",
+                                "/sitemap.xml",
+                                "/google491b0d2ab3dfd7d4.html"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/cart/**", "/checkout/**", "/my-orders").authenticated()
-
-                        .anyRequest().permitAll()   // 🔥 TEMPORARY: allow everything else
+                        .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth -> oauth
                         .loginPage("/login")
@@ -50,8 +51,13 @@ public class SecurityConfig {
                         )
                         .successHandler(customLoginSuccessHandler)
                 )
-                .logout(logout -> logout.logoutSuccessUrl("/").permitAll());
+                .logout(logout -> logout
+                        .logoutUrl("/admin/logout")           // ✅ FIXED
+                        .logoutSuccessUrl("/login?logout")    // ✅ redirect after logout
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                );
 
         return http.build();
     }
-}
