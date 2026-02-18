@@ -26,7 +26,6 @@ public class SecurityConfig {
                                 "/",
                                 "/products",
                                 "/products/**",
-                                "/checkout/**",
                                 "/uploads/**",
                                 "/images/**",
                                 "/css/**",
@@ -46,14 +45,12 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth -> oauth
                         .loginPage("/login")
-                        .userInfoEndpoint(userInfo ->
-                                userInfo.userService(customOAuthUserService)
-                        )
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuthUserService))
                         .successHandler(customLoginSuccessHandler)
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/admin/logout")           // ✅ FIXED
-                        .logoutSuccessUrl("/login?logout")    // ✅ redirect after logout
+                        .logoutUrl("/logout")                // ✅ universal logout
+                        .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
@@ -61,4 +58,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }

@@ -1,5 +1,7 @@
 package com.poultry.shop.controller;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.poultry.shop.model.Product;
 import com.poultry.shop.service.ProductService;
 import org.springframework.stereotype.Controller;
@@ -7,20 +9,35 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
     private final ProductService productService;
+    private final Cloudinary cloudinary;
 
-    private static final String UPLOAD_DIR =
-            System.getProperty("user.dir") + "/uploads/products/";
-
-
-    public AdminController(ProductService productService) {
+    // Constructor injection for both services
+    public AdminController(ProductService productService, Cloudinary cloudinary) {
         this.productService = productService;
+        this.cloudinary = cloudinary;
+    }
+
+    // ─────────────────────────────────────────────
+    // Helper: Upload a MultipartFile to Cloudinary
+    // Returns the secure URL string
+    // ─────────────────────────────────────────────
+    private String uploadToCloudinary(MultipartFile file) throws IOException {
+        Map uploadResult = cloudinary.uploader().upload(
+                file.getBytes(),
+                ObjectUtils.asMap(
+                        "folder", "poultry_shop/products",   // organizes files in Cloudinary dashboard
+                        "resource_type", "image"
+                )
+        );
+        return (String) uploadResult.get("secure_url");  // permanent HTTPS URL
     }
 
     // 1️⃣ PRODUCT LIST PAGE
@@ -36,6 +53,8 @@ public class AdminController {
         model.addAttribute("product", new Product());
         return "admin-add-product";
     }
+
+    // 3️⃣ SAVE PRODUCT (Add or Edit)
     @PostMapping("/products/save")
     public String saveProduct(
             @ModelAttribute Product product,
@@ -43,36 +62,29 @@ public class AdminController {
             @RequestParam("knowMoreImage") MultipartFile knowMoreImage
     ) {
         try {
-            File uploadDir = new File(UPLOAD_DIR);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            // 👉 Fetch existing product if editing
+            // Fetch existing product if we are editing (id is present)
             Product existing = null;
             if (product.getId() != null) {
                 existing = productService.getById(product.getId());
             }
 
-            // ✅ Main product image
+            // ✅ Handle main product image
             if (!image.isEmpty()) {
-                String fileName = System.currentTimeMillis() + "_" + java.util.UUID.randomUUID() + "_" + image.getOriginalFilename();
-                File destination = new File(uploadDir, fileName);
-                image.transferTo(destination);
-                product.setImageUrl("/uploads/products/" + fileName);
+                // New image uploaded → send to Cloudinary
+                String imageUrl = uploadToCloudinary(image);
+                product.setImageUrl(imageUrl);
             } else if (existing != null) {
-                // 🔥 KEEP OLD IMAGE
+                // No new image → keep the old Cloudinary URL
                 product.setImageUrl(existing.getImageUrl());
             }
 
-            // ✅ Know More image
+            // ✅ Handle "Know More" image
             if (!knowMoreImage.isEmpty()) {
-                String fileName2 = System.currentTimeMillis() + "_knowmore_" + java.util.UUID.randomUUID() + "_" + knowMoreImage.getOriginalFilename();
-                File destination2 = new File(uploadDir, fileName2);
-                knowMoreImage.transferTo(destination2);
-                product.setKnowMoreImageUrl("/uploads/products/" + fileName2);
+                // New image uploaded → send to Cloudinary
+                String knowMoreUrl = uploadToCloudinary(knowMoreImage);
+                product.setKnowMoreImageUrl(knowMoreUrl);
             } else if (existing != null) {
-                // 🔥 KEEP OLD IMAGE
+                // No new image → keep the old Cloudinary URL
                 product.setKnowMoreImageUrl(existing.getKnowMoreImageUrl());
             }
 
@@ -81,12 +93,13 @@ public class AdminController {
 
         } catch (Exception e) {
             e.printStackTrace();
+            // Optional: you can add a flash error message here using RedirectAttributes
         }
 
         return "redirect:/admin/products";
     }
 
-    // 4️⃣ EDIT PRODUCT
+    // 4️⃣ EDIT PRODUCT - Load existing product into form
     @GetMapping("/products/edit/{id}")
     public String editProduct(@PathVariable Long id, Model model) {
         Product product = productService.getById(id);

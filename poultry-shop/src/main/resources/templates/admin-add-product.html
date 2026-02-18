@@ -50,14 +50,38 @@
             display: flex;
             gap: 12px;
             margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .preview-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
         }
 
         .preview img {
             width: 110px;
-            height: auto;
+            height: 110px;
+            object-fit: cover;
             border-radius: 8px;
             border: 1px solid #e5e7eb;
             background: #f9fafb;
+        }
+
+        /* 🔴 shown when image is missing/broken */
+        .preview .no-image {
+            width: 110px;
+            height: 110px;
+            border-radius: 8px;
+            border: 1px dashed #d1d5db;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #9ca3af;
+            text-align: center;
         }
 
         .hint {
@@ -95,50 +119,85 @@
           enctype="multipart/form-data"
           th:object="${product}">
 
-        <!-- Hidden ID -->
+        <!-- Hidden ID for edit mode -->
         <input type="hidden" th:field="*{id}">
 
-        <!-- BASIC INFO -->
+        <!-- ── BASIC INFO ─────────────────────────── -->
         <label>Product Name</label>
         <input type="text" th:field="*{name}" placeholder="Product Name" required>
 
         <label>Description</label>
         <textarea th:field="*{description}" placeholder="Product Description"></textarea>
 
-        <!-- PRICING -->
+        <!-- ── PRICING ────────────────────────────── -->
         <label>Price (MRP without GST)</label>
         <input type="number" th:field="*{price}" step="0.01" placeholder="Enter Price" required>
 
         <label>GST %</label>
         <input type="number" th:field="*{gstPercent}" min="0" max="28" placeholder="GST %" required>
 
-        <!-- INVENTORY -->
+        <!-- ── INVENTORY ──────────────────────────── -->
         <label>Stock</label>
         <input type="number" th:field="*{stock}" min="0" placeholder="Available Stock" required>
 
-        <!-- IMAGE PREVIEWS -->
+        <!-- ── IMAGE PREVIEWS (Edit mode only) ───────
+             Since imageUrl is now a full Cloudinary HTTPS URL,
+             th:src works directly — no /uploads/** mapping needed.
+             We guard with th:if to avoid broken <img> on add mode.
+        ─────────────────────────────────────────── -->
         <div class="preview" th:if="${product.id != null}">
-            <div th:if="${product.imageUrl != null}">
+
+            <!-- Product Image Preview -->
+            <div class="preview-item">
                 <label>Current Product Image</label>
-                <img th:src="${product.imageUrl}" alt="Product Image">
+                <!-- ✅ Show image if Cloudinary URL exists -->
+                <img th:if="${product.imageUrl != null and !#strings.isEmpty(product.imageUrl)}"
+                     th:src="${product.imageUrl}"
+                     alt="Product Image"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <!-- 🔴 Fallback if URL is missing or broken -->
+                <div class="no-image"
+                     th:style="${product.imageUrl == null or #strings.isEmpty(product.imageUrl)} ? 'display:flex' : 'display:none'">
+                    No Image
+                </div>
             </div>
 
-            <div th:if="${product.knowMoreImageUrl != null}">
+            <!-- Know More Image Preview -->
+            <div class="preview-item">
                 <label>Current Know More Image</label>
-                <img th:src="${product.knowMoreImageUrl}" alt="Know More Image">
+                <!-- ✅ Show image if Cloudinary URL exists -->
+                <img th:if="${product.knowMoreImageUrl != null and !#strings.isEmpty(product.knowMoreImageUrl)}"
+                     th:src="${product.knowMoreImageUrl}"
+                     alt="Know More Image"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <!-- 🔴 Fallback if URL is missing or broken -->
+                <div class="no-image"
+                     th:style="${product.knowMoreImageUrl == null or #strings.isEmpty(product.knowMoreImageUrl)} ? 'display:flex' : 'display:none'">
+                    No Image
+                </div>
             </div>
+
         </div>
 
-        <!-- IMAGE UPLOAD -->
-        <label>Replace Product Image (optional)</label>
+        <!-- ── IMAGE UPLOAD ───────────────────────── -->
+        <label>
+            <!-- Dynamic label: shows "Upload" on add, "Replace" on edit -->
+            <span th:text="${product.id == null ? 'Upload Product Image' : 'Replace Product Image (optional)'}"></span>
+        </label>
         <input type="file" name="image" accept="image/*">
-        <div class="hint">Leave empty to keep existing product image</div>
+        <div class="hint" th:if="${product.id != null}">Leave empty to keep existing product image</div>
 
-        <label>Replace Know More Image (optional)</label>
+        <label>
+            <span th:text="${product.id == null ? 'Upload Know More Image' : 'Replace Know More Image (optional)'}"></span>
+        </label>
         <input type="file" name="knowMoreImage" accept="image/*">
-        <div class="hint">Leave empty to keep existing detail image</div>
+        <div class="hint" th:if="${product.id != null}">Leave empty to keep existing detail image</div>
 
-        <button type="submit">Save Product</button>
+        <button type="submit"
+                th:text="${product.id == null ? 'Add Product' : 'Save Changes'}">
+            Save Product
+        </button>
+
     </form>
 
 </div>
