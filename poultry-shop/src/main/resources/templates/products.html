@@ -1,731 +1,736 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <title>MT Animal Care — Products</title>
+    <title>Products</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Fonts loaded async so they NEVER block page render -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Cinzel:wght@600;700;900&display=swap" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Cinzel:wght@600;700;900&display=swap"></noscript>
+
     <style>
-        /* ===================================================
-           VARIABLES
-        =================================================== */
-        :root {
-            --cr:  #8b0000;
-            --cr2: #b81212;
-            --cr3: #5a0000;
-            --go:  #e8b84b;
-            --go2: #f5d78e;
-            --go3: #a07c20;
-            --bg:  #080404;
-            --bg2: #0e0606;
-            --bg3: #130808;
-            --tx:  #f0ebe0;
-            --txd: rgba(240,235,224,0.6);
-            --txm: rgba(240,235,224,0.35);
-            --gl:  rgba(255,255,255,0.03);
-            --bd:  rgba(232,184,75,0.14);
-            --bh:  rgba(232,184,75,0.4);
-            --ease: cubic-bezier(0.4,0,0.2,1);
-        }
-
-        /* ===================================================
-           RESET / BASE
-        =================================================== */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; overflow-x: hidden; }
         body {
-            font-family: 'DM Sans', Arial, sans-serif;
-            background: var(--bg);
-            color: var(--tx);
-            overflow-x: hidden;
+            font-family: Arial, sans-serif;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;   /* prevent horizontal scroll */
+            background: #f9fafb;
         }
 
-        /* ===================================================
-           ANIMATED BACKGROUND (purely decorative)
-        =================================================== */
-        .bg-canvas {
-            position: fixed; inset: 0; z-index: 0;
-            pointer-events: none; overflow: hidden;
-        }
-        .bg-grid {
-            position: absolute; inset: 0;
-            background-image:
-                    linear-gradient(rgba(232,184,75,0.03) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(232,184,75,0.03) 1px, transparent 1px);
-            background-size: 72px 72px;
-            animation: gridMove 40s linear infinite;
-        }
-        @keyframes gridMove { to { background-position: 72px 72px; } }
-
-        .orb {
-            position: absolute; border-radius: 50%;
-            filter: blur(100px); pointer-events: none;
-            animation: orbFloat var(--d,14s) ease-in-out infinite;
-            animation-delay: var(--dl,0s);
-        }
-        .o1 { width:600px;height:600px;background:radial-gradient(circle,rgba(139,0,0,0.28),transparent 70%);top:-150px;left:-150px;--d:16s; }
-        .o2 { width:450px;height:450px;background:radial-gradient(circle,rgba(232,184,75,0.12),transparent 70%);top:35%;right:-100px;--d:13s;--dl:-5s; }
-        .o3 { width:380px;height:380px;background:radial-gradient(circle,rgba(184,18,18,0.15),transparent 70%);bottom:10%;left:25%;--d:18s;--dl:-9s; }
-        @keyframes orbFloat {
-            0%,100%{transform:translate(0,0)}
-            33%{transform:translate(40px,-50px)}
-            66%{transform:translate(-30px,35px)}
-        }
-
-        /* NO LOADER — removed to prevent stuck screen on deployment */
-
-        /* ===================================================
-           ANNOUNCEMENT BAR
-        =================================================== */
-        .ann-bar {
-            background: linear-gradient(90deg, var(--cr3), var(--cr), var(--go3), var(--cr), var(--cr3));
-            background-size: 300% 100%;
-            animation: annBg 7s linear infinite;
-            padding: 8px 0; overflow: hidden;
-            font-size: 12px; font-weight: 600; color: var(--go2);
-            letter-spacing: 0.8px; white-space: nowrap;
-            position: relative; z-index: 2;
-        }
-        @keyframes annBg { 0%{background-position:0 50%} 100%{background-position:300% 50%} }
-        .ann-scroll { display: inline-flex; gap: 60px; animation: annScroll 24s linear infinite; }
-        @keyframes annScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-        .ann-dot { color: var(--go); margin-right: 5px; }
-
-        /* ===================================================
-           NAVBAR  — all logic classes preserved exactly
-        =================================================== */
+        /* ===== NAVBAR ===== */
         .navbar {
-            position: sticky; top: 0; z-index: 1000;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 40px; height: 68px;
-            background: rgba(8,4,4,0.88);
-            backdrop-filter: blur(22px) saturate(160%);
-            -webkit-backdrop-filter: blur(22px) saturate(160%);
-            border-bottom: 1px solid var(--bd);
-            box-shadow: 0 4px 32px rgba(0,0,0,0.55);
-        }
-        .navbar::after {
-            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--go), transparent);
-            opacity: 0.35;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 32px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
-        /* brand */
         .brand {
-            display: flex; align-items: center; gap: 10px;
-            text-decoration: none; color: var(--tx); white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            white-space: nowrap;
         }
-        .brand-logo { height: 36px; border-radius: 7px; border: 1px solid var(--bd); transition: 0.35s var(--ease); }
-        .brand:hover .brand-logo { transform: rotate(-4deg) scale(1.08); border-color: var(--go); }
-        .brand-name { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; background: linear-gradient(135deg,#fff 40%,var(--go)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .brand-sub  { font-size: 8px; color: var(--txm); display: block; letter-spacing: 2px; margin-top: -2px; }
 
-        /* desktop nav — class "desktop-nav" kept exactly as original */
+        .brand-logo {
+            height: 34px;
+            width: auto;
+            border-radius: 6px;
+        }
+        /* ===== DESKTOP NAV LINKS ===== */
         .desktop-nav {
-            display: flex; align-items: center; gap: 4px;
+            display: flex;
+            align-items: center;
+            gap: 22px;
         }
+
         .desktop-nav a {
-            position: relative; text-decoration: none; color: var(--txd);
-            font-size: 13.5px; font-weight: 500; padding: 8px 14px; border-radius: 8px;
-            transition: 0.35s var(--ease); letter-spacing: 0.4px;
+            position: relative;
+            text-decoration: none;
+            color: #111827;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 6px 4px;
+            transition: color 0.25s ease;
         }
+
+        /* Hover underline animation */
         .desktop-nav a::after {
-            content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 1.5px;
-            background: linear-gradient(90deg, var(--cr), var(--go));
-            transition: width 0.35s var(--ease); border-radius: 99px;
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, #8b0000, #ffcc66);
+            transition: width 0.3s ease;
         }
-        .desktop-nav a:hover { color: var(--go); }
-        .desktop-nav a:hover::after { width: 60%; }
+
+        .desktop-nav a:hover {
+            color: #8b0000;
+        }
+
+        .desktop-nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Enquiry CTA button style */
         .desktop-nav a.enquiry-link {
-            background: linear-gradient(135deg, var(--cr), var(--go3));
-            color: var(--go2) !important; font-weight: 700;
-            padding: 8px 20px; border-radius: 99px;
-            border: 1px solid rgba(232,184,75,0.25);
-            box-shadow: 0 4px 18px rgba(139,0,0,0.4);
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #8b0000, #ffcc66);
+            color: #111;
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(255, 204, 102, 0.5);
         }
-        .desktop-nav a.enquiry-link::after { display: none; }
-        .desktop-nav a.enquiry-link:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(139,0,0,0.6); }
 
-        /* right actions */
-        .right-actions { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
-
-        /* search */
-        .search-wrap {
-            display: flex; align-items: center;
-            background: var(--gl); border: 1px solid var(--bd); border-radius: 99px; overflow: hidden;
-            transition: 0.35s var(--ease);
+        .desktop-nav a.enquiry-link:hover {
+            color: #111;
+            transform: translateY(-1px);
         }
-        .search-wrap:focus-within { border-color: var(--go); box-shadow: 0 0 0 3px rgba(232,184,75,0.1); }
-        .search-wrap input {
-            background: transparent; border: none; outline: none;
-            color: var(--tx); padding: 7px 14px; font-size: 13px;
-            font-family: 'DM Sans', Arial, sans-serif; width: 145px;
-        }
-        .search-wrap input::placeholder { color: var(--txm); }
-        .search-wrap button { background: none; border: none; color: var(--go); padding: 7px 12px; cursor: pointer; font-size: 14px; }
 
-        /* whatsapp */
-        .whatsapp-btn {
-            width: 36px; height: 36px; min-width: 36px;
-            border-radius: 50%; background: #25D366;
-            display: flex; align-items: center; justify-content: center;
-            text-decoration: none; transition: 0.3s ease;
-            box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex: 1;
+            justify-content: center;
         }
-        .whatsapp-btn:hover { transform: translateY(-2px) scale(1.1); box-shadow: 0 8px 20px rgba(37,211,102,0.5); }
-        .whatsapp-icon { width: 18px; height: 18px; object-fit: contain; }
 
-        /* login / user */
+        .nav-links a {
+            text-decoration: none;
+            color: #111827;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .right-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Login + User */
         .login-btn, .user-btn {
-            display: flex; align-items: center; gap: 6px;
-            text-decoration: none; padding: 7px 14px; border-radius: 99px;
-            border: 1px solid var(--bd); color: var(--tx);
-            font-weight: 500; font-size: 13px; background: var(--gl);
-            cursor: pointer; transition: 0.3s var(--ease);
-            font-family: 'DM Sans', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            color: #111;
+            font-weight: 500;
+            background: #fff;
         }
-        .login-btn:hover, .user-btn:hover { border-color: var(--go); background: rgba(232,184,75,0.07); }
 
-        /* dropdown — id "userMenu" preserved */
-        .user-dropdown { position: relative; }
+        .login-btn:hover, .user-btn:hover {
+            background: #f3f4f6;
+        }
+
+        /* User Dropdown */
+        .user-dropdown {
+            position: relative;
+        }
+
         .dropdown-menu {
-            display: none; position: absolute; right: 0; top: 120%;
-            background: rgba(14,6,6,0.97); backdrop-filter: blur(18px);
-            border: 1px solid var(--bd); border-radius: 12px;
-            min-width: 140px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 120%;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            min-width: 140px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             overflow: hidden;
         }
-        .dropdown-menu a { display: block; padding: 11px 16px; text-decoration: none; color: var(--tx); font-size: 14px; transition: 0.25s; }
-        .dropdown-menu a:hover { background: rgba(232,184,75,0.08); color: var(--go); }
 
-        /* cart — id "cartCountBadge" preserved */
+        .dropdown-menu a {
+            display: block;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: #111;
+            font-size: 14px;
+        }
+
+        .dropdown-menu a:hover {
+            background: #f3f4f6;
+        }
+        .dropdown-menu {
+            transition: all 0.2s ease;
+        }
+
+
+
+        /* Cart Button */
         .cart-btn {
-            position: relative; width: 38px; height: 38px; min-width: 38px;
-            border-radius: 50%; background: linear-gradient(135deg, var(--cr), #c01414);
-            color: #fff; display: flex; align-items: center; justify-content: center;
-            font-size: 17px; text-decoration: none;
-            transition: 0.3s var(--ease); box-shadow: 0 4px 14px rgba(139,0,0,0.45);
+            position: relative;
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            min-height: 36px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            text-decoration: none;
         }
-        .cart-btn:hover { transform: scale(1.12) rotate(-5deg); box-shadow: 0 8px 24px rgba(139,0,0,0.65); }
+
+        .cart-btn:hover {
+            background: #1e40af;
+        }
+        .cart-badge {
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+
         .cart-count {
-            position: absolute; top: -6px; right: -6px;
-            background: var(--go); color: #1a0505;
-            font-size: 10px; font-weight: 800; padding: 2px 5px;
-            border-radius: 99px; line-height: 1;
-        }
-
-        /* hamburger — id "hamburgerBtn" preserved */
-        .hamburger {
-            display: none; flex-direction: column; gap: 5px;
-            cursor: pointer; padding: 6px; margin-left: auto;
-        }
-        .hamburger span { width: 22px; height: 2px; background: var(--go); border-radius: 2px; transition: 0.3s ease; }
-        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
-        .hamburger.active span:nth-child(2) { opacity: 0; }
-        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
-
-        /* mobile overlay + drawer — ids "mobileOverlay" "mobileMenu" preserved */
-        .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: 998; backdrop-filter: blur(5px); }
-        .mobile-overlay.active { display: block; }
-        .mobile-menu {
-            position: fixed; top: 0; left: -100%; width: 78%; max-width: 300px; height: 100vh;
-            background: linear-gradient(180deg, #120808, #1c0a0a);
-            z-index: 999; padding: 24px 18px;
-            display: flex; flex-direction: column; gap: 8px;
-            box-shadow: 8px 0 50px rgba(0,0,0,0.7);
-            border-right: 1px solid var(--bd);
-            transition: left 0.35s var(--ease);
-        }
-        .mobile-menu.active { left: 0; }
-        .mobile-menu-header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--bd);
-        }
-        .mobile-menu a {
-            padding: 13px 16px; text-decoration: none; color: var(--tx);
-            font-size: 15px; font-weight: 600; border-radius: 10px;
-            background: rgba(232,184,75,0.04); border: 1px solid rgba(232,184,75,0.08);
-            transition: 0.3s var(--ease);
-        }
-        .mobile-menu a:hover { background: rgba(232,184,75,0.1); color: var(--go); transform: translateX(6px); }
-        .close-menu { font-size: 20px; cursor: pointer; color: var(--go); }
-
-        /* ===================================================
-           HERO
-        =================================================== */
-        .hero-section {
-            position: relative; width: 100%;
-            min-height: 78vh; overflow: hidden; background: var(--bg);
-        }
-        .hero-image {
-            width: 100%; height: 100%; min-height: 78vh;
-            object-fit: cover; object-position: center; display: block;
-            animation: heroZoom 16s ease-in-out infinite alternate;
-        }
-        @keyframes heroZoom { from{transform:scale(1.05)} to{transform:scale(1.12)} }
-        .hero-section::after {
-            content: ''; position: absolute; inset: 0; z-index: 1;
-            background: linear-gradient(110deg, rgba(4,0,0,0.92) 0%, rgba(8,2,2,0.72) 40%, rgba(0,0,0,0.2) 80%);
-        }
-        .hero-overlay {
-            position: absolute; bottom: 70px; left: 64px; z-index: 2; max-width: 580px;
-        }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(232,184,75,0.1); border: 1px solid rgba(232,184,75,0.28);
-            border-radius: 99px; padding: 6px 16px; margin-bottom: 20px;
-            font-size: 11px; font-weight: 700; color: var(--go);
-            letter-spacing: 2px; text-transform: uppercase;
-            animation: suUp 0.8s ease 0.2s both;
-        }
-        .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--go); animation: bdPulse 2s ease-in-out infinite; }
-        @keyframes bdPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.6)} }
-        .hero-overlay h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(32px, 5vw, 64px); font-weight: 700;
-            line-height: 1.06; color: #fff; margin-bottom: 16px;
-            animation: suUp 0.8s ease 0.35s both;
-        }
-        .hero-overlay h1 em { font-style: normal; background: linear-gradient(135deg, var(--go), #ff9f1c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero-overlay p { font-size: 15px; color: rgba(255,255,255,0.72); margin-bottom: 28px; line-height: 1.8; max-width: 460px; animation: suUp 0.8s ease 0.5s both; }
-        @keyframes suUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
-        .hero-ctas { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; animation: suUp 0.8s ease 0.65s both; }
-        .hero-btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 13px 28px; background: linear-gradient(135deg, var(--go), #ff9f1c);
-            color: #1a0505; text-decoration: none; border-radius: 10px;
-            font-weight: 700; font-size: 14px;
-            box-shadow: 0 10px 28px rgba(232,184,75,0.35);
-            transition: 0.35s var(--ease);
-        }
-        .hero-btn:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(232,184,75,0.5); }
-        .hero-btn-ghost {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 13px 28px; border: 1.5px solid rgba(232,184,75,0.38);
-            color: var(--go2); text-decoration: none; border-radius: 10px;
-            font-weight: 600; font-size: 14px; background: rgba(232,184,75,0.04);
-            transition: 0.35s var(--ease);
-        }
-        .hero-btn-ghost:hover { border-color: var(--go); background: rgba(232,184,75,0.1); transform: translateY(-3px); }
-
-        /* hero stats bar */
-        .hero-stats {
-            position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
-            display: flex; align-items: stretch;
-            background: rgba(8,4,4,0.82); backdrop-filter: blur(18px);
-            border-top: 1px solid var(--bd);
-        }
-        .hs { flex: 1; padding: 16px 20px; text-align: center; border-right: 1px solid var(--bd); transition: 0.3s; }
-        .hs:last-child { border-right: none; }
-        .hs:hover { background: rgba(232,184,75,0.04); }
-        .hs-num { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; color: var(--go); display: block; }
-        .hs-lbl { font-size: 10px; color: var(--txm); letter-spacing: 1px; text-transform: uppercase; margin-top: 3px; display: block; }
-
-        /* ===================================================
-           TICKER
-        =================================================== */
-        .ticker-wrap { background: var(--bg2); border-top: 1px solid var(--bd); border-bottom: 1px solid var(--bd); padding: 13px 0; overflow: hidden; position: relative; z-index: 1; }
-        .ticker-inner { display: inline-flex; gap: 56px; white-space: nowrap; animation: tickScroll 26s linear infinite; }
-        @keyframes tickScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-        .tick-item { display: inline-flex; align-items: center; gap: 9px; font-size: 11.5px; font-weight: 600; color: var(--txd); letter-spacing: 0.8px; text-transform: uppercase; }
-        .tick-icon { color: var(--go); }
-
-        /* ===================================================
-           SCROLL REVEAL
-        =================================================== */
-        .rv  { opacity: 0; transform: translateY(36px); transition: opacity 0.7s ease, transform 0.7s var(--ease); }
-        .rvl { opacity: 0; transform: translateX(-36px); transition: opacity 0.7s ease, transform 0.7s var(--ease); }
-        .rvr { opacity: 0; transform: translateX(36px); transition: opacity 0.7s ease, transform 0.7s var(--ease); }
-        .rv.on, .rvl.on, .rvr.on { opacity: 1; transform: translate(0); }
-
-        /* ===================================================
-           SECTION HELPERS
-        =================================================== */
-        .sec-ey { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--go); opacity: 0.75; margin-bottom: 8px; }
-        .sec-ttl { font-family: 'Cormorant Garamond', serif; font-size: clamp(24px, 3.5vw, 46px); font-weight: 700; color: #fff; line-height: 1.12; margin-bottom: 12px; }
-        .sec-ttl em { font-style: normal; background: linear-gradient(135deg, var(--go), #ff9f1c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .sec-rule { width: 56px; height: 2px; margin: 0 auto 44px; background: linear-gradient(90deg, var(--cr), var(--go)); border-radius: 99px; }
-
-        /* ===================================================
-           WHY CHOOSE US  — class "why-choose-us" kept
-        =================================================== */
-        .why-choose-us {
-            position: relative; padding: 90px 48px;
-            background: var(--bg2); text-align: center; overflow: hidden; z-index: 1;
-        }
-        .why-choose-us::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,0,0,0.14), transparent); pointer-events: none; }
-        /* keeping "why-grid" and "why-card" classes */
-        .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap: 18px; max-width: 1080px; margin: 0 auto; }
-        .why-card {
-            background: var(--gl); border: 1px solid var(--bd);
-            padding: 26px 20px; border-radius: 16px; backdrop-filter: blur(10px);
-            font-weight: 500; font-size: 14px; line-height: 1.65;
-            transition: 0.4s var(--ease); position: relative; overflow: hidden; text-align: left;
-        }
-        .wc-icon { font-size: 24px; margin-bottom: 12px; display: block; }
-        .why-card h4 { font-family: 'Cinzel', serif; font-size: 12.5px; color: var(--go); margin-bottom: 7px; letter-spacing: 0.5px; }
-        .why-card p  { font-size: 13px; color: var(--txd); line-height: 1.7; }
-        .why-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--cr), var(--go)); transform: scaleX(0); transition: transform 0.45s var(--ease); transform-origin: left; }
-        .why-card:hover::before { transform: scaleX(1); }
-        .why-card:hover { transform: translateY(-8px); border-color: var(--bh); box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 0 1px rgba(232,184,75,0.14); }
-
-        /* ===================================================
-           PRODUCTS SECTION  — keeping "product-grid",
-           "product-card", "product-name", "product-desc",
-           "price", "stock", "qty-controls", "qty-btn",
-           "qty-value", "know-more-btn", "dim", "highlight"
-        =================================================== */
-        .products-section { position: relative; padding: 90px 48px; z-index: 1; }
-        .products-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 55% 40% at 80% 50%, rgba(139,0,0,0.07), transparent); pointer-events: none; }
-        .products-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 50px; flex-wrap: wrap; gap: 16px; }
-        .products-count { font-size: 12px; color: var(--txd); background: var(--gl); border: 1px solid var(--bd); padding: 5px 14px; border-radius: 99px; }
-
-        /* GRID */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(275px,1fr));
-            gap: 26px;
-        }
-
-        /* CARD */
-        .product-card {
-            position: relative; background: var(--gl); border: 1px solid var(--bd);
-            border-radius: 20px; padding: 20px; text-align: center; overflow: hidden;
-            transition: transform 0.45s var(--ease), box-shadow 0.45s ease, border-color 0.45s ease;
-            opacity: 0; transform: translateY(44px);
-        }
-        .product-card.show { opacity: 1; transform: translateY(0); }
-
-        /* shimmer sweep */
-        .product-card::before {
-            content: ''; position: absolute; top: 0; left: -110%; width: 60%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(232,184,75,0.04), transparent);
-            transition: left 0.7s ease; transform: skewX(-18deg);
-        }
-        .product-card:hover::before { left: 150%; }
-        .product-card:hover {
-            transform: translateY(-10px) scale(1.01);
-            border-color: var(--bh);
-            box-shadow: 0 28px 65px rgba(0,0,0,0.52), 0 0 0 1px rgba(232,184,75,0.16);
-        }
-
-        /* card accents */
-        .card-glow {
-            position: absolute; top: -55px; left: 50%; transform: translateX(-50%);
-            width: 200px; height: 200px;
-            background: radial-gradient(circle, rgba(232,184,75,0.09), transparent 70%);
-            pointer-events: none; opacity: 0; transition: opacity 0.4s ease;
-        }
-        .product-card:hover .card-glow { opacity: 1; }
-        .card-badge {
-            position: absolute; top: 12px; left: 12px;
-            background: linear-gradient(135deg, var(--cr), var(--go3));
-            color: var(--go2); font-size: 9px; font-weight: 700;
-            padding: 3px 9px; border-radius: 99px; letter-spacing: 0.8px; text-transform: uppercase;
-        }
-
-        /* IMAGE */
-        .product-card img {
-            width: 100%; height: 168px; object-fit: contain;
-            border-radius: 12px; background: rgba(255,255,255,0.97);
-            padding: 9px; margin-bottom: 14px;
-            transition: transform 0.45s var(--ease);
-        }
-        .product-card:hover img { transform: scale(1.06) rotate(-1.5deg); }
-
-        /* TEXT */
-        .product-name { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: var(--go); margin: 9px 0 6px; letter-spacing: 0.5px; line-height: 1.35; }
-        .product-desc { font-size: 12.5px; color: var(--txd); margin-bottom: 9px; line-height: 1.7; }
-
-        /* PRICE */
-        .price { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--go2); margin: 7px 0; }
-
-        /* STOCK */
-        .stock {
-            font-size: 11px; font-weight: 600; letter-spacing: 0.7px;
-            padding: 4px 12px; border-radius: 99px;
-            display: inline-flex; align-items: center; gap: 5px;
-            background: rgba(0,220,100,0.08); color: #4ade80;
-            border: 1px solid rgba(0,220,100,0.18);
-        }
-        .stock.out { background: rgba(239,68,68,0.08); color: #f87171; border-color: rgba(239,68,68,0.2); }
-        .sdot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; animation: sdPulse 2s ease-in-out infinite; }
-        @keyframes sdPulse { 0%,100%{opacity:1}50%{opacity:0.25} }
-
-        /* QTY — classes "qty-controls", "qty-btn", "qty-value" kept */
-        .qty-controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 14px; }
-        .qty-btn {
-            width: 36px; height: 36px; border-radius: 50%;
-            border: 1px solid var(--bd);
-            background: rgba(232,184,75,0.07); color: var(--go);
-            font-size: 18px; font-weight: 900; cursor: pointer;
-            transition: 0.3s var(--ease);
-            display: flex; align-items: center; justify-content: center;
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 999px;
             line-height: 1;
         }
-        .qty-btn:hover { background: var(--go); color: #1a0505; border-color: var(--go); transform: scale(1.14); box-shadow: 0 6px 18px rgba(232,184,75,0.4); }
-        .qty-value { min-width: 28px; text-align: center; font-weight: 800; font-size: 18px; color: #fff; font-family: 'Cinzel', serif; }
 
-        /* KNOW MORE BTN — class "know-more-btn" kept */
-        .know-more-btn {
-            display: inline-flex; align-items: center; gap: 6px;
-            margin-top: 13px; padding: 9px 18px; border-radius: 9px; cursor: pointer;
-            background: linear-gradient(135deg, rgba(139,0,0,0.45), rgba(232,184,75,0.18));
-            border: 1px solid var(--bd); color: var(--go2);
-            font-weight: 700; font-size: 12.5px; text-decoration: none;
-            transition: 0.35s var(--ease); letter-spacing: 0.3px;
+        /* WhatsApp Button */
+        .whatsapp-btn {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            min-height: 36px;
+            border-radius: 50%;
+            background: #25D366;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
         }
-        .know-more-btn:hover { background: linear-gradient(135deg, var(--cr), var(--go3)); color: #fff; border-color: transparent; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(139,0,0,0.4); }
 
-        /* SEARCH HELPERS — classes "dim", "highlight" kept */
-        .product-card.dim { opacity: 0.18 !important; filter: saturate(0) blur(1px); pointer-events: none; transition: 0.35s ease; }
-        .highlight { background: var(--go); color: #1a0505; padding: 1px 4px; border-radius: 3px; font-weight: 700; }
+        .whatsapp-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        }
 
-        /* ===================================================
-           KNOW MORE MODAL
-           — ids "knowMoreModal", "knowMoreImg" kept
-           — class "modal-overlay" kept
-           — close-btn is INSIDE .modal-box which has position:relative
-        =================================================== */
-        .modal-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.82); backdrop-filter: blur(10px);
-            display: none; justify-content: center; align-items: center;
+        .whatsapp-icon {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero-section {
+            position: relative;
+            width: 100%;
+            min-height: 65vh;
+            max-height: 80vh;
+            overflow: hidden;
+            background: #0b0b0b;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .hero-section::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                    90deg,
+                    rgba(0,0,0,0.75) 0%,
+                    rgba(0,0,0,0.55) 40%,
+                    rgba(0,0,0,0.25) 70%,
+                    rgba(0,0,0,0.1) 100%
+            );
+            z-index: 1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            bottom: 48px;
+            left: 48px;
+            z-index: 2;
+            color: #ffffff;
+            max-width: 520px;
+        }
+
+        .hero-overlay h1 {
+            font-size: clamp(28px, 4vw, 44px);
+            line-height: 1.1;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        .hero-overlay p {
+            font-size: 15px;
+            margin-bottom: 18px;
+            opacity: 0.95;
+        }
+
+        /* CTA */
+        .hero-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: #111827;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.45);
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.55);
+        }
+        body {
+            background: #ffffff;   /* full page white */
+        }
+
+        /* ===== PAGE CONTENT ===== */
+        /* ===== PAGE CONTENT ===== */
+        .page {
+            padding: 32px;
+            background: #ffffff;   /* 🔥 black hata ke white */
+        }
+        .page h1 {
+            color: #8b0000;          /* dark red */
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 28px;
+            align-items: stretch;
+            justify-items: center;   /* cards center align */
+        }
+
+
+        .product-card {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+            background: linear-gradient(145deg, #7a0000, #b11212, #ffcc66);
+            border: 2px solid #f5c16c;
+            box-shadow:
+                    0 8px 25px rgba(0,0,0,0.5),
+                    inset 0 0 0 1px rgba(255,215,0,0.3);
+            color: #fff;
+            transition: transform .25s ease, box-shadow .25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top left, rgba(255,215,0,0.25), transparent 60%);
+            pointer-events: none;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow:
+                    0 14px 40px rgba(255, 204, 102, 0.6),
+                    0 0 0 2px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Product image */
+        .product-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #fff;
+            padding: 8px;
+            margin-bottom: 12px;
+        }
+
+        /* Product name */
+        .product-card h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffd700;   /* gold */
+            margin: 10px 0 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Description */
+        .product-card p {
+            font-size: 13px;
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+
+        /* Price */
+        .price {
+            font-size: 18px;
+            font-weight: 900;
+            color: #ffdf8a;
+            margin: 8px 0;
+        }
+
+        /* Stock */
+        .stock {
+            font-size: 13px;
+            font-weight: 600;
+            color: #b6ffb6;  /* greenish for stock */
+        }
+
+        /* ===== Qty Controls ===== */
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        /* 🔥 Gold buttons */
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(145deg, #ffb703, #ffd166);
+            color: #3b0a0a;
+            font-size: 18px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 200, 0, 0.6);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .qty-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.9);
+        }
+
+        .qty-value {
+            min-width: 24px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        /* Know More Button (if you have it inside card) */
+        .product-card .know-more-btn {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: linear-gradient(145deg, #ffd700, #ff9f1c);
+            color: #3b0a0a;
+            font-weight: 800;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.6);
+            transition: transform .2s ease;
+        }
+
+        .product-card .know-more-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+        }
+        .image-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
             z-index: 9999;
+            align-items: center;
+            justify-content: center;
         }
-        .modal-box {
-            position: relative;   /* ← required for close-btn */
-            background: linear-gradient(145deg, rgba(14,6,6,0.98), rgba(22,12,0,0.98));
-            padding: 26px; border-radius: 20px;
-            box-shadow: 0 40px 90px rgba(0,0,0,0.75), 0 0 0 1px rgba(232,184,75,0.18);
-            max-width: 90%; max-height: 90%;
-            animation: mIn 0.35s var(--ease);
-        }
-        @keyframes mIn { from{opacity:0;transform:scale(0.82) translateY(22px)} to{opacity:1;transform:scale(1) translateY(0)} }
-        .modal-box img { max-width: 100%; max-height: 70vh; border-radius: 12px; border: 1.5px solid rgba(232,184,75,0.22); display: block; }
-        /* close-btn class kept — used by BOTH modals */
-        .close-btn {
-            position: absolute; right: 13px; top: 11px;
-            font-size: 17px; cursor: pointer; color: var(--go);
-            width: 30px; height: 30px;
-            background: rgba(232,184,75,0.08); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            border: 1px solid var(--bd); transition: 0.3s var(--ease); z-index: 5;
-        }
-        .close-btn:hover { background: var(--go); color: #1a0505; }
 
-        /* ===================================================
-           CERTIFICATIONS STRIP
-        =================================================== */
-        .cert-strip { background: var(--bg3); border-top: 1px solid var(--bd); border-bottom: 1px solid var(--bd); padding: 32px 40px; display: flex; align-items: center; justify-content: center; gap: 44px; flex-wrap: wrap; position: relative; z-index: 1; }
-        .cert-item { display: flex; flex-direction: column; align-items: center; gap: 7px; transition: 0.3s; }
-        .cert-item:hover { transform: translateY(-4px); }
-        .cert-icon { font-size: 28px; }
-        .cert-name { font-size: 10.5px; font-weight: 700; letter-spacing: 2px; color: var(--go); text-transform: uppercase; }
-        .cert-desc { font-size: 9.5px; color: var(--txm); }
+        .image-modal img {
+            max-width: 85%;
+            max-height: 85%;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            background: #fff;
+            padding: 10px;
+        }
 
-        /* ===================================================
-           ABOUT — class "about-section" kept
-        =================================================== */
+        .image-modal .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 36px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+        }
         .about-section {
-            position: relative; padding: 100px 48px;
-            background: var(--bg2); overflow: hidden; z-index: 1;
+            margin: 60px auto;
+            max-width: 900px;
+            padding: 40px;
+            background: linear-gradient(135deg, #7a0c0c, #b8860b);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            color: #fff;
+            text-align: center;
         }
-        .about-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(139,0,0,0.16), transparent); pointer-events: none; }
-        .about-inner { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
-        .about-text p { font-size: 15px; line-height: 2; color: var(--txd); margin-top: 18px; }
-        .about-visual { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .asc { background: var(--gl); border: 1px solid var(--bd); border-radius: 14px; padding: 22px 18px; text-align: center; transition: 0.35s; }
-        .asc:hover { border-color: var(--bh); transform: translateY(-4px); }
-        .asc:nth-child(2), .asc:nth-child(4) { margin-top: 22px; }
-        .asc-n { font-family: 'Cinzel', serif; font-size: 26px; color: var(--go); display: block; }
-        .asc-l { font-size: 10px; color: var(--txm); letter-spacing: 1px; text-transform: uppercase; margin-top: 3px; }
 
-        /* ===================================================
-           CONTACT — class "contact-section", "contact-grid", "contact-card" kept
-        =================================================== */
+        .about-section h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #ffd700; /* Gold */
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .about-section p {
+            font-size: 17px;
+            line-height: 1.8;
+            color: #f9f9f9;
+            text-align: justify;
+        }
+        .about-section {
+            border: 2px solid #ffd700;
+            background: #7a0c0c;
+        }
+
         .contact-section {
-            position: relative; padding: 100px 48px;
-            background: var(--bg); z-index: 1; overflow: hidden; text-align: center;
+            margin: 80px auto;
+            padding: 50px 30px;
+            background: linear-gradient(135deg, #7a0c0c, #b8860b);
+            border-top: 4px solid #ffd700;
+            color: #fff;
+            text-align: center;
         }
-        .contact-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--go), transparent); opacity: 0.3; }
-        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 20px; max-width: 1020px; margin: 0 auto; }
-        .contact-card { background: var(--gl); border: 1px solid var(--bd); padding: 28px; border-radius: 18px; backdrop-filter: blur(10px); transition: 0.35s; }
-        .contact-card:hover { transform: translateY(-6px); border-color: var(--bh); box-shadow: 0 18px 45px rgba(0,0,0,0.38); }
-        .contact-card h3 { font-family: 'Cinzel', serif; color: var(--go); margin-bottom: 14px; font-size: 13.5px; letter-spacing: 1px; }
-        .contact-card p { font-size: 14px; line-height: 2; color: var(--txd); }
 
-        /* ===================================================
-           FOOTER
-        =================================================== */
-        .footer { background: var(--bg2); border-top: 1px solid var(--bd); padding: 24px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; position: relative; z-index: 1; }
-        .footer-brand { font-family: 'Cinzel', serif; font-size: 12px; color: var(--txm); letter-spacing: 1.5px; }
-        .footer-links { display: flex; gap: 18px; }
-        .footer-links a { font-size: 12px; color: var(--txm); text-decoration: none; transition: color 0.25s; }
-        .footer-links a:hover { color: var(--go); }
+        .contact-section h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #ffd700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
 
-        /* ===================================================
-           AI CHATBOT — ids "ai-chatbot","ai-header","ai-body","ai-input" kept
-        =================================================== */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .contact-card {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.5);
+        }
+
+        .contact-card h3 {
+            color: #ffd700;
+            margin-bottom: 12px;
+        }
+
+        .contact-card p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #f5f5f5;
+        }
+        .highlight {
+            background: #ffd700;
+            color: #7a0000;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .product-card.dim {
+            opacity: 0.35;
+            filter: grayscale(40%);
+        }
+        /* ================= MOBILE RESPONSIVE (DO NOT BREAK DESKTOP) ================= */
+        @media (max-width: 768px) {
+
+            .navbar {
+                flex-wrap: wrap;
+                padding: 10px 12px;
+                gap: 10px;
+            }
+
+            .brand {
+                flex: 1;
+            }
+
+
+
+            /* Mobile menu panel */
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                background: #ffffff;
+                border-top: 1px solid #eee;
+                padding: 12px 0;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 10px 16px;
+                font-size: 15px;
+                border-bottom: 1px solid #f1f1f1;
+            }
+
+            .right-actions {
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: space-between;
+            }
+
+            .right-actions form {
+                width: 100%;
+                display: flex;
+            }
+
+            .right-actions input {
+                flex: 1;
+            }
+        }
+
+
+
+        /* Hero */
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: 30vh;
+            }
+
+            .hero-overlay {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+            }
+
+            .hero-overlay h1 {
+                font-size: 18px;
+            }
+
+            .hero-overlay p {
+                font-size: 12px;
+            }
+        }
+
+
+        .hero-btn {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        /* Products */
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .product-card {
+                padding: 10px;
+            }
+
+            .product-card img {
+                height: 110px;
+            }
+
+            .product-card h3 {
+                font-size: 14px;
+            }
+
+            .price {
+                font-size: 14px;
+            }
+        }
+
+
+        .product-card p {
+            font-size: 12px;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+        }
+
+        /* Contact */
+        .contact-grid {
+            grid-template-columns: 1fr;
+        }
+
+        @media (max-width: 768px) {
+            .cart-btn {
+                position: fixed;
+                bottom: 16px;
+                right: 16px;
+                width: 48px;
+                height: 48px;
+                z-index: 9999;
+            }
+        }
+
+
+        /* Chatbot reposition */
         #ai-chatbot {
-            position: fixed; bottom: 22px; right: 22px; width: 315px;
-            background: rgba(10,4,4,0.97); backdrop-filter: blur(22px);
-            border: 1px solid rgba(232,184,75,0.2); border-radius: 16px;
-            box-shadow: 0 22px 55px rgba(0,0,0,0.6); overflow: hidden; z-index: 9995;
-            font-family: 'DM Sans', Arial, sans-serif;
+            width: 90%;
+            right: 5%;
+            bottom: 80px;
         }
-        #ai-header {
-            background: linear-gradient(135deg, var(--cr3), var(--go3));
-            color: white; padding: 12px 15px; font-weight: 700; font-size: 13px;
-            cursor: move; user-select: none;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid rgba(232,184,75,0.12);
-        }
-        .ai-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; display: inline-block; margin-right: 7px; animation: sdPulse 2s ease-in-out infinite; }
-        #ai-body { height: 230px; padding: 10px; overflow-y: auto; font-size: 13px; }
-        #ai-body::-webkit-scrollbar { width: 3px; }
-        #ai-body::-webkit-scrollbar-thumb { background: rgba(232,184,75,0.18); border-radius: 2px; }
-        .msg-user { margin: 5px 0; text-align: right; color: var(--txd); }
-        .msg-user b { color: var(--go); }
-        .msg-ai { margin: 5px 0; text-align: left; color: #4ade80; }
-        .msg-ai b { color: #22c55e; }
-        .typing { font-style: italic; color: rgba(255,255,255,0.28); font-size: 12px; }
-        #ai-input {
-            width: 100%; border: none; border-top: 1px solid rgba(232,184,75,0.1);
-            padding: 10px 13px; outline: none;
-            background: rgba(255,255,255,0.02); color: var(--tx);
-            font-family: 'DM Sans', Arial, sans-serif; font-size: 13px;
-        }
-        #ai-input::placeholder { color: rgba(255,255,255,0.22); }
-
-        /* ===================================================
-           TALK TO EXPERT — id "talkExpertFloat" kept
-        =================================================== */
-        #talkExpertFloat {
-            position: fixed; top: 100px; right: 18px; z-index: 9994;
-            background: linear-gradient(135deg, #15803d, #22c55e);
-            color: #fff; text-decoration: none; padding: 10px 16px;
-            border-radius: 99px; font-weight: 700; font-size: 12px;
-            display: inline-flex; align-items: center; gap: 7px;
-            box-shadow: 0 8px 22px rgba(0,0,0,0.32);
-            animation: expPulse 2.4s infinite; transition: 0.3s;
-        }
-        #talkExpertFloat:hover { transform: translateY(-2px) scale(1.05); }
-        @keyframes expPulse {
-            0%   { box-shadow: 0 8px 22px rgba(0,0,0,0.3), 0 0 0 0 rgba(34,197,94,0.5); }
-            70%  { box-shadow: 0 10px 28px rgba(0,0,0,0.3), 0 0 0 10px rgba(34,197,94,0); }
-            100% { box-shadow: 0 8px 22px rgba(0,0,0,0.3), 0 0 0 0 rgba(34,197,94,0); }
         }
 
-        /* ===================================================
-           SCROLL TO TOP
-        =================================================== */
-        #scrollTop {
-            position: fixed; bottom: 86px; right: 24px; width: 38px; height: 38px;
-            background: rgba(232,184,75,0.1); border: 1px solid var(--bd);
-            border-radius: 50%; color: var(--go); font-size: 17px;
-            cursor: pointer; display: none; align-items: center; justify-content: center;
-            z-index: 9993; transition: 0.35s var(--ease);
-        }
-        #scrollTop.on { display: flex; }
-        #scrollTop:hover { background: var(--go); color: #1a0505; transform: translateY(-3px); }
 
-        /* ===================================================
-           ENQUIRY MODAL — ids "enquiryModal","enquiryForm" kept
-           class "enquiry-modal","enquiry-box" kept
-        =================================================== */
-        .enquiry-modal {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.82); backdrop-filter: blur(10px);
-            z-index: 99999; justify-content: center; align-items: center;
+        @media (max-width: 768px) {
+            .page h1 {
+                text-align: center;
+                font-size: 20px;
+            }
         }
-        .enquiry-modal.show { display: flex; }
-        .enquiry-box {
-            background: linear-gradient(145deg, #0e0606, #1a0c00);
-            border: 1px solid rgba(232,184,75,0.18); padding: 34px 28px;
-            border-radius: 20px; width: 90%; max-width: 440px;
-            max-height: 90vh; overflow-y: auto; color: var(--tx);
-            box-shadow: 0 40px 90px rgba(0,0,0,0.75); position: relative;
-        }
-        .enquiry-box::-webkit-scrollbar { width: 3px; }
-        .enquiry-box::-webkit-scrollbar-thumb { background: rgba(232,184,75,0.18); }
-        .enquiry-box h2 { font-family: 'Cinzel', serif; margin-bottom: 6px; color: var(--go); font-size: 20px; }
-        .enquiry-box > p { font-size: 13px; margin-bottom: 18px; color: var(--txd); line-height: 1.7; }
-        .enquiry-box label { display: block; margin-top: 13px; font-weight: 600; font-size: 11.5px; color: var(--txm); margin-bottom: 4px; letter-spacing: 0.8px; text-transform: uppercase; }
-        .enquiry-box input, .enquiry-box select, .enquiry-box textarea {
-            width: 100%; padding: 10px 13px; border-radius: 9px;
-            border: 1px solid rgba(232,184,75,0.16);
-            background: rgba(255,255,255,0.04); color: var(--tx);
-            font-family: 'DM Sans', Arial, sans-serif; font-size: 13.5px; outline: none;
-            transition: border-color 0.25s;
-        }
-        .enquiry-box input:focus, .enquiry-box select:focus, .enquiry-box textarea:focus { border-color: var(--go); box-shadow: 0 0 0 3px rgba(232,184,75,0.09); }
-        .enquiry-box select option { background: #1a0808; }
-        .enquiry-box textarea { min-height: 80px; resize: vertical; }
-        .enquiry-box button {
-            width: 100%; margin-top: 20px; padding: 12px; border-radius: 11px; border: none;
-            background: linear-gradient(135deg, var(--go), #ff9f1c);
-            color: #1a0505; font-weight: 800; font-size: 14px;
-            cursor: pointer; font-family: 'DM Sans', Arial, sans-serif;
-            transition: 0.35s; letter-spacing: 0.4px;
-        }
-        .enquiry-box button:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(232,184,75,0.38); }
 
-        /* ===================================================
-           RESPONSIVE
-        =================================================== */
-        @media (max-width: 1024px) {
-            .about-inner { grid-template-columns: 1fr; gap: 44px; }
-            .about-visual { max-width: 380px; margin: 0 auto; }
-        }
-        @media (max-width: 900px) {
-            .navbar { padding: 0 18px; }
-            .desktop-nav { display: none; }
-            .hamburger { display: flex; }
-            .hero-stats { display: none; }
-            .hero-section { min-height: 58vh; }
-            .hero-image { min-height: 58vh; }
-            .hero-overlay { left: 22px; right: 22px; bottom: 26px; }
-        }
-        @media (max-width: 600px) {
-            .navbar { padding: 10px 13px; flex-wrap: wrap; height: auto; }
-            .right-actions { width: 100%; justify-content: space-between; margin-top: 6px; }
-            .search-wrap { flex: 1; }
-            .search-wrap input { width: 100%; }
-            .hero-overlay h1 { font-size: 24px; }
-            .hero-ctas { gap: 9px; }
-            .hero-btn, .hero-btn-ghost { padding: 10px 18px; font-size: 13px; }
-            .why-choose-us, .products-section, .about-section, .contact-section { padding: 56px 16px; }
-            .cert-strip { padding: 24px 16px; gap: 24px; }
-            .products-header { flex-direction: column; align-items: flex-start; }
-            .product-grid { grid-template-columns: repeat(2,1fr); gap: 12px; }
-            .product-card { padding: 10px; }
-            .product-card img { height: 115px; }
-            .product-name { font-size: 11.5px; }
-            .price { font-size: 17px; }
-            .about-inner { gap: 32px; }
-            .about-visual { grid-template-columns: 1fr 1fr; }
-            .asc:nth-child(2), .asc:nth-child(4) { margin-top: 0; }
-            #ai-chatbot { width: 92%; right: 4%; bottom: 70px; }
-            #ai-body { height: 140px; }
-            #talkExpertFloat { top: 76px; right: 8px; padding: 8px 12px; font-size: 11px; }
-            .cart-btn { position: fixed; bottom: 14px; right: 14px; width: 46px; height: 46px; z-index: 9999; }
-            .footer { padding: 18px 16px; flex-direction: column; text-align: center; }
-            .footer-links { justify-content: center; }
-            html, body { overflow-x: hidden; }
-            .mobile-menu { left: -100%; }
-            .mobile-menu.active { left: 0; }
-        }
+
     </style>
-
-    <!-- ==============================================
-         CART + KNOW MORE LOGIC
-         Copied character-for-character from original
-    ============================================== -->
     <script>
         function updateQty(productId, action) {
             fetch(`/cart/${action}/${productId}`, { method: 'POST' })
@@ -734,22 +739,41 @@
                         window.location.href = "/login";
                         return null;
                     }
-                    if (!res.ok) throw new Error("Network response was not ok");
+
+                    if (!res.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+
                     return res.text();
                 })
                 .then(qty => {
                     if (!qty) return;
+
                     qty = parseInt(qty);
+
                     if (isNaN(qty)) return;
-                    const qtyEl = document.getElementById("qty-" + productId);
+
+
+                    const qtyEl = document.getElementById(`qty-${productId}`);
                     if (qtyEl) qtyEl.innerText = qty;
+
+
                     const badge = document.getElementById("cartCountBadge");
-                    let cur = badge ? parseInt(badge.innerText || "0") : 0;
-                    if (action === "increase") cur += 1;
-                    else if (action === "decrease" && cur > 0) cur -= 1;
+                    let currentCount = badge ? parseInt(badge.innerText || "0") : 0;
+
+                    if (action === "increase") {
+                        currentCount += 1;
+                    } else if (action === "decrease" && currentCount > 0) {
+                        currentCount -= 1;
+                    }
+
                     if (badge) {
-                        badge.style.display = cur <= 0 ? "none" : "inline-block";
-                        badge.innerText = cur;
+                        if (currentCount <= 0) {
+                            badge.style.display = "none";
+                        } else {
+                            badge.style.display = "inline-block";
+                            badge.innerText = currentCount;
+                        }
                     }
                 })
                 .catch(err => {
@@ -758,114 +782,113 @@
                 });
         }
 
-        function openKnowMoreFromBtn(btn) {
-            var imgUrl = btn.getAttribute("data-img");
-            document.getElementById("knowMoreImg").src = imgUrl;
-            document.getElementById("knowMoreModal").style.display = "flex";
+        function openDetailImage(url) {
+            const modal = document.getElementById("imageModal");
+            const img = document.getElementById("modalImg");
+
+            img.src = url;
+            modal.style.display = "flex";
         }
 
-        function closeKnowMore() {
-            document.getElementById("knowMoreModal").style.display = "none";
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
         }
     </script>
+
 </head>
 
 <body>
 
-<!-- Decorative background -->
-<div class="bg-canvas">
-    <div class="bg-grid"></div>
-    <div class="orb o1"></div>
-    <div class="orb o2"></div>
-    <div class="orb o3"></div>
-</div>
-
-<!-- NO LOADER - removed to fix stuck screen on deployment -->
-
-<!-- ============================================================
-     ANNOUNCEMENT BAR
-============================================================ -->
-<div class="ann-bar">
-    <div class="ann-scroll">
-        <span><span class="ann-dot">★</span>WHO-GMP Certified Facility</span>
-        <span><span class="ann-dot">★</span>Free Consultation for Bulk Orders</span>
-        <span><span class="ann-dot">★</span>Global Export Support Available</span>
-        <span><span class="ann-dot">★</span>Custom Formulations for Poultry &amp; Livestock</span>
-        <span><span class="ann-dot">★</span>ISO Certified Manufacturing</span>
-        <span><span class="ann-dot">★</span>WHO-GMP Certified Facility</span>
-        <span><span class="ann-dot">★</span>Free Consultation for Bulk Orders</span>
-        <span><span class="ann-dot">★</span>Global Export Support Available</span>
-        <span><span class="ann-dot">★</span>Custom Formulations for Poultry &amp; Livestock</span>
-        <span><span class="ann-dot">★</span>ISO Certified Manufacturing</span>
-    </div>
-</div>
-
-<!-- ============================================================
-     NAVBAR  (all class/id names identical to original)
-============================================================ -->
 <div class="navbar">
 
-    <!-- Brand -->
-    <a href="/products" style="text-decoration:none;color:inherit;">
+    <!-- LEFT -->
+    <a href="/products" style="text-decoration:none; color:inherit;">
         <div class="brand">
             <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="MT Animal Care">
-            <div>
-                <span class="brand-name">MT ANIMAL CARE</span>
-                <span class="brand-sub">Veterinary Excellence</span>
-            </div>
+            <span>MT ANIMAL CARE</span>
         </div>
     </a>
-
-    <!-- Desktop nav — class "desktop-nav" kept -->
+    <!-- DESKTOP NAV -->
     <div class="nav-links desktop-nav">
         <a href="/">Home</a>
         <a href="#shop">Shop</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
-        <a href="javascript:void(0)" class="enquiry-link" onclick="openEnquiryModal()">✦ Enquiry</a>
+
+        <a href="javascript:void(0)"
+           class="enquiry-link"
+           onclick="openEnquiryModal()">
+            Enquiry
+        </a>
+
         <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
     </div>
 
-    <!-- Hamburger — id "hamburgerBtn" kept -->
+    <!-- HAMBURGER -->
     <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
+        <span></span>
+        <span></span>
+        <span></span>
     </div>
 
-    <!-- Mobile overlay — id "mobileOverlay" kept -->
+    <!-- MOBILE OVERLAY -->
     <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
 
-    <!-- Mobile drawer — id "mobileMenu" kept -->
+    <!-- MOBILE DRAWER MENU -->
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-header">
             <div class="brand">
                 <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="MT Animal Care">
-                <span class="brand-name">MT ANIMAL CARE</span>
+                <span>MT ANIMAL CARE</span>
             </div>
             <span class="close-menu" onclick="toggleMenu()">✖</span>
         </div>
+
         <a href="/">Home</a>
         <a href="#shop">Shop</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
-        <a href="javascript:void(0)" onclick="openEnquiryModal()">✦ Enquiry</a>
+        <a href="javascript:void(0)" onclick="openEnquiryModal()">Enquiry</a>
         <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
     </div>
 
-    <!-- Right actions -->
+
+
+    <!-- RIGHT -->
     <div class="right-actions">
+
         <!-- Search -->
-        <div class="search-wrap">
-            <input type="text" id="liveSearch" placeholder="Search products…"
-                   oninput="liveSearchProducts(this.value)" />
-            <button type="button" onclick="">🔍</button>
+        <div style="display:flex; gap:6px;">
+            <input type="text"
+                   id="liveSearch"
+                   placeholder="Search products..."
+                   oninput="liveSearchProducts(this.value)"
+                   style="padding:6px 10px;border-radius:6px;border:1px solid #ddd;outline:none;" />
+
+            <button type="button"
+                    onclick="alert('Live search is enabled. Just start typing! 🔍')"
+                    style="padding:6px 12px;border:none;border-radius:6px;background:#8b0000;color:white;cursor:pointer;">
+                🔍
+            </button>
         </div>
+
+
         <!-- WhatsApp -->
-        <a href="https://wa.me/919021466362" target="_blank" class="whatsapp-btn" title="Chat on WhatsApp">
+        <a href="https://wa.me/919021466362"
+           target="_blank"
+           class="whatsapp-btn"
+           title="Chat on WhatsApp">
             <img src="/images/whatsapp.png" alt="WhatsApp" class="whatsapp-icon">
         </a>
+
         <!-- Login -->
-        <a sec:authorize="!isAuthenticated()" href="/oauth2/authorization/google" class="login-btn">Login</a>
-        <!-- User dropdown -->
+        <a sec:authorize="!isAuthenticated()"
+           href="/oauth2/authorization/google"
+           class="login-btn">
+            Login
+        </a>
+
+        <!-- User -->
         <div class="user-dropdown" sec:authorize="isAuthenticated()">
             <div class="user-btn" onclick="toggleUserMenu()">
                 👤 <span sec:authentication="name"></span> ⌄
@@ -874,481 +897,1084 @@
                 <a href="/logout">Logout</a>
             </div>
         </div>
-        <!-- Cart — id "cartCountBadge" kept -->
+
+        <!-- Cart -->
         <a href="/cart" class="cart-btn" title="Cart">
             🛒
-            <span class="cart-count" id="cartCountBadge"
-                  th:if="${cartCount > 0}" th:text="${cartCount}"></span>
+            <span class="cart-count"
+                  id="cartCountBadge"
+                  th:if="${cartCount > 0}"
+                  th:text="${cartCount}">
+            </span>
         </a>
+
     </div>
 </div>
 
-<!-- ============================================================
-     HERO
-============================================================ -->
+</section>
+<style>
+    .why-choose-us {
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #7a0c0c, #b8860b);
+        color: white;
+        text-align: center;
+    }
+
+    .why-choose-us h2 {
+        font-size: 32px;
+        margin-bottom: 30px;
+        color: #ffd700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .why-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        max-width: 1000px;
+        margin: auto;
+    }
+
+    .why-card {
+        background: rgba(0,0,0,0.25);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,215,0,0.6);
+        font-weight: 600;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .why-card:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 10px 24px rgba(255,215,0,0.4);
+    }
+
+    @media (max-width: 768px) {
+
+        .why-choose-us {
+            padding: 40px 14px;
+        }
+
+        .why-choose-us h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .why-grid {
+            grid-template-columns: 1fr;   /* 🔥 Single column on mobile */
+            gap: 12px;
+        }
+
+        .why-card {
+            font-size: 14px;
+            padding: 14px;
+            border-radius: 10px;
+            text-align: left;           /* More readable on mobile */
+        }
+        .why-card::before {
+            content: "✔";
+            margin-right: 8px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+    }
+</style>
+
+<!-- ===== HOME HERO SECTION ===== -->
 <section class="hero-section">
     <img src="/images/home-banner.png" alt="MT Animal Care Banner" class="hero-image">
+
     <div class="hero-overlay">
-        <div class="hero-badge"><div class="badge-dot"></div> WHO · GMP · ISO Certified</div>
-        <h1>Leading Name in<br><em>Contract Manufacturing</em></h1>
-        <p>Premium poultry nutrition, veterinary medicines &amp; livestock healthcare trusted by farms across India &amp; beyond.</p>
-        <div class="hero-ctas">
-            <a href="/pdf/mt-animal-care-brochure.pdf" target="_blank" class="hero-btn">📄 Download Brochure</a>
-            <a href="#shop" class="hero-btn-ghost">🛍 Explore Products</a>
-        </div>
-    </div>
-    <div class="hero-stats">
-        <div class="hs"><span class="hs-num">500+</span><span class="hs-lbl">Products</span></div>
-        <div class="hs"><span class="hs-num">12+</span><span class="hs-lbl">Years</span></div>
-        <div class="hs"><span class="hs-num">10K+</span><span class="hs-lbl">Farms Served</span></div>
-        <div class="hs"><span class="hs-num">15+</span><span class="hs-lbl">Countries</span></div>
+        <h1>Leading Name in Contract Manufacturing</h1>
+        <p>WHO • GMP • ISO Certified Manufacturing Facility & Global Export</p>
+
+        <a href="/pdf/mt-animal-care-brochure.pdf"
+           target="_blank"
+           class="hero-btn">
+            📄 Know More
+        </a>
     </div>
 </section>
 
-<!-- ============================================================
-     TICKER
-============================================================ -->
-<div class="ticker-wrap">
-    <div class="ticker-inner">
-        <span class="tick-item"><span class="tick-icon">🏆</span>WHO-GMP Certified</span>
-        <span class="tick-item"><span class="tick-icon">🌍</span>Global Export</span>
-        <span class="tick-item"><span class="tick-icon">🔬</span>Scientifically Formulated</span>
-        <span class="tick-item"><span class="tick-icon">✅</span>ISO Certified</span>
-        <span class="tick-item"><span class="tick-icon">🚚</span>Pan India Delivery</span>
-        <span class="tick-item"><span class="tick-icon">💊</span>500+ Products</span>
-        <span class="tick-item"><span class="tick-icon">🐔</span>Poultry Specialists</span>
-        <span class="tick-item"><span class="tick-icon">🐄</span>Livestock Solutions</span>
-        <span class="tick-item"><span class="tick-icon">🏆</span>WHO-GMP Certified</span>
-        <span class="tick-item"><span class="tick-icon">🌍</span>Global Export</span>
-        <span class="tick-item"><span class="tick-icon">🔬</span>Scientifically Formulated</span>
-        <span class="tick-item"><span class="tick-icon">✅</span>ISO Certified</span>
-        <span class="tick-item"><span class="tick-icon">🚚</span>Pan India Delivery</span>
-        <span class="tick-item"><span class="tick-icon">💊</span>500+ Products</span>
-        <span class="tick-item"><span class="tick-icon">🐔</span>Poultry Specialists</span>
-        <span class="tick-item"><span class="tick-icon">🐄</span>Livestock Solutions</span>
-    </div>
-</div>
-
-<!-- ============================================================
-     WHY CHOOSE US  (class "why-choose-us" kept)
-============================================================ -->
 <section class="why-choose-us" id="why-us">
-    <div class="sec-ey rv">Our Strengths</div>
-    <h2 class="sec-ttl rv">Why Choose <em>MT Animal Care?</em></h2>
-    <div class="sec-rule rv"></div>
+    <h2>Why Choose MT Animal Care?</h2>
+
     <div class="why-grid">
-        <div class="why-card rv">
-            <span class="wc-icon">🏭</span>
-            <h4>WHO-GMP Certified</h4>
-            <p>State-of-the-art manufacturing facility meeting international quality &amp; hygiene standards.</p>
-        </div>
-        <div class="why-card rv">
-            <span class="wc-icon">🧪</span>
-            <h4>Custom Formulation</h4>
-            <p>Tailor-made poultry &amp; livestock supplements designed by our expert veterinary team.</p>
-        </div>
-        <div class="why-card rv">
-            <span class="wc-icon">🌍</span>
-            <h4>Bulk &amp; Export Ready</h4>
-            <p>Flexible bulk manufacturing with complete export documentation and global logistics support.</p>
-        </div>
-        <div class="why-card rv">
-            <span class="wc-icon">👨‍⚕️</span>
-            <h4>Expert Veterinary Team</h4>
-            <p>Backed by experienced veterinarians and animal health scientists for proven formulations.</p>
-        </div>
-        <div class="why-card rv">
-            <span class="wc-icon">⚡</span>
-            <h4>Fast Turnaround</h4>
-            <p>Quick order processing with reliable Pan India delivery and real-time order tracking.</p>
-        </div>
+        <div class="why-card">✅ WHO-GMP Certified Facility</div>
+        <div class="why-card">✅ Custom Formulation for Poultry & Livestock</div>
+        <div class="why-card">✅ Bulk Manufacturing & Export Support</div>
+        <div class="why-card">✅ Experienced Veterinary Team</div>
+
     </div>
-</section>
+    <!-- ===== PAGE CONTENT ===== -->
+    <div class="page">
 
-<!-- ============================================================
-     PRODUCTS  (Thymeleaf logic 100% identical to original)
-============================================================ -->
-<section class="products-section" id="shop">
-    <div class="products-header">
-        <div>
-            <div class="sec-ey rv">Our Catalogue</div>
-            <h1 class="sec-ttl rv" th:if="${searchQuery != null}" style="color:#fff;">
-                Results for &ldquo;<em th:text="${searchQuery}"></em>&rdquo;
-            </h1>
-            <h1 class="sec-ttl rv" th:if="${searchQuery == null}" style="color:#fff;">
-                Available <em>Products</em>
-            </h1>
+        <!--  Search Result Heading -->
+        <h1 th:if="${searchQuery != null}">
+            Search Results for "<span th:text="${searchQuery}"></span>"
+        </h1>
+
+        <h1 th:if="${searchQuery == null}">
+            Available Products
+        </h1>
+
+        <!-- Empty result handling -->
+        <div th:if="${#lists.isEmpty(products)}"
+             style="text-align:center; padding:40px; color:#8b0000; font-weight:700;">
+            ❌ No products found.
         </div>
-        <div class="products-count rv">Premium Veterinary Range</div>
-    </div>
 
-    <!-- Empty state -->
-    <div th:if="${#lists.isEmpty(products)}"
-         style="text-align:center;padding:70px;color:var(--txd);font-size:17px;">
-        ❌ No products found.
-    </div>
+        <!-- 🛍 Product Grid -->
+        <!-- 🛍 Product Grid -->
+        <div id="shop" class="product-grid" th:if="${!#lists.isEmpty(products)}">
 
-    <!-- Product grid -->
-    <div class="product-grid" th:if="${!#lists.isEmpty(products)}">
 
-        <div class="product-card"
-             th:each="product : ${products}"
-             th:attr="data-name=${product.name},data-desc=${product.description}">
+            <div class="product-card"
+                 th:each="product : ${products}"
+                 th:attr="data-name=${product.name}, data-desc=${product.description}">
 
-            <div class="card-glow"></div>
-            <div class="card-badge">Premium</div>
 
-            <!-- IMAGE -->
-            <img th:src="${product.imageUrl}"
-                 alt="Product Image"
-                 onerror="this.src='/images/no-image.png'">
+                <img th:src="${product.imageUrl}"
+                     alt="Product Image"
+                     onerror="this.src='/images/no-image.png'">
+                <h3 class="product-name" th:text="${product.name}"></h3>
+                <p class="product-desc" th:text="${product.description}"></p>
 
-            <!-- NAME -->
-            <h3 class="product-name" th:text="${product.name}"></h3>
 
-            <!-- DESC -->
-            <p class="product-desc" th:text="${product.description}"></p>
+                <div class="price">
+                    ₹ <span th:text="${product.price}"></span>
+                </div>
 
-            <!-- PRICE -->
-            <div class="price">&#8377; <span th:text="${product.price}"></span></div>
+                <div class="stock"
+                     th:text="${product.stock > 0 ? 'In Stock' : 'Out of Stock'}">
+                </div>
 
-            <!-- STOCK — original th:text logic kept -->
-            <div th:if="${product.stock > 0}" class="stock">
-                <div class="sdot"></div> In Stock
-            </div>
-            <div th:if="${product.stock <= 0}" class="stock out">
-                ✗ Out of Stock
+                <div class="qty-controls">
+                    <button type="button"
+                            class="qty-btn"
+                            th:attr="onclick=|updateQty(${product.id}, 'decrease')|">
+                        −
+                    </button>
+
+                    <span class="qty-value"
+                          th:id="'qty-' + ${product.id}"
+                          th:text="${cart[product.id] != null ? cart[product.id] : 0}">
+                0
+            </span>
+
+                    <button type="button"
+                            class="qty-btn"
+                            th:attr="onclick=|updateQty(${product.id}, 'increase')|">
+                        +
+                    </button>
+                </div>
+                <a href="javascript:void(0)"
+                   class="know-more-btn"
+                   th:attr="data-img=${product.knowMoreImageUrl}"
+                   onclick="openKnowMoreFromBtn(this)">
+                    🔍 Know More
+                </a>
+
             </div>
 
-            <!-- QTY CONTROLS — original th:attr onclick kept exactly -->
-            <div class="qty-controls">
-                <button type="button" class="qty-btn"
-                        th:attr="onclick=|updateQty(${product.id}, 'decrease')|">−</button>
 
-                <span class="qty-value"
-                      th:id="'qty-' + ${product.id}"
-                      th:text="${cart[product.id] != null ? cart[product.id] : 0}">0</span>
 
-                <button type="button" class="qty-btn"
-                        th:attr="onclick=|updateQty(${product.id}, 'increase')|">+</button>
+
+        </div>
+
+        <!-- Know More Modal -->
+        <div id="knowMoreModal" class="modal-overlay">
+            <div class="modal-box">
+                <span class="close-btn" onclick="closeKnowMore()">✖</span>
+                <img id="knowMoreImg" src="" alt="Know More Image"/>
             </div>
-
-            <!-- KNOW MORE — original onclick + data-img kept -->
-            <a href="javascript:void(0)"
-               class="know-more-btn"
-               th:attr="data-img=${product.knowMoreImageUrl}"
-               onclick="openKnowMoreFromBtn(this)">
-                🔍 Know More
-            </a>
         </div>
-    </div>
-</section>
 
-<!-- ============================================================
-     KNOW MORE MODAL
-     ids: knowMoreModal, knowMoreImg   — kept exactly
-     .modal-box has position:relative  — required for .close-btn
-============================================================ -->
-<div id="knowMoreModal" class="modal-overlay">
-    <div class="modal-box">
-        <span class="close-btn" onclick="closeKnowMore()">✖</span>
-        <img id="knowMoreImg" src="" alt="Know More Image">
-    </div>
-</div>
+        <style>
+            .modal-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.7);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            }
 
-<!-- ============================================================
-     CERTIFICATIONS STRIP
-============================================================ -->
-<div class="cert-strip">
-    <div class="cert-item rv"><div class="cert-icon">🏆</div><div class="cert-name">WHO-GMP</div><div class="cert-desc">Certified Facility</div></div>
-    <div class="cert-item rv"><div class="cert-icon">✅</div><div class="cert-name">ISO Certified</div><div class="cert-desc">Quality Management</div></div>
-    <div class="cert-item rv"><div class="cert-icon">🔬</div><div class="cert-name">Lab Tested</div><div class="cert-desc">Every Batch</div></div>
-    <div class="cert-item rv"><div class="cert-icon">🇮🇳</div><div class="cert-name">MSME Registered</div><div class="cert-desc">Govt. of India</div></div>
-    <div class="cert-item rv"><div class="cert-icon">🌍</div><div class="cert-name">Export Approved</div><div class="cert-desc">15+ Countries</div></div>
-</div>
+            .modal-box {
+                background: linear-gradient(135deg, #7a0000, #ffcc70);
+                padding: 20px;
+                border-radius: 16px;
+                box-shadow: 0 20px 50px rgba(255,215,0,0.5);
+                max-width: 90%;
+                max-height: 90%;
+            }
 
-<!-- ============================================================
-     ABOUT  (class "about-section" kept)
-============================================================ -->
-<section id="about" class="about-section">
-    <div class="about-inner">
-        <div class="rvl">
-            <div class="sec-ey">Who We Are</div>
-            <h2 class="sec-ttl">About Our<br><em>Manufacturing Unit</em></h2>
-            <p class="about-text">We are a quality-driven manufacturing unit specializing in poultry nutrition, veterinary medicines, and animal healthcare products designed to enhance growth, immunity, and overall farm productivity. Our facility follows strict industrial standards, modern production processes, and quality control systems to ensure every product meets safety, performance, and regulatory requirements. From poultry feed supplements and disease-prevention formulations to healthcare solutions for other livestock and animals, we are committed to delivering reliable, effective, and scientifically developed products that support farmers, integrators, and veterinary professionals across the industry.</p>
+            .modal-box img {
+                max-width: 100%;
+                max-height: 70vh;
+                border-radius: 12px;
+                border: 4px solid gold;
+            }
+
+            .close-btn {
+                position: absolute;
+                right: 20px;
+                top: 10px;
+                font-size: 24px;
+                cursor: pointer;
+                color: white;
+            }
+        </style>
+
+        <script>
+            function openKnowMoreFromBtn(btn) {
+                const imgUrl = btn.getAttribute("data-img");
+                document.getElementById("knowMoreImg").src = imgUrl;
+                document.getElementById("knowMoreModal").style.display = "flex";
+            }
+
+            function closeKnowMore() {
+                document.getElementById("knowMoreModal").style.display = "none";
+            }
+        </script>
+
+        <section id="about" class="about-section">
+            <h2>About Our Manufacturing Unit</h2>
+            <p>
+                We are a quality-driven manufacturing unit specializing in poultry nutrition, veterinary medicines,
+                and animal healthcare products designed to enhance growth, immunity, and overall farm productivity.
+                Our facility follows strict industrial standards, modern production processes, and quality control systems
+                to ensure every product meets safety, performance, and regulatory requirements. From poultry feed supplements
+                and disease-prevention formulations to healthcare solutions for other livestock and animals, we are committed
+                to delivering reliable, effective, and scientifically developed products that support farmers, integrators,
+                and veterinary professionals across the industry. Our focus on innovation, hygiene, and consistency helps
+                build healthier flocks and sustainable farming outcomes.
+            </p>
+        </section>
+        <section id="contact" class="contact-section">
+            <h2>Contact Us</h2>
+
+            <div class="contact-grid">
+                <!-- Address -->
+                <div class="contact-card">
+                    <h3>Registered Address</h3>
+                    <p>
+                        B/201, Mauli Apartment 3, Manvel Pada Road,<br>
+                        Nearby Landmark: Jaydeep English Primary School,<br>
+                        Kargil Nagar, Vasai Virar, District: Palghar,<br>
+                        Maharashtra – 401305
+                    </p>
+                </div>
+
+                <!-- Phone & Email -->
+                <div class="contact-card">
+                    <h3>Contact</h3>
+                    <p>
+                        📞 9503569405<br>
+                        📞 97734 05980<br><br>
+                        ✉️ mtanimalhealthcare@gmail.com
+                    </p>
+                </div>
+
+                <!-- Registrations -->
+                <div class="contact-card">
+                    <h3>Registrations</h3>
+                    <p>
+                        MSME: UDYAM-MH-19-0395860<br>
+                        GST: 27ACFFM7590J1ZN
+                    </p>
+                </div>
+            </div>
+        </section>
+        <script>
+            function liveSearchProducts(query) {
+                query = query.toLowerCase().trim();
+
+                const cards = document.querySelectorAll(".product-card");
+                let firstMatch = null;
+
+                cards.forEach(card => {
+                    const nameEl = card.querySelector(".product-name");
+                    const descEl = card.querySelector(".product-desc");
+
+                    const name = nameEl.innerText.toLowerCase();
+                    const desc = descEl.innerText.toLowerCase();
+
+                    // Reset previous highlights
+                    nameEl.innerHTML = nameEl.innerText;
+                    descEl.innerHTML = descEl.innerText;
+
+                    if (!query) {
+                        card.classList.remove("dim");
+                        return;
+                    }
+
+                    if (name.includes(query) || desc.includes(query)) {
+                        card.classList.remove("dim");
+
+                        // Highlight text
+                        highlightText(nameEl, query);
+                        highlightText(descEl, query);
+
+                        if (!firstMatch) {
+                            firstMatch = card;
+                        }
+                    } else {
+                        card.classList.add("dim");
+                    }
+                });
+
+                // Auto scroll to first match
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                }
+            }
+
+            function highlightText(element, query) {
+                const text = element.innerText;
+                const regex = new RegExp(`(${query})`, "ig");
+                element.innerHTML = text.replace(regex, `<span class="highlight">$1</span>`);
+            }
+        </script>
+
+        <!-- 🤖 AI Chatbot -->
+
+        <!-- 🤖 AI Chatbot -->
+        <div id="ai-chatbot">
+            <div id="ai-header">
+                🤖 Ask MT Assistant <span onclick="toggleChatbot()" style="float:right; cursor:pointer;">➖</span>
+            </div>
+            <div id="ai-body"></div>
+            <input type="text" id="ai-input" placeholder="Ask about products, GST, delivery..." />
         </div>
-        <div class="about-visual rvr">
-            <div class="asc"><span class="asc-n">500+</span><span class="asc-l">Products</span></div>
-            <div class="asc"><span class="asc-n">12+</span><span class="asc-l">Years</span></div>
-            <div class="asc"><span class="asc-n">10K+</span><span class="asc-l">Farms</span></div>
-            <div class="asc"><span class="asc-n">15+</span><span class="asc-l">Countries</span></div>
-        </div>
-    </div>
-</section>
 
-<!-- ============================================================
-     CONTACT (classes "contact-section","contact-grid","contact-card" kept)
-============================================================ -->
-<section id="contact" class="contact-section">
-    <div class="sec-ey rv">Get in Touch</div>
-    <h2 class="sec-ttl rv">Contact <em>Us</em></h2>
-    <div class="sec-rule rv"></div>
-    <div class="contact-grid">
-        <div class="contact-card rv">
-            <h3>📍 Registered Address</h3>
-            <p>B/201, Mauli Apartment 3, Manvel Pada Road,<br>
-                Nearby Landmark: Jaydeep English Primary School,<br>
-                Kargil Nagar, Vasai Virar, District: Palghar,<br>
-                Maharashtra – 401305</p>
-        </div>
-        <div class="contact-card rv">
-            <h3>📞 Contact</h3>
-            <p>📞 9503569405<br>📞 97734 05980<br><br>✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cea3baafa0a7a3afa2a6abafa2baa6adafbcab8ea9a3afa7a2e0ada1a3">[email&#160;protected]</a></p>
-        </div>
-        <div class="contact-card rv">
-            <h3>📋 Registrations</h3>
-            <p>MSME: UDYAM-MH-19-0395860<br><br>GST: 27ACFFM7590J1ZN</p>
-        </div>
-    </div>
-</section>
+        <style>
 
-<!-- FOOTER -->
-<footer class="footer">
-    <div class="footer-brand">MT ANIMAL CARE © 2025</div>
-    <div class="footer-links">
-        <a href="/">Home</a>
-        <a href="#shop">Shop</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-    </div>
-</footer>
+            #ai-chatbot {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 320px;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+                overflow: hidden;
+                z-index: 9999;
+                font-family: Arial;
+            }
 
-<!-- Scroll to top -->
-<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+            #ai-header {
+                background: linear-gradient(135deg, #7a0000, #ffcc66);
+                color: white;
+                padding: 10px;
+                font-weight: bold;
+                text-align: center;
+                cursor: move;
+                user-select: none;
+            }
 
-<!-- Talk to Expert — id "talkExpertFloat" kept -->
-<a href="tel:+919503569405" id="talkExpertFloat" title="Call Expert">📞 Talk to an Expert</a>
+            #ai-body {
+                height: 240px;
+                padding: 10px;
+                overflow-y: auto;
+                font-size: 13px;
+                background: #fafafa;
+            }
 
-<!-- ============================================================
-     AI CHATBOT  (ids "ai-chatbot","ai-header","ai-body","ai-input" kept)
-============================================================ -->
-<div id="ai-chatbot">
-    <div id="ai-header">
-        <span><span class="ai-dot"></span>🤖 Ask MT Assistant</span>
-        <span onclick="toggleChatbot()" style="cursor:pointer;opacity:0.6;font-size:17px;">—</span>
-    </div>
-    <div id="ai-body"></div>
-    <input type="text" id="ai-input" placeholder="Ask about products, GST, delivery…">
-</div>
+            .msg-user {
+                margin: 6px 0;
+                text-align: right;
+                color: #333;
+            }
 
-<!-- ============================================================
-     ENQUIRY MODAL (ids "enquiryModal","enquiryForm" kept)
-============================================================ -->
-<div id="enquiryModal" class="enquiry-modal" onclick="backdropClose(event)">
-    <div class="enquiry-box">
-        <span class="close-btn" onclick="closeEnquiryModal()">✖</span>
-        <h2>📩 Custom Product Enquiry</h2>
-        <p>Tell us your requirement and we will design a custom solution for your animals.</p>
-        <form id="enquiryForm" onsubmit="submitEnquiry(event)">
-            <label>Animal Type</label>
-            <select name="animalType" required>
-                <option value="">Select Animal</option>
-                <option value="Chicken">Chicken</option>
-                <option value="Cow">Cow</option>
-                <option value="Goat">Goat</option>
-                <option value="Pig">Pig</option>
-                <option value="Other">Other</option>
-            </select>
-            <label>Requirement (Medicine / Supplement)</label>
-            <textarea name="requirement" placeholder="Describe the problem or supplement needed…" required></textarea>
-            <label>Your Name</label>
-            <input type="text" name="name" required>
-            <label>Contact Number</label>
-            <input type="tel" name="phone" required>
-            <label>Number of Animals</label>
-            <input type="number" name="animalCount" placeholder="e.g. 500" min="1" required>
-            <label>Expected Monthly Requirement</label>
-            <input type="text" name="monthlyRequirement" placeholder="e.g. 10 kg / 100 bottles" required>
-            <button type="submit">Send Enquiry 🚀</button>
-        </form>
-    </div>
-</div>
+            .msg-ai {
+                margin: 6px 0;
+                text-align: left;
+                color: green;
+            }
 
-<!-- ============================================================
-     ALL SCRIPTS — one clean block at bottom of body
-============================================================ -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    /* ── Page ready ── */
+            .typing {
+                font-style: italic;
+                color: gray;
+            }
 
-    /* ── Scroll reveal ── */
-    (function () {
-        var obs = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) {
-                if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); }
-            });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.rv,.rvl,.rvr').forEach(function (el) { obs.observe(el); });
-    })();
+            #ai-input {
+                width: 100%;
+                border: none;
+                border-top: 1px solid #eee;
+                padding: 10px;
+                outline: none;
+            }
 
-    /* ── Product card stagger ── */
-    (function () {
-        var cards = document.querySelectorAll('.product-card');
-        var co = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) {
-                if (e.isIntersecting) {
-                    var i = Array.from(cards).indexOf(e.target);
-                    setTimeout(function () { e.target.classList.add('show'); }, i * 75);
-                    co.unobserve(e.target);
+
+        </style>
+
+        <script>
+            const aiBody = document.getElementById("ai-body");
+            const aiInput = document.getElementById("ai-input");
+
+            aiInput.addEventListener("keydown", function(e) {
+                if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
                 }
             });
-        }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
-        cards.forEach(function (c) { co.observe(c); });
-    })();
 
-    /* ── Scroll to top ── */
-    window.addEventListener('scroll', function () {
-        var b = document.getElementById('scrollTop');
-        if (b) b.classList.toggle('on', window.scrollY > 500);
-    });
+            function sendMessage() {
+                const msg = aiInput.value.trim();
+                if (!msg) return;
 
-    /* ── Live Search (copied from original) ── */
-    function liveSearchProducts(query) {
-        query = query.toLowerCase().trim();
-        var cards = document.querySelectorAll('.product-card');
-        var firstMatch = null;
-        cards.forEach(function (card) {
-            var nameEl = card.querySelector('.product-name');
-            var descEl = card.querySelector('.product-desc');
-            var name = nameEl.innerText.toLowerCase();
-            var desc = descEl.innerText.toLowerCase();
-            nameEl.innerHTML = nameEl.innerText;
-            descEl.innerHTML = descEl.innerText;
-            if (!query) { card.classList.remove('dim'); return; }
-            if (name.includes(query) || desc.includes(query)) {
-                card.classList.remove('dim');
-                highlightText(nameEl, query);
-                highlightText(descEl, query);
-                if (!firstMatch) firstMatch = card;
-            } else {
-                card.classList.add('dim');
-            }
-        });
-        if (firstMatch) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    function highlightText(element, query) {
-        var text = element.innerText;
-        var regex = new RegExp('(' + query + ')', 'ig');
-        element.innerHTML = text.replace(regex, '<span class="highlight">$1</span>');
-    }
+                aiBody.innerHTML += `<div class="msg-user"><b>You:</b> ${escapeHtml(msg)}</div>`;
+                aiInput.value = "";
 
-    /* ── User dropdown (copied from original) ── */
-    function toggleUserMenu() {
-        var menu = document.getElementById('userMenu');
-        if (!menu) return;
-        menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-    }
-    document.addEventListener('click', function (e) {
-        var dd = document.querySelector('.user-dropdown');
-        var menu = document.getElementById('userMenu');
-        if (dd && menu && !dd.contains(e.target)) menu.style.display = 'none';
-    });
-    var um = document.getElementById('userMenu');
-    if (um) um.addEventListener('click', function (e) { e.stopPropagation(); });
-
-    /* ── Mobile menu (copied from original) ── */
-    function toggleMenu() {
-        document.getElementById('mobileMenu').classList.toggle('active');
-        document.getElementById('mobileOverlay').classList.toggle('active');
-        document.getElementById('hamburgerBtn').classList.toggle('active');
-    }
-
-    /* ── Enquiry modal (copied from original) ── */
-    function openEnquiryModal()  { document.getElementById('enquiryModal').classList.add('show'); }
-    function closeEnquiryModal() { document.getElementById('enquiryModal').classList.remove('show'); }
-    function backdropClose(e)    { if (e.target.id === 'enquiryModal') closeEnquiryModal(); }
-    function submitEnquiry(e) {
-        e.preventDefault();
-        var form = document.getElementById('enquiryForm');
-        var data = new FormData(form);
-        var msg = encodeURIComponent(
-            'Hello, I submitted an enquiry on MT Animal Care.\n\n' +
-            'Animal: ' + data.get('animalType') + '\n' +
-            'Number of Animals: ' + data.get('animalCount') + '\n' +
-            'Monthly Requirement: ' + data.get('monthlyRequirement') + '\n' +
-            'Requirement: ' + data.get('requirement') + '\n' +
-            'Name: ' + data.get('name') + '\n' +
-            'Contact: ' + data.get('phone')
-        );
-        fetch('/enquiry', { method: 'POST', body: data }).catch(function(){});
-        alert('✅ Your enquiry has been sent.\n👉 Chat instantly with our expert on WhatsApp.');
-        window.open('https://wa.me/919021466362?text=' + msg, '_blank');
-        form.reset();
-        closeEnquiryModal();
-    }
-
-    /* ── Auto enquiry popup (copied from original — using "enquiryPopupShown") ── */
-    document.addEventListener('DOMContentLoaded', function () {
-        if (!sessionStorage.getItem('enquiryPopupShown')) {
-            setTimeout(function () {
-                openEnquiryModal();
-                sessionStorage.setItem('enquiryPopupShown', 'true');
-            }, 1200);
-        }
-    });
-
-    /* ── AI Chatbot (copied from original) ── */
-    var chatbotMinimized = false;
-    function toggleChatbot() {
-        chatbotMinimized = !chatbotMinimized;
-        document.getElementById('ai-body').style.display  = chatbotMinimized ? 'none' : 'block';
-        document.getElementById('ai-input').style.display = chatbotMinimized ? 'none' : 'block';
-    }
-    function escapeHtml(text) {
-        return text.replace(/[&<>"']/g, function (m) {
-            return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' })[m];
-        });
-    }
-    function sendMessage() {
-        var aiBody  = document.getElementById('ai-body');
-        var aiInput = document.getElementById('ai-input');
-        var msg = aiInput.value.trim();
-        if (!msg) return;
-        aiBody.innerHTML += '<div class="msg-user"><b>You:</b> ' + escapeHtml(msg) + '</div>';
-        aiInput.value = '';
-        var typingEl = document.createElement('div');
-        typingEl.className = 'typing'; typingEl.innerText = 'AI is typing...';
-        aiBody.appendChild(typingEl); aiBody.scrollTop = aiBody.scrollHeight;
-        fetch('/ai-chat', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: msg })
-            .then(function (r) { return r.text(); })
-            .then(function (reply) {
-                typingEl.remove();
-                aiBody.innerHTML += '<div class="msg-ai"><b>AI:</b> ' + escapeHtml(reply) + '</div>';
+                const typingEl = document.createElement("div");
+                typingEl.className = "typing";
+                typingEl.innerText = "AI is typing...";
+                aiBody.appendChild(typingEl);
                 aiBody.scrollTop = aiBody.scrollHeight;
-            })
-            .catch(function () { typingEl.innerText = 'AI is not available right now.'; });
-    }
-    document.addEventListener('DOMContentLoaded', function () {
-        var aiInput = document.getElementById('ai-input');
-        if (aiInput) {
-            aiInput.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-            });
-        }
-        /* ── Chatbot drag (copied from original) ── */
-        var chatbot = document.getElementById('ai-chatbot');
-        var header  = document.getElementById('ai-header');
-        if (!chatbot || !header) return;
-        var isDragging = false, offsetX = 0, offsetY = 0;
-        function startDrag(x,y) { var r=chatbot.getBoundingClientRect(); offsetX=x-r.left; offsetY=y-r.top; isDragging=true; }
-        function moveDrag(x,y) { if(!isDragging) return; chatbot.style.left=(x-offsetX)+'px'; chatbot.style.top=(y-offsetY)+'px'; chatbot.style.right='auto'; chatbot.style.bottom='auto'; chatbot.style.position='fixed'; }
-        function stopDrag() { isDragging=false; }
-        header.addEventListener('mousedown', function(e){ startDrag(e.clientX,e.clientY); e.preventDefault(); });
-        document.addEventListener('mousemove', function(e){ moveDrag(e.clientX,e.clientY); });
-        document.addEventListener('mouseup', stopDrag);
-        header.addEventListener('touchstart', function(e){ var t=e.touches[0]; startDrag(t.clientX,t.clientY); });
-        document.addEventListener('touchmove', function(e){ var t=e.touches[0]; moveDrag(t.clientX,t.clientY); });
-        document.addEventListener('touchend', stopDrag);
-    });
 
-    /* ── Talk to expert position (copied from original) ── */
-    window.addEventListener('load', function
+                fetch("/ai-chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "text/plain"
+                    },
+                    body: msg   // ✅ FIXED: send the actual message
+                })
+                    .then(res => res.text())
+                    .then(reply => {
+                        typingEl.remove();
+                        aiBody.innerHTML += `<div class="msg-ai"><b>AI:</b> ${escapeHtml(reply)}</div>`;
+                        aiBody.scrollTop = aiBody.scrollHeight;
+                    })
+                    .catch(err => {
+                        typingEl.innerText = "AI is not available right now.";
+                        console.error("AI call failed", err);
+                    });
+            }
+
+            function escapeHtml(text) {
+                return text.replace(/[&<>"']/g, function (m) {
+                    return ({
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    })[m];
+                });
+            }
+        </script>
+
+
+        <script>
+            function toggleUserMenu() {
+                const menu = document.getElementById("userMenu");
+                menu.style.display = (menu.style.display === "block") ? "none" : "block";
+            }
+
+            // Prevent dropdown from closing when clicking inside it
+            document.getElementById("userMenu").addEventListener("click", function (e) {
+                e.stopPropagation();
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener("click", function (e) {
+                const dropdown = document.querySelector(".user-dropdown");
+                const menu = document.getElementById("userMenu");
+
+                if (!dropdown.contains(e.target)) {
+                    menu.style.display = "none";
+                }
+            });
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const aiBody = document.getElementById("ai-body");
+                const aiInput = document.getElementById("ai-input");
+                const chatbot = document.getElementById("ai-chatbot");
+                const header = document.getElementById("ai-header");
+
+                if (!chatbot || !header) {
+                    console.error("Chatbot elements not found in DOM");
+                    return;
+                }
+
+                /* ================= Chat Input ================= */
+                aiInput.addEventListener("keydown", function(e) {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+
+                function sendMessage() {
+                    const msg = aiInput.value.trim();
+                    if (!msg) return;
+
+                    aiBody.innerHTML += `<div class="msg-user"><b>You:</b> ${escapeHtml(msg)}</div>`;
+                    aiInput.value = "";
+
+                    const typingEl = document.createElement("div");
+                    typingEl.className = "typing";
+                    typingEl.innerText = "AI is typing...";
+                    aiBody.appendChild(typingEl);
+                    aiBody.scrollTop = aiBody.scrollHeight;
+
+                    fetch("/ai-chat", {
+                        method: "POST",
+                        headers: { "Content-Type": "text/plain" },
+                        body: msg
+                    })
+                        .then(res => res.text())
+                        .then(reply => {
+                            typingEl.remove();
+                            aiBody.innerHTML += `<div class="msg-ai"><b>AI:</b> ${escapeHtml(reply)}</div>`;
+                            aiBody.scrollTop = aiBody.scrollHeight;
+                        })
+                        .catch(() => {
+                            typingEl.innerText = "AI is not available right now.";
+                        });
+                }
+
+                function escapeHtml(text) {
+                    return text.replace(/[&<>"']/g, function (m) {
+                        return ({
+                            '&': '&amp;',
+                            '<': '&lt;',
+                            '>': '&gt;',
+                            '"': '&quot;',
+                            "'": '&#039;'
+                        })[m];
+                    });
+                }
+
+                /* ================= Drag Logic (Desktop + Mobile) ================= */
+
+                let isDragging = false;
+                let offsetX = 0, offsetY = 0;
+
+                function startDrag(x, y) {
+                    const rect = chatbot.getBoundingClientRect();
+                    offsetX = x - rect.left;
+                    offsetY = y - rect.top;
+                    isDragging = true;
+                }
+
+                function moveDrag(x, y) {
+                    if (!isDragging) return;
+                    chatbot.style.left = (x - offsetX) + "px";
+                    chatbot.style.top = (y - offsetY) + "px";
+                    chatbot.style.right = "auto";
+                    chatbot.style.bottom = "auto";
+                    chatbot.style.position = "fixed";
+                }
+
+                function stopDrag() {
+                    isDragging = false;
+                }
+
+                // 🖱️ Desktop
+                header.addEventListener("mousedown", e => {
+                    startDrag(e.clientX, e.clientY);
+                    e.preventDefault();
+                });
+
+                document.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
+                document.addEventListener("mouseup", stopDrag);
+
+                // 📱 Mobile (Touch support)
+                header.addEventListener("touchstart", e => {
+                    const t = e.touches[0];
+                    startDrag(t.clientX, t.clientY);
+                });
+
+                document.addEventListener("touchmove", e => {
+                    const t = e.touches[0];
+                    moveDrag(t.clientX, t.clientY);
+                });
+
+                document.addEventListener("touchend", stopDrag);
+
+            });
+        </script>
+
+        <!-- 📨 Enquiry Modal -->
+        <div id="enquiryModal" class="enquiry-modal" onclick="backdropClose(event)">
+            <div class="enquiry-box">
+                <span class="close-btn" onclick="closeEnquiryModal()">✖</span>
+
+                <h2>📩 Custom Product Enquiry</h2>
+                <p>Tell us your requirement and we will design a custom solution for your animals.</p>
+
+                <form id="enquiryForm" onsubmit="submitEnquiry(event)">
+                    <label>Animal Type</label>
+                    <select name="animalType" required>
+                        <option value="">Select Animal</option>
+                        <option value="Chicken">Chicken</option>
+                        <option value="Cow">Cow</option>
+                        <option value="Goat">Goat</option>
+                        <option value="Pig">Pig</option>
+                        <option value="Other">Other</option>
+                    </select>
+
+                    <label>Requirement (Medicine / Supplement)</label>
+                    <textarea name="requirement" placeholder="Describe the problem or supplement needed..." required></textarea>
+
+                    <label>Your Name</label>
+                    <input type="text" name="name" required />
+
+                    <label>Contact Number</label>
+                    <input type="tel" name="phone" required />
+
+                    <label>Number of Animals</label>
+                    <input type="number" name="animalCount" placeholder="e.g. 500" min="1" required />
+
+                    <label>Expected Monthly Requirement</label>
+                    <input type="text" name="monthlyRequirement" placeholder="e.g. 10 kg / 100 bottles" required />
+
+                    <button type="submit">Send Enquiry</button>
+                </form>
+            </div>
+        </div>
+
+        <style>
+            .enquiry-modal {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.7);
+                z-index: 99999;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .enquiry-modal.show {
+                display: flex;
+            }
+
+            .enquiry-box {
+                background: linear-gradient(135deg, #7a0000, #ffcc66);
+                padding: 30px;
+                border-radius: 16px;
+                width: 90%;
+                max-width: 420px;
+                color: #fff;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+                position: relative;
+            }
+
+            .enquiry-box h2 {
+                margin-bottom: 10px;
+                color: #ffd700;
+            }
+
+            .enquiry-box p {
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .enquiry-box label {
+                display: block;
+                margin-top: 10px;
+                font-weight: 600;
+            }
+
+            .enquiry-box input,
+            .enquiry-box select,
+            .enquiry-box textarea {
+                width: 100%;
+                padding: 8px 10px;
+                margin-top: 6px;
+                border-radius: 6px;
+                border: none;
+                outline: none;
+            }
+
+            .enquiry-box textarea {
+                min-height: 80px;
+                resize: vertical;
+            }
+
+            .enquiry-box button {
+                width: 100%;
+                margin-top: 18px;
+                padding: 10px;
+                border-radius: 8px;
+                border: none;
+                background: #ffd700;
+                color: #7a0000;
+                font-weight: 800;
+                cursor: pointer;
+            }
+
+            .enquiry-box button:hover {
+                background: #ffea00;
+            }
+
+            .enquiry-box .close-btn {
+                position: absolute;
+                right: 14px;
+                top: 10px;
+                font-size: 20px;
+                cursor: pointer;
+            }
+        </style>
+
+        <script>
+            function openEnquiryModal() {
+                document.getElementById("enquiryModal").classList.add("show");
+            }
+
+            function closeEnquiryModal() {
+                document.getElementById("enquiryModal").classList.remove("show");
+            }
+
+            function backdropClose(e) {
+                if (e.target.id === "enquiryModal") {
+                    closeEnquiryModal();
+                }
+            }
+
+            function submitEnquiry(e) {
+                e.preventDefault();
+
+                const form = document.getElementById("enquiryForm");
+                const data = new FormData(form);
+
+                const whatsappMsg = encodeURIComponent(
+                    `Hello, I submitted an enquiry on MT Animal Care.\n\n` +
+                    `Animal: ${data.get("animalType")}\n` +
+                    `Number of Animals: ${data.get("animalCount")}\n` +
+                    `Monthly Requirement: ${data.get("monthlyRequirement")}\n` +
+                    `Requirement: ${data.get("requirement")}\n` +
+                    `Name: ${data.get("name")}\n` +
+                    `Contact: ${data.get("phone")}`
+                );
+
+                const whatsappNumber = "919021466362";
+
+                // Optional backend call (won't break if API not present)
+                fetch("/enquiry", { method: "POST", body: data }).catch(() => {});
+
+                alert("✅ Your enquiry has been sent.\n👉 Chat instantly with our expert on WhatsApp.");
+
+                window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, "_blank");
+
+                form.reset();
+                closeEnquiryModal();
+            }
+
+            // 🔥 Auto popup on page load (only once per session)
+            document.addEventListener("DOMContentLoaded", function () {
+                if (!sessionStorage.getItem("enquiryPopupShown")) {
+                    setTimeout(() => {
+                        openEnquiryModal();
+                        sessionStorage.setItem("enquiryPopupShown", "true");
+                    }, 1200);
+                }
+            });
+        </script>
+
+        <script>
+            function toggleMenu() {
+                const menu = document.getElementById("mobileMenu");
+                const overlay = document.getElementById("mobileOverlay");
+                const burger = document.getElementById("hamburgerBtn");
+
+                menu.classList.toggle("active");
+                overlay.classList.toggle("active");
+                burger.classList.toggle("active");
+            }
+        </script>
+
+
+        </script>
+        <style>
+
+
+            @media (max-width: 768px) {
+                #ai-chatbot {
+                    width: 92%;
+                    right: 4%;
+                    bottom: 70px;     /* above cart button */
+                    max-height: 300px;
+                }
+
+                #ai-body {
+                    height: 140px;
+                }
+            }
+
+
+        </style>
+        <script>
+            let chatbotMinimized = false;
+
+            function toggleChatbot() {
+                const body = document.getElementById("ai-body");
+                const input = document.getElementById("ai-input");
+
+                chatbotMinimized = !chatbotMinimized;
+
+                if (chatbotMinimized) {
+                    body.style.display = "none";
+                    input.style.display = "none";
+                } else {
+                    body.style.display = "block";
+                    input.style.display = "block";
+                }
+            }
+        </script>
+        <style>
+            /* ===== MOBILE DRAWER MENU ===== */
+            .mobile-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 998;
+            }
+
+            .mobile-overlay.active {
+                display: block;
+            }
+
+            .mobile-menu {
+                position: fixed;
+                top: 0;
+                left: -80%;
+                width: 80%;
+                max-width: 300px;
+                height: 100vh;
+                background: #ffffff;
+                z-index: 999;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+                box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+                transition: left 0.3s ease;
+            }
+
+            .mobile-menu.active {
+                left: 0;
+            }
+
+
+        </style>
+        <style>
+            .navbar {
+                min-height: 64px;
+            }
+
+            /* ===== HAMBURGER (DESKTOP HIDDEN BY DEFAULT) ===== */
+            .hamburger {
+                display: none;              /* ❌ hidden on desktop */
+                flex-direction: column;
+                gap: 4px;
+                cursor: pointer;
+                padding: 6px;
+            }
+
+            .hamburger span {
+                width: 22px;
+                height: 2px;
+                background: #111;
+                border-radius: 2px;
+                transition: 0.3s ease;
+            }
+
+            /* ===== MOBILE ONLY ===== */
+            @media (max-width: 768px) {
+                .hamburger {
+                    display: flex;          /* ✅ visible only on mobile */
+                    margin-left: auto;
+                }
+            }
+
+            /* Hamburger animation */
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(5px, -5px);
+            }
+
+        </style>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                if (!sessionStorage.getItem("enquiryShown")) {
+                    setTimeout(() => {
+                        openEnquiryModal();
+                        sessionStorage.setItem("enquiryShown", "true");
+                    }, 1000);
+                }
+            });
+        </script>
+
+        <!-- 📞 Floating Talk to an Expert -->
+        <!-- 📞 Floating Talk to an Expert -->
+        <a href="tel:+919503569405" id="talkExpertFloat" title="Call Poultry Expert">
+            📞 Talk to an Expert
+        </a>
+
+        <style>
+            /* ===== Floating Talk to an Expert (Right Side) ===== */
+            #talkExpertFloat {
+                position: fixed;        /* floating */
+                top: 110px;             /* 🔼 move up/down by changing this */
+                right: 20px;
+                z-index: 9999;
+
+                background: linear-gradient(135deg, #16a34a, #22c55e);
+                color: #ffffff;
+                text-decoration: none;
+
+                padding: 12px 18px;
+                border-radius: 999px;
+
+                font-weight: 800;
+                font-size: 13px;
+                letter-spacing: 0.3px;
+
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+
+                box-shadow:
+                        0 10px 24px rgba(0,0,0,0.35),
+                        0 0 0 0 rgba(34, 197, 94, 0.6);
+
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                animation: expertPulse 2.2s infinite;
+            }
+
+            #talkExpertFloat:hover {
+                transform: translateY(-2px) scale(1.06);
+                box-shadow:
+                        0 14px 32px rgba(0,0,0,0.45),
+                        0 0 0 8px rgba(34, 197, 94, 0.25);
+            }
+
+            /* Subtle pulse glow */
+            @keyframes expertPulse {
+                0% {
+                    box-shadow: 0 10px 24px rgba(0,0,0,0.35), 0 0 0 0 rgba(34, 197, 94, 0.5);
+                }
+                70% {
+                    box-shadow: 0 12px 30px rgba(0,0,0,0.45), 0 0 0 10px rgba(34, 197, 94, 0);
+                }
+                100% {
+                    box-shadow: 0 10px 24px rgba(0,0,0,0.35), 0 0 0 0 rgba(34, 197, 94, 0);
+                }
+            }
+
+            /* 📱 Mobile tweak */
+            @media (max-width: 768px) {
+                #talkExpertFloat {
+                    top: 90px;        /* a bit higher on mobile */
+                    right: 10px;
+                    padding: 10px 14px;
+                    font-size: 11px;
+                }
+            }
+
+        </style>
+        <script>
+            // Optional: adjust position dynamically if navbar height changes
+            window.addEventListener("load", function () {
+                const btn = document.getElementById("talkExpertFloat");
+                const navbar = document.querySelector(".navbar");
+
+                if (btn && navbar) {
+                    const navHeight = navbar.offsetHeight || 80;
+                    btn.style.top = (navHeight + 20) + "px"; // keeps it just below navbar
+                }
+            });
+        </script>
+
+        <style>
+            /* 🔥 Remove weird white line / stray element near hamburger */
+            @media (max-width: 768px) {
+                .mobile-menu-header::before,
+                .mobile-menu-header::after {
+                    content: none !important;
+                    display: none !important;
+                }
+
+                .mobile-menu-header {
+                    border: none !important;
+                    box-shadow: none !important;
+                }
+                /* ===== MOBILE DRAWER MENU LINKS (CLEAN UI) ===== */
+                .mobile-menu a {
+                    padding: 14px 16px;
+                    text-decoration: none;
+                    color: #8b0000;
+                    font-size: 16px;
+                    font-weight: 700;
+                    border-radius: 10px;
+                    background: linear-gradient(135deg, #fff7ed, #fff1c1);
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+                    transition: all 0.2s ease;
+                }
+
+                .mobile-menu a:hover {
+                    transform: translateX(6px);
+                    background: linear-gradient(135deg, #8b0000, #ffcc66);
+                    color: white;
+                }
+
+            }
+        </style>
+        <style>
+            /* 🔥 FINAL FIX: remove white line near hamburger (mobile only) */
+            @media (max-width: 768px) {
+
+                /* Kill any stray borders or outlines near navbar */
+                .navbar,
+                .brand,
+                .mobile-menu,
+                .mobile-menu-header {
+                    border: none !important;
+                    outline: none !important;
+                    box-shadow: none !important;
+                }
+
+                /* Prevent any horizontal overflow causing white sliver */
+                html, body {
+                    overflow-x: hidden !important;
+                }
+
+                /* Ensure mobile drawer is fully off-canvas */
+                .mobile-menu {
+                    left: -100% !important;
+                }
+
+                .mobile-menu.active {
+                    left: 0 !important;
+                }
+
+                /* Remove any accidental left pseudo elements */
+                .mobile-menu::before,
+                .mobile-menu-header::before {
+                    content: none !important;
+                    display: none !important;
+                }
+            }
+        </style>
+</body>
+</html>
