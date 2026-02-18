@@ -979,39 +979,129 @@
         @media (max-width: 900px) {
             .desktop-nav { display: none; }
             .hamburger { display: flex; }
-            .navbar { padding: 0 16px; }
         }
 
         @media (max-width: 768px) {
-            :root { --nav-h: 60px; }
+            :root { --nav-h: 58px; }
+
+            /* ── Navbar: single tight row ── */
+            .navbar {
+                padding: 0 12px;
+                height: var(--nav-h);
+                flex-wrap: nowrap;
+                gap: 8px;
+            }
+
+            /* Logo: smaller, no wrap */
+            .brand { flex-shrink: 0; gap: 8px; }
+            .brand-logo { height: 34px; width: 34px; }
+            .brand-text span:first-child { font-size: 13px; }
+            .brand-text span:last-child { display: none; } /* hide "PREMIUM VETERINARY" on mobile */
+
+            /* Hamburger right after brand */
+            .hamburger { margin-left: 0; flex-shrink: 0; }
+
+            /* Right actions: compact, no wrap */
+            .right-actions {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 6px;
+                flex-wrap: nowrap;
+                overflow: hidden;
+            }
+
+            /* Hide search on mobile to save space */
+            .search-wrap { display: none; }
+
+            /* Smaller action buttons */
+            .whatsapp-btn { width: 32px; height: 32px; flex-shrink: 0; }
+            .whatsapp-icon { width: 16px; height: 16px; }
+
+            .login-btn {
+                padding: 6px 10px;
+                font-size: 11px;
+                white-space: nowrap;
+                max-width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* Truncate long usernames */
+            .user-btn {
+                padding: 6px 10px;
+                font-size: 11px;
+                max-width: 130px;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+            .user-btn span[sec\:authentication] {
+                max-width: 70px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: inline-block;
+            }
+
+            .cart-btn { width: 34px; height: 34px; font-size: 16px; flex-shrink: 0; }
+
+            /* Hero */
             .hero-section { min-height: 45vh; max-height: 60vh; }
             .hero-overlay { left: 20px; right: 20px; bottom: 20px; }
+
+            /* Sections */
             .why-choose-us { padding: 40px 20px; }
             .why-choose-us h2 { font-size: 24px; }
             .why-grid { grid-template-columns: 1fr; }
             .page { padding: 36px 20px 56px; }
             .about-section { padding: 56px 20px; }
             .contact-section { padding: 56px 20px; }
+
+            /* Products */
             .product-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
             .product-card h3 { font-size: 14px; }
             .card-img-wrap { height: 140px; }
             .price { font-size: 16px; }
-            /* Cart stays in navbar on mobile — no fixed override */
+
+            /* Chatbot */
             #ai-chatbot { width: 92%; right: 4%; bottom: 24px; }
             #ai-body { height: 150px; }
+
+            /* Expert button */
             #talkExpertFloat {
                 top: calc(var(--nav-h) + 12px);
                 right: 10px;
                 padding: 9px 14px;
                 font-size: 11px;
             }
-            .search-wrap input { width: 120px; }
-            .search-wrap input:focus { width: 140px; }
+        }
+
+        @media (max-width: 420px) {
+            .product-grid { grid-template-columns: 1fr; }
+            /* On very small screens, truncate username more aggressively */
+            .user-btn span { max-width: 50px; }
         }
 
         @media (max-width: 420px) {
             .product-grid { grid-template-columns: 1fr; }
         }
+
+        /* Mobile search inside drawer */
+        .mobile-search-wrap {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--ivory-dark);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-bottom: 4px;
+        }
+        .mobile-search-icon { font-size: 14px; flex-shrink: 0; }
+        .mobile-search-wrap input {
+            border: none; background: none; outline: none;
+            font-family: var(--font-body); font-size: 14px;
+            color: var(--text-primary); width: 100%;
+        }
+        .mobile-search-wrap input::placeholder { color: var(--text-muted); }
 
         /* ============================================================
            IMAGE MODAL (legacy from original — kept for compat)
@@ -1117,11 +1207,22 @@
             </div>
             <span class="close-menu" onclick="toggleMenu()">✖</span>
         </div>
+
+        <!-- Search bar inside drawer -->
+        <div class="mobile-search-wrap">
+            <span class="mobile-search-icon">🔍</span>
+            <input type="text"
+                   id="liveSearchMobile"
+                   placeholder="Search products…"
+                   oninput="liveSearchProducts(this.value); document.getElementById('liveSearch').value=this.value;"
+            />
+        </div>
+
         <a href="/">Home</a>
-        <a href="#shop">Shop</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-        <a href="javascript:void(0)" onclick="openEnquiryModal()">Enquiry</a>
+        <a href="#shop" onclick="toggleMenu()">Shop</a>
+        <a href="#about" onclick="toggleMenu()">About</a>
+        <a href="#contact" onclick="toggleMenu()">Contact</a>
+        <a href="javascript:void(0)" onclick="closeMenuAndEnquiry()">Enquiry</a>
         <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
     </div>
 
@@ -1239,14 +1340,12 @@
                                 th:attr="onclick=|updateQty(${product.id}, 'increase')|">+</button>
                     </div>
 
-                    <a th:if="${product.knowMoreImageUrl != null}"
-                       href="javascript:void(0)"
+                    <a href="javascript:void(0)"
                        class="know-more-btn"
                        th:attr="data-img=${product.knowMoreImageUrl}"
                        onclick="openKnowMoreFromBtn(this)">
                         🔍 Know More
                     </a>
-
                 </div>
             </div>
         </div>
@@ -1258,11 +1357,7 @@
     <div id="knowMoreModal" class="modal-overlay">
         <div class="modal-box">
             <span class="close-btn" onclick="closeKnowMore()">✖</span>
-            <img id="knowMoreImg"
-                 src=""
-                 alt="Know More Image"
-                 onerror="this.src='/images/no-image.png'"/>
-
+            <img id="knowMoreImg" src="" alt="Know More Image"/>
         </div>
     </div>
 
@@ -1305,7 +1400,7 @@
                 <p>
                     📞 9503569405<br>
                     📞 97734 05980<br><br>
-                    ✉️ mtanimalhealthcare@gmail.com
+                    ✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fc91889d9295919d9094999d9088949f9d8e99bc9b919d9590d29f9391">[email&#160;protected]</a>
                 </p>
             </div>
             <div class="contact-card">
@@ -1321,181 +1416,180 @@
     <!-- ============================================================
          ALL SCRIPTS — LOGIC UNCHANGED
     ============================================================ -->
-    <script>
-        /* Know More Modal */
-        function openKnowMoreFromBtn(btn) {
-            const imgUrl = btn.getAttribute("data-img");
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    /* Know More Modal */
+    function openKnowMoreFromBtn(btn) {
+        const imgUrl = btn.getAttribute("data-img");
+        document.getElementById("knowMoreImg").src = imgUrl;
+        document.getElementById("knowMoreModal").style.display = "flex";
+    }
+    function closeKnowMore() {
+        document.getElementById("knowMoreModal").style.display = "none";
+    }
 
-            if (!imgUrl) {
-                alert("No additional image available for this product.");
-                return;
+    /* Live Search */
+    function liveSearchProducts(query) {
+        query = query.toLowerCase().trim();
+        const cards = document.querySelectorAll(".product-card");
+        let firstMatch = null;
+        cards.forEach(card => {
+            const nameEl = card.querySelector(".product-name");
+            const descEl = card.querySelector(".product-desc");
+            const name = nameEl.innerText.toLowerCase();
+            const desc = descEl.innerText.toLowerCase();
+            nameEl.innerHTML = nameEl.innerText;
+            descEl.innerHTML = descEl.innerText;
+            if (!query) { card.classList.remove("dim"); return; }
+            if (name.includes(query) || desc.includes(query)) {
+                card.classList.remove("dim");
+                highlightText(nameEl, query);
+                highlightText(descEl, query);
+                if (!firstMatch) firstMatch = card;
+            } else {
+                card.classList.add("dim");
             }
+        });
+        if (firstMatch) firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    function highlightText(element, query) {
+        const text = element.innerText;
+        const regex = new RegExp(`(${query})`, "ig");
+        element.innerHTML = text.replace(regex, `<span class="highlight">$1</span>`);
+    }
 
-            const img = document.getElementById("knowMoreImg");
-            img.src = imgUrl;
-            document.getElementById("knowMoreModal").style.display = "flex";
-        }
-        function closeKnowMore() {
-            document.getElementById("knowMoreModal").style.display = "none";
+    /* User Dropdown */
+    function toggleUserMenu() {
+        const menu = document.getElementById("userMenu");
+        menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    }
+    document.getElementById("userMenu")?.addEventListener("click", function(e) { e.stopPropagation(); });
+    document.addEventListener("click", function(e) {
+        const dropdown = document.querySelector(".user-dropdown");
+        const menu = document.getElementById("userMenu");
+        if (dropdown && menu && !dropdown.contains(e.target)) menu.style.display = "none";
+    });
+
+    /* Mobile Menu */
+    function toggleMenu() {
+        document.getElementById("mobileMenu").classList.toggle("active");
+        document.getElementById("mobileOverlay").classList.toggle("active");
+        document.getElementById("hamburgerBtn").classList.toggle("active");
+    }
+
+    /* Close menu then open enquiry */
+    function closeMenuAndEnquiry() {
+        document.getElementById("mobileMenu").classList.remove("active");
+        document.getElementById("mobileOverlay").classList.remove("active");
+        document.getElementById("hamburgerBtn").classList.remove("active");
+        setTimeout(() => openEnquiryModal(), 200);
+    }
+
+    /* Enquiry Modal */
+    function openEnquiryModal() {
+        document.getElementById("enquiryModal").classList.add("show");
+    }
+    function closeEnquiryModal() {
+        document.getElementById("enquiryModal").classList.remove("show");
+    }
+    function backdropClose(e) {
+        if (e.target.id === "enquiryModal") closeEnquiryModal();
+    }
+    function submitEnquiry(e) {
+        e.preventDefault();
+        const form = document.getElementById("enquiryForm");
+        const data = new FormData(form);
+        const whatsappMsg = encodeURIComponent(
+            `Hello, I submitted an enquiry on MT Animal Care.\n\n` +
+            `Animal: ${data.get("animalType")}\n` +
+            `Number of Animals: ${data.get("animalCount")}\n` +
+            `Monthly Requirement: ${data.get("monthlyRequirement")}\n` +
+            `Requirement: ${data.get("requirement")}\n` +
+            `Name: ${data.get("name")}\n` +
+            `Contact: ${data.get("phone")}`
+        );
+        const whatsappNumber = "919021466362";
+        fetch("/enquiry", { method: "POST", body: data }).catch(() => {});
+        alert("✅ Your enquiry has been sent.\n👉 Chat instantly with our expert on WhatsApp.");
+        window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, "_blank");
+        form.reset();
+        closeEnquiryModal();
+    }
+
+    /* Chatbot minimize */
+    let chatbotMinimized = false;
+    function toggleChatbot() {
+        const body = document.getElementById("ai-body");
+        const input = document.getElementById("ai-input");
+        chatbotMinimized = !chatbotMinimized;
+        body.style.display = chatbotMinimized ? "none" : "block";
+        input.style.display = chatbotMinimized ? "none" : "block";
+    }
+
+    /* DOMContentLoaded */
+    document.addEventListener("DOMContentLoaded", function () {
+        /* Auto enquiry popup once per session */
+        if (!sessionStorage.getItem("enquiryShown")) {
+            setTimeout(() => { openEnquiryModal(); sessionStorage.setItem("enquiryShown", "true"); }, 1200);
         }
 
-        /* Live Search */
-        function liveSearchProducts(query) {
-            query = query.toLowerCase().trim();
-            const cards = document.querySelectorAll(".product-card");
-            let firstMatch = null;
-            cards.forEach(card => {
-                const nameEl = card.querySelector(".product-name");
-                const descEl = card.querySelector(".product-desc");
-                const name = nameEl.innerText.toLowerCase();
-                const desc = descEl.innerText.toLowerCase();
-                nameEl.innerHTML = nameEl.innerText;
-                descEl.innerHTML = descEl.innerText;
-                if (!query) { card.classList.remove("dim"); return; }
-                if (name.includes(query) || desc.includes(query)) {
-                    card.classList.remove("dim");
-                    highlightText(nameEl, query);
-                    highlightText(descEl, query);
-                    if (!firstMatch) firstMatch = card;
-                } else {
-                    card.classList.add("dim");
-                }
-            });
-            if (firstMatch) firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-        function highlightText(element, query) {
-            const text = element.innerText;
-            const regex = new RegExp(`(${query})`, "ig");
-            element.innerHTML = text.replace(regex, `<span class="highlight">$1</span>`);
+        /* Floating button position handled by CSS calc(var(--nav-h) + 16px) */
+
+        /* ---- CHATBOT ---- */
+        const aiBody = document.getElementById("ai-body");
+        const aiInput = document.getElementById("ai-input");
+        const chatbot = document.getElementById("ai-chatbot");
+        const header = document.getElementById("ai-header");
+
+        function escapeHtml(text) {
+            return text.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]);
         }
 
-        /* User Dropdown */
-        function toggleUserMenu() {
-            const menu = document.getElementById("userMenu");
-            menu.style.display = (menu.style.display === "block") ? "none" : "block";
-        }
-        document.getElementById("userMenu")?.addEventListener("click", function(e) { e.stopPropagation(); });
-        document.addEventListener("click", function(e) {
-            const dropdown = document.querySelector(".user-dropdown");
-            const menu = document.getElementById("userMenu");
-            if (dropdown && menu && !dropdown.contains(e.target)) menu.style.display = "none";
+        aiInput.addEventListener("keydown", function(e) {
+            if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
         });
 
-        /* Mobile Menu */
-        function toggleMenu() {
-            document.getElementById("mobileMenu").classList.toggle("active");
-            document.getElementById("mobileOverlay").classList.toggle("active");
-            document.getElementById("hamburgerBtn").classList.toggle("active");
+        function sendMessage() {
+            const msg = aiInput.value.trim();
+            if (!msg) return;
+            aiBody.innerHTML += `<div class="msg-user"><b>You:</b> ${escapeHtml(msg)}</div>`;
+            aiInput.value = "";
+            const typingEl = document.createElement("div");
+            typingEl.className = "typing"; typingEl.innerText = "AI is typing…";
+            aiBody.appendChild(typingEl);
+            aiBody.scrollTop = aiBody.scrollHeight;
+            fetch("/ai-chat", { method: "POST", headers: { "Content-Type": "text/plain" }, body: msg })
+                .then(res => res.text())
+                .then(reply => {
+                    typingEl.remove();
+                    aiBody.innerHTML += `<div class="msg-ai"><b>AI:</b> ${escapeHtml(reply)}</div>`;
+                    aiBody.scrollTop = aiBody.scrollHeight;
+                })
+                .catch(() => { typingEl.innerText = "AI is not available right now."; });
         }
 
-        /* Enquiry Modal */
-        function openEnquiryModal() {
-            document.getElementById("enquiryModal").classList.add("show");
+        /* Drag */
+        let isDragging = false, offsetX = 0, offsetY = 0;
+        function startDrag(x, y) {
+            const rect = chatbot.getBoundingClientRect();
+            offsetX = x - rect.left; offsetY = y - rect.top; isDragging = true;
         }
-        function closeEnquiryModal() {
-            document.getElementById("enquiryModal").classList.remove("show");
+        function moveDrag(x, y) {
+            if (!isDragging) return;
+            chatbot.style.left = (x - offsetX) + "px"; chatbot.style.top = (y - offsetY) + "px";
+            chatbot.style.right = "auto"; chatbot.style.bottom = "auto"; chatbot.style.position = "fixed";
         }
-        function backdropClose(e) {
-            if (e.target.id === "enquiryModal") closeEnquiryModal();
-        }
-        function submitEnquiry(e) {
-            e.preventDefault();
-            const form = document.getElementById("enquiryForm");
-            const data = new FormData(form);
-            const whatsappMsg = encodeURIComponent(
-                `Hello, I submitted an enquiry on MT Animal Care.\n\n` +
-                `Animal: ${data.get("animalType")}\n` +
-                `Number of Animals: ${data.get("animalCount")}\n` +
-                `Monthly Requirement: ${data.get("monthlyRequirement")}\n` +
-                `Requirement: ${data.get("requirement")}\n` +
-                `Name: ${data.get("name")}\n` +
-                `Contact: ${data.get("phone")}`
-            );
-            const whatsappNumber = "919021466362";
-            fetch("/enquiry", { method: "POST", body: data }).catch(() => {});
-            alert("✅ Your enquiry has been sent.\n👉 Chat instantly with our expert on WhatsApp.");
-            window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, "_blank");
-            form.reset();
-            closeEnquiryModal();
-        }
+        function stopDrag() { isDragging = false; }
 
-        /* Chatbot minimize */
-        let chatbotMinimized = false;
-        function toggleChatbot() {
-            const body = document.getElementById("ai-body");
-            const input = document.getElementById("ai-input");
-            chatbotMinimized = !chatbotMinimized;
-            body.style.display = chatbotMinimized ? "none" : "block";
-            input.style.display = chatbotMinimized ? "none" : "block";
-        }
+        header.addEventListener("mousedown", e => { startDrag(e.clientX, e.clientY); e.preventDefault(); });
+        document.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
+        document.addEventListener("mouseup", stopDrag);
+        header.addEventListener("touchstart", e => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); });
+        document.addEventListener("touchmove", e => { const t = e.touches[0]; moveDrag(t.clientX, t.clientY); });
+        document.addEventListener("touchend", stopDrag);
+    });
+</script>
 
-        /* DOMContentLoaded */
-        document.addEventListener("DOMContentLoaded", function () {
-            /* Auto enquiry popup once per session */
-            if (!sessionStorage.getItem("enquiryShown")) {
-                setTimeout(() => { openEnquiryModal(); sessionStorage.setItem("enquiryShown", "true"); }, 1200);
-            }
 
-            /* Floating button position handled by CSS calc(var(--nav-h) + 16px) */
-
-            /* ---- CHATBOT ---- */
-            const aiBody = document.getElementById("ai-body");
-            const aiInput = document.getElementById("ai-input");
-            const chatbot = document.getElementById("ai-chatbot");
-            const header = document.getElementById("ai-header");
-
-            function escapeHtml(text) {
-                return text.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]);
-            }
-
-            aiInput.addEventListener("keydown", function(e) {
-                if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-            });
-
-            function sendMessage() {
-                const msg = aiInput.value.trim();
-                if (!msg) return;
-                aiBody.innerHTML += `<div class="msg-user"><b>You:</b> ${escapeHtml(msg)}</div>`;
-                aiInput.value = "";
-                const typingEl = document.createElement("div");
-                typingEl.className = "typing"; typingEl.innerText = "AI is typing…";
-                aiBody.appendChild(typingEl);
-                aiBody.scrollTop = aiBody.scrollHeight;
-                fetch("/ai-chat", { method: "POST", headers: { "Content-Type": "text/plain" }, body: msg })
-                    .then(res => res.text())
-                    .then(reply => {
-                        typingEl.remove();
-                        aiBody.innerHTML += `<div class="msg-ai"><b>AI:</b> ${escapeHtml(reply)}</div>`;
-                        aiBody.scrollTop = aiBody.scrollHeight;
-                    })
-                    .catch(() => { typingEl.innerText = "AI is not available right now."; });
-            }
-
-            /* Drag */
-            let isDragging = false, offsetX = 0, offsetY = 0;
-            function startDrag(x, y) {
-                const rect = chatbot.getBoundingClientRect();
-                offsetX = x - rect.left; offsetY = y - rect.top; isDragging = true;
-            }
-            function moveDrag(x, y) {
-                if (!isDragging) return;
-                chatbot.style.left = (x - offsetX) + "px"; chatbot.style.top = (y - offsetY) + "px";
-                chatbot.style.right = "auto"; chatbot.style.bottom = "auto"; chatbot.style.position = "fixed";
-            }
-            function stopDrag() { isDragging = false; }
-
-            header.addEventListener("mousedown", e => { startDrag(e.clientX, e.clientY); e.preventDefault(); });
-            document.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
-            document.addEventListener("mouseup", stopDrag);
-            header.addEventListener("touchstart", e => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); });
-            document.addEventListener("touchmove", e => { const t = e.touches[0]; moveDrag(t.clientX, t.clientY); });
-            document.addEventListener("touchend", stopDrag);
-        });
-    </script>
-
-    <!-- ============================================================
-         AI CHATBOT WIDGET
-    ============================================================ -->
     <div id="ai-chatbot">
         <div id="ai-header">
             🤖 Ask MT Assistant <span onclick="toggleChatbot()">➖</span>
@@ -1537,13 +1631,3 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         FLOATING CALL
-    ============================================================ -->
-    <a href="tel:+919503569405" id="talkExpertFloat" title="Call Poultry Expert">
-        📞 Talk to an Expert
-    </a>
-
-</section>
-</body>
-</html>
