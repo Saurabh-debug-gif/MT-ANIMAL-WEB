@@ -28,17 +28,20 @@ public class AdminController {
     // ─────────────────────────────────────────────
     // Helper: Upload a MultipartFile to Cloudinary
     // Returns the secure URL string
-    // ─────────────────────────────────────────────
     private String uploadToCloudinary(MultipartFile file) throws IOException {
+
+        if (file == null || file.isEmpty()) return null;   // 🔥 1-line guard
+
         Map uploadResult = cloudinary.uploader().upload(
                 file.getBytes(),
                 ObjectUtils.asMap(
-                        "folder", "poultry_shop/products",   // organizes files in Cloudinary dashboard
+                        "folder", "poultry_shop/products",
                         "resource_type", "image"
                 )
         );
-        return (String) uploadResult.get("secure_url");  // permanent HTTPS URL
+        return (String) uploadResult.get("secure_url");
     }
+
 
     // 1️⃣ PRODUCT LIST PAGE
     @GetMapping("/products")

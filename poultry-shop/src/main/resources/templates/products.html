@@ -1239,12 +1239,14 @@
                                 th:attr="onclick=|updateQty(${product.id}, 'increase')|">+</button>
                     </div>
 
-                    <a href="javascript:void(0)"
+                    <a th:if="${product.knowMoreImageUrl != null}"
+                       href="javascript:void(0)"
                        class="know-more-btn"
                        th:attr="data-img=${product.knowMoreImageUrl}"
                        onclick="openKnowMoreFromBtn(this)">
                         🔍 Know More
                     </a>
+
                 </div>
             </div>
         </div>
@@ -1256,7 +1258,11 @@
     <div id="knowMoreModal" class="modal-overlay">
         <div class="modal-box">
             <span class="close-btn" onclick="closeKnowMore()">✖</span>
-            <img id="knowMoreImg" src="" alt="Know More Image"/>
+            <img id="knowMoreImg"
+                 src=""
+                 alt="Know More Image"
+                 onerror="this.src='/images/no-image.png'"/>
+
         </div>
     </div>
 
@@ -1319,7 +1325,14 @@
         /* Know More Modal */
         function openKnowMoreFromBtn(btn) {
             const imgUrl = btn.getAttribute("data-img");
-            document.getElementById("knowMoreImg").src = imgUrl;
+
+            if (!imgUrl) {
+                alert("No additional image available for this product.");
+                return;
+            }
+
+            const img = document.getElementById("knowMoreImg");
+            img.src = imgUrl;
             document.getElementById("knowMoreModal").style.display = "flex";
         }
         function closeKnowMore() {
