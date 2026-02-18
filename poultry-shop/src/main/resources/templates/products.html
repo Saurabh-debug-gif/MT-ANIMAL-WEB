@@ -4,8 +4,10 @@
 <head>
     <title>MT Animal Care — Products</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Cinzel:wght@600;700;900&display=swap" rel="stylesheet">
+    <!-- Fonts loaded async so they NEVER block page render -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Cinzel:wght@600;700;900&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Cinzel:wght@600;700;900&display=swap"></noscript>
     <style>
         /* ===================================================
            VARIABLES
@@ -73,26 +75,7 @@
             66%{transform:translate(-30px,35px)}
         }
 
-        /* ===================================================
-           LOADING SCREEN
-        =================================================== */
-        #loader {
-            position: fixed; inset: 0; background: var(--bg);
-            z-index: 99997; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 20px;
-            transition: opacity 0.7s ease, visibility 0.7s ease;
-        }
-        #loader.gone { opacity: 0; visibility: hidden; pointer-events: none; }
-        .ld-logo {
-            font-family: 'Cinzel', serif; font-size: 26px; letter-spacing: 4px;
-            background: linear-gradient(135deg, #fff 30%, var(--go));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: ldPulse 1.4s ease-in-out infinite;
-        }
-        @keyframes ldPulse { 0%,100%{opacity:1} 50%{opacity:0.45} }
-        .ld-track { width: 180px; height: 2px; background: rgba(232,184,75,0.15); border-radius: 99px; overflow: hidden; }
-        .ld-fill  { height: 100%; width: 0; background: linear-gradient(90deg, var(--cr), var(--go)); border-radius: 99px; animation: ldFill 2s var(--ease) forwards; }
-        @keyframes ldFill { to { width: 100%; } }
+        /* NO LOADER — removed to prevent stuck screen on deployment */
 
         /* ===================================================
            ANNOUNCEMENT BAR
@@ -797,11 +780,7 @@
     <div class="orb o3"></div>
 </div>
 
-<!-- Loading screen -->
-<div id="loader">
-    <div class="ld-logo">MT ANIMAL CARE</div>
-    <div class="ld-track"><div class="ld-fill"></div></div>
-</div>
+<!-- NO LOADER - removed to fix stuck screen on deployment -->
 
 <!-- ============================================================
      ANNOUNCEMENT BAR
@@ -1124,7 +1103,7 @@
         </div>
         <div class="contact-card rv">
             <h3>📞 Contact</h3>
-            <p>📞 9503569405<br>📞 97734 05980<br><br>✉️ mtanimalhealthcare@gmail.com</p>
+            <p>📞 9503569405<br>📞 97734 05980<br><br>✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cea3baafa0a7a3afa2a6abafa2baa6adafbcab8ea9a3afa7a2e0ada1a3">[email&#160;protected]</a></p>
         </div>
         <div class="contact-card rv">
             <h3>📋 Registrations</h3>
@@ -1198,14 +1177,8 @@
 <!-- ============================================================
      ALL SCRIPTS — one clean block at bottom of body
 ============================================================ -->
-<script>
-    /* ── Loader ── */
-    window.addEventListener('load', function () {
-        setTimeout(function () {
-            var l = document.getElementById('loader');
-            if (l) l.classList.add('gone');
-        }, 2000);
-    });
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    /* ── Page ready ── */
 
     /* ── Scroll reveal ── */
     (function () {
@@ -1378,12 +1351,4 @@
     });
 
     /* ── Talk to expert position (copied from original) ── */
-    window.addEventListener('load', function () {
-        var btn    = document.getElementById('talkExpertFloat');
-        var navbar = document.querySelector('.navbar');
-        if (btn && navbar) btn.style.top = (navbar.offsetHeight + 18) + 'px';
-    });
-</script>
-
-</body>
-</html>
+    window.addEventListener('load', function
