@@ -3,734 +3,1101 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-    <title>Products</title>
+    <title>MT Animal Care — Products</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 0;
-            margin: 0;
-            overflow-x: hidden;   /* prevent horizontal scroll */
-            background: #f9fafb;
+        /* ============================================================
+           CSS VARIABLES & RESET
+        ============================================================ */
+        :root {
+            --crimson:   #8b0000;
+            --crimson-l: #b81212;
+            --gold:      #ffcc44;
+            --gold-l:    #ffe07a;
+            --gold-d:    #c89b1a;
+            --bg:        #0a0505;
+            --bg2:       #110808;
+            --glass:     rgba(255,255,255,0.04);
+            --glass-b:   rgba(255,215,0,0.12);
+            --txt:       #f5f0e8;
+            --txt-dim:   rgba(245,240,232,0.65);
+            --radius:    16px;
+            --transition: 0.38s cubic-bezier(0.4,0,0.2,1);
         }
 
-        /* ===== NAVBAR ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; overflow-x: hidden; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--txt);
+            overflow-x: hidden;
+        }
+
+        /* ============================================================
+           ANIMATED BACKGROUND GRID
+        ============================================================ */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                    linear-gradient(rgba(255,204,68,0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,204,68,0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+            animation: gridDrift 30s linear infinite;
+        }
+
+        @keyframes gridDrift {
+            0%   { background-position: 0 0, 0 0; }
+            100% { background-position: 60px 60px, 60px 60px; }
+        }
+
+        /* ============================================================
+           AMBIENT GLOW ORBS
+        ============================================================ */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(90px);
+            animation: orbFloat 12s ease-in-out infinite;
+        }
+        .orb1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(139,0,0,0.35), transparent 70%); top: -100px; left: -100px; animation-delay: 0s; }
+        .orb2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,204,68,0.18), transparent 70%); top: 40%; right: -80px; animation-delay: -4s; }
+        .orb3 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(184,18,18,0.2), transparent 70%); bottom: 0; left: 30%; animation-delay: -8s; }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33%       { transform: translate(30px, -40px) scale(1.08); }
+            66%       { transform: translate(-20px, 25px) scale(0.95); }
+        }
+
+        /* ============================================================
+           NAVBAR
+        ============================================================ */
         .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 32px;
-            background: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
-            position: sticky;
-            top: 0;
-            z-index: 50;
+            padding: 0 40px;
+            height: 68px;
+            background: rgba(10,5,5,0.75);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255,204,68,0.18);
+            box-shadow: 0 4px 32px rgba(0,0,0,0.5);
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            white-space: nowrap;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--txt);
         }
 
         .brand-logo {
-            height: 34px;
+            height: 38px;
             width: auto;
-            border-radius: 6px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-b);
+            transition: var(--transition);
         }
-        /* ===== DESKTOP NAV LINKS ===== */
+        .brand:hover .brand-logo { transform: rotate(-4deg) scale(1.08); }
+
+        .brand-name {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 1.5px;
+            background: linear-gradient(135deg, #fff 40%, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Desktop nav */
         .desktop-nav {
             display: flex;
             align-items: center;
-            gap: 22px;
+            gap: 6px;
         }
 
         .desktop-nav a {
             position: relative;
             text-decoration: none;
-            color: #111827;
-            font-size: 15px;
-            font-weight: 600;
-            padding: 6px 4px;
-            transition: color 0.25s ease;
-        }
-
-        /* Hover underline animation */
-        .desktop-nav a::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: -4px;
-            width: 0%;
-            height: 2px;
-            background: linear-gradient(90deg, #8b0000, #ffcc66);
-            transition: width 0.3s ease;
-        }
-
-        .desktop-nav a:hover {
-            color: #8b0000;
-        }
-
-        .desktop-nav a:hover::after {
-            width: 100%;
-        }
-
-        /* Enquiry CTA button style */
-        .desktop-nav a.enquiry-link {
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #8b0000, #ffcc66);
-            color: #111;
-            font-weight: 800;
-            box-shadow: 0 4px 12px rgba(255, 204, 102, 0.5);
-        }
-
-        .desktop-nav a.enquiry-link:hover {
-            color: #111;
-            transform: translateY(-1px);
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            flex: 1;
-            justify-content: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #111827;
-            font-size: 15px;
+            color: var(--txt-dim);
+            font-size: 14px;
             font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: var(--transition);
+            letter-spacing: 0.4px;
         }
 
-        .nav-links a:hover {
-            color: #2563eb;
+        .desktop-nav a::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            background: var(--glass);
+            opacity: 0;
+            transition: var(--transition);
         }
 
+        .desktop-nav a:hover { color: var(--gold); }
+        .desktop-nav a:hover::before { opacity: 1; }
+
+        .desktop-nav a.enquiry-link {
+            background: linear-gradient(135deg, var(--crimson), var(--gold));
+            color: #111 !important;
+            font-weight: 700;
+            padding: 8px 18px;
+            border-radius: 999px;
+            box-shadow: 0 4px 20px rgba(255,204,68,0.3);
+            letter-spacing: 0.5px;
+        }
+        .desktop-nav a.enquiry-link::before { display: none; }
+        .desktop-nav a.enquiry-link:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,204,68,0.5); }
+
+        /* Right actions */
         .right-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
-            white-space: nowrap;
-        }
-        html {
-            scroll-behavior: smooth;
+            gap: 10px;
         }
 
-        /* Login + User */
-        .login-btn, .user-btn {
+        .search-wrap {
             display: flex;
             align-items: center;
-            gap: 6px;
-            text-decoration: none;
-            padding: 6px 14px;
+            gap: 0;
+            background: var(--glass);
+            border: 1px solid rgba(255,204,68,0.2);
             border-radius: 999px;
-            border: 1px solid #e5e7eb;
-            color: #111;
-            font-weight: 500;
-            background: #fff;
-        }
-
-        .login-btn:hover, .user-btn:hover {
-            background: #f3f4f6;
-        }
-
-        /* User Dropdown */
-        .user-dropdown {
-            position: relative;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 120%;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            min-width: 140px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             overflow: hidden;
+            transition: var(--transition);
+        }
+        .search-wrap:focus-within {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(255,204,68,0.15);
         }
 
-        .dropdown-menu a {
-            display: block;
-            padding: 10px 14px;
-            text-decoration: none;
-            color: #111;
+        .search-wrap input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--txt);
+            padding: 7px 14px;
+            font-size: 13px;
+            font-family: 'Outfit', sans-serif;
+            width: 160px;
+        }
+        .search-wrap input::placeholder { color: var(--txt-dim); }
+
+        .search-wrap button {
+            background: none;
+            border: none;
+            color: var(--gold);
+            padding: 7px 12px;
+            cursor: pointer;
             font-size: 14px;
         }
 
-        .dropdown-menu a:hover {
-            background: #f3f4f6;
-        }
-        .dropdown-menu {
-            transition: all 0.2s ease;
-        }
-
-
-
-        /* Cart Button */
-        .cart-btn {
-            position: relative;
-            width: 36px;
-            height: 36px;
-            min-width: 36px;
-            min-height: 36px;
-            border-radius: 50%;
-            background: #2563eb;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            text-decoration: none;
-        }
-
-        .cart-btn:hover {
-            background: #1e40af;
-        }
-        .cart-badge {
-            background: red;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 12px;
-            margin-left: 6px;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: #ef4444;
-            color: white;
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 999px;
-            line-height: 1;
-        }
-
-        /* WhatsApp Button */
         .whatsapp-btn {
             width: 36px;
             height: 36px;
-            min-width: 36px;
-            min-height: 36px;
             border-radius: 50%;
             background: #25D366;
             display: flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+        }
+        .whatsapp-btn:hover { transform: translateY(-2px) scale(1.1); box-shadow: 0 8px 20px rgba(37,211,102,0.5); }
+        .whatsapp-icon { width: 18px; height: 18px; object-fit: contain; }
+
+        .login-btn, .user-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            padding: 7px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,204,68,0.3);
+            color: var(--txt);
+            font-weight: 500;
+            font-size: 13px;
+            background: var(--glass);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Outfit', sans-serif;
+        }
+        .login-btn:hover, .user-btn:hover { border-color: var(--gold); background: rgba(255,204,68,0.08); }
+
+        .user-dropdown { position: relative; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 120%;
+            background: rgba(17,8,8,0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,204,68,0.2);
+            border-radius: 12px;
+            min-width: 140px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+            animation: dropIn 0.2s ease;
+        }
+        @keyframes dropIn { from { opacity:0; transform: translateY(-8px); } to { opacity:1; transform: translateY(0); } }
+        .dropdown-menu a {
+            display: block;
+            padding: 11px 16px;
+            text-decoration: none;
+            color: var(--txt);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        .dropdown-menu a:hover { background: rgba(255,204,68,0.1); color: var(--gold); }
+
+        .cart-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--crimson), #d11111);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(139,0,0,0.4);
+        }
+        .cart-btn:hover { transform: scale(1.12); box-shadow: 0 8px 24px rgba(139,0,0,0.6); }
+        .cart-count {
+            position: absolute;
+            top: -6px; right: -6px;
+            background: var(--gold);
+            color: #111;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 5px;
+            border-radius: 999px;
+            line-height: 1;
         }
 
-        .whatsapp-btn:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 6px;
+            margin-left: auto;
         }
-
-        .whatsapp-icon {
-            width: 18px;
-            height: 18px;
-            object-fit: contain;
+        .hamburger span {
+            width: 22px; height: 2px;
+            background: var(--gold);
+            border-radius: 2px;
+            transition: 0.3s ease;
         }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
-        /* ===== HERO SECTION ===== */
+        /* Mobile overlay & drawer */
+        .mobile-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7); z-index: 998;
+            backdrop-filter: blur(4px);
+        }
+        .mobile-overlay.active { display: block; }
+
+        .mobile-menu {
+            position: fixed; top: 0; left: -100%;
+            width: 78%; max-width: 300px; height: 100vh;
+            background: linear-gradient(180deg, #110808, #1a0a0a);
+            z-index: 999; padding: 24px 20px;
+            display: flex; flex-direction: column; gap: 8px;
+            box-shadow: 8px 0 40px rgba(0,0,0,0.6);
+            border-right: 1px solid rgba(255,204,68,0.15);
+            transition: left 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .mobile-menu.active { left: 0; }
+        .mobile-menu-header {
+            display: flex; align-items: center;
+            justify-content: space-between; margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,204,68,0.15);
+        }
+        .mobile-menu a {
+            padding: 13px 16px; text-decoration: none;
+            color: var(--txt); font-size: 15px; font-weight: 600;
+            border-radius: 10px;
+            background: rgba(255,204,68,0.05);
+            border: 1px solid rgba(255,204,68,0.08);
+            transition: var(--transition);
+        }
+        .mobile-menu a:hover { background: rgba(255,204,68,0.12); color: var(--gold); border-color: rgba(255,204,68,0.3); transform: translateX(6px); }
+        .close-menu { font-size: 22px; cursor: pointer; color: var(--gold); }
+
+        /* ============================================================
+           HERO SECTION
+        ============================================================ */
         .hero-section {
             position: relative;
             width: 100%;
-            min-height: 65vh;
-            max-height: 80vh;
+            min-height: 70vh;
             overflow: hidden;
-            background: #0b0b0b;
+            background: #0a0505;
         }
 
         .hero-image {
             width: 100%;
             height: 100%;
+            min-height: 70vh;
             object-fit: cover;
             object-position: center;
             display: block;
+            transform: scale(1.05);
+            animation: heroZoom 12s ease-in-out infinite alternate;
+        }
+        @keyframes heroZoom {
+            from { transform: scale(1.05); }
+            to   { transform: scale(1.12); }
         }
 
         .hero-section::after {
-            content: "";
-            position: absolute;
-            inset: 0;
+            content: '';
+            position: absolute; inset: 0;
             background: linear-gradient(
-                    90deg,
-                    rgba(0,0,0,0.75) 0%,
-                    rgba(0,0,0,0.55) 40%,
-                    rgba(0,0,0,0.25) 70%,
-                    rgba(0,0,0,0.1) 100%
+                    105deg,
+                    rgba(0,0,0,0.88) 0%,
+                    rgba(0,0,0,0.6) 45%,
+                    rgba(0,0,0,0.2) 100%
             );
             z-index: 1;
         }
 
         .hero-overlay {
             position: absolute;
-            bottom: 48px;
-            left: 48px;
+            bottom: 60px; left: 60px;
             z-index: 2;
-            color: #ffffff;
-            max-width: 520px;
+            max-width: 560px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,204,68,0.12);
+            border: 1px solid rgba(255,204,68,0.35);
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            backdrop-filter: blur(8px);
+            animation: slideUp 0.8s ease 0.2s both;
         }
 
         .hero-overlay h1 {
-            font-size: clamp(28px, 4vw, 44px);
-            line-height: 1.1;
-            margin-bottom: 12px;
-            font-weight: 800;
+            font-family: 'Cinzel', serif;
+            font-size: clamp(28px, 4.5vw, 52px);
+            font-weight: 900;
+            line-height: 1.08;
+            color: #fff;
+            margin-bottom: 16px;
+            animation: slideUp 0.8s ease 0.4s both;
+        }
+
+        .hero-overlay h1 span {
+            background: linear-gradient(135deg, var(--gold), #ff9f1c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-overlay p {
             font-size: 15px;
-            margin-bottom: 18px;
-            opacity: 0.95;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 28px;
+            line-height: 1.7;
+            animation: slideUp 0.8s ease 0.6s both;
         }
 
-        /* CTA */
         .hero-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #f59e0b, #fbbf24);
-            color: #111827;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--gold), #ff9f1c);
+            color: #1a0505;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 700;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.45);
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 10px 30px rgba(255,204,68,0.35);
+            transition: var(--transition);
+            animation: slideUp 0.8s ease 0.8s both;
+        }
+        .hero-btn:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(255,204,68,0.55); }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        .hero-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 28px rgba(0,0,0,0.55);
+        /* ============================================================
+           SCROLL REVEAL UTILITY
+        ============================================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
         }
-        body {
-            background: #ffffff;   /* full page white */
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
-
-        /* ===== PAGE CONTENT ===== */
-        /* ===== PAGE CONTENT ===== */
-        .page {
-            padding: 32px;
-            background: #ffffff;   /* 🔥 black hata ke white */
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
         }
-        .page h1 {
-            color: #8b0000;          /* dark red */
-            font-weight: 900;
-            letter-spacing: 1px;
-            margin-bottom: 30px;
-        }
+        .reveal-left.visible { opacity: 1; transform: translateX(0); }
 
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 28px;
-            align-items: stretch;
-            justify-items: center;   /* cards center align */
-        }
-
-
-        .product-card {
-            width: 100%;
-            max-width: 300px;
-            border-radius: 16px;
-            padding: 18px;
+        /* ============================================================
+           WHY CHOOSE US
+        ============================================================ */
+        .why-choose-us {
+            position: relative;
+            padding: 80px 40px;
+            background: var(--bg2);
             text-align: center;
-            background: linear-gradient(145deg, #7a0000, #b11212, #ffcc66);
-            border: 2px solid #f5c16c;
-            box-shadow:
-                    0 8px 25px rgba(0,0,0,0.5),
-                    inset 0 0 0 1px rgba(255,215,0,0.3);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 12px;
+            opacity: 0.8;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(22px, 3vw, 36px);
+            font-weight: 700;
             color: #fff;
-            transition: transform .25s ease, box-shadow .25s ease;
+            margin-bottom: 48px;
+            line-height: 1.2;
+        }
+        .section-title span {
+            background: linear-gradient(135deg, var(--gold), #ff9f1c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .why-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-b);
+            padding: 24px 20px;
+            border-radius: var(--radius);
+            backdrop-filter: blur(12px);
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 1.5;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
         }
+        .why-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--crimson), var(--gold));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+            transform-origin: left;
+        }
+        .why-card:hover::before { transform: scaleX(1); }
+        .why-card:hover { transform: translateY(-6px); border-color: rgba(255,204,68,0.4); background: rgba(255,255,255,0.07); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+
+        /* ============================================================
+           PAGE / PRODUCTS SECTION
+        ============================================================ */
+        .page {
+            position: relative;
+            padding: 80px 40px;
+            z-index: 1;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-heading {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(24px, 3.5vw, 42px);
+            font-weight: 900;
+            color: #fff;
+            line-height: 1.1;
+        }
+        .page-heading span {
+            background: linear-gradient(135deg, var(--gold), #ff9f1c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .no-products {
+            text-align: center;
+            padding: 80px;
+            color: var(--txt-dim);
+            font-size: 18px;
+        }
+
+        /* ============================================================
+           PRODUCT GRID
+        ============================================================ */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 28px;
+        }
+
+        .product-card {
+            position: relative;
+            background: var(--glass);
+            border: 1px solid rgba(255,204,68,0.14);
+            border-radius: 20px;
+            padding: 22px;
+            text-align: center;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s ease, border-color 0.4s ease;
+            cursor: pointer;
+
+            /* Stagger animation applied via JS */
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .product-card.card-visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s ease, border-color 0.4s ease;
+        }
 
         .product-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at top left, rgba(255,215,0,0.25), transparent 60%);
-            pointer-events: none;
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(145deg, rgba(139,0,0,0.12), rgba(255,204,68,0.06));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 20px;
         }
 
         .product-card:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow:
-                    0 14px 40px rgba(255, 204, 102, 0.6),
-                    0 0 0 2px rgba(255, 215, 0, 0.5);
+            transform: translateY(-10px) scale(1.01);
+            border-color: rgba(255,204,68,0.45);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,204,68,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
         }
+        .product-card:hover::before { opacity: 1; }
 
-        /* Product image */
+        .card-glow {
+            position: absolute;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,204,68,0.12), transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .product-card:hover .card-glow { opacity: 1; }
+
         .product-card img {
             width: 100%;
-            height: 160px;
+            height: 170px;
             object-fit: contain;
-            border-radius: 10px;
-            background: #fff;
-            padding: 8px;
-            margin-bottom: 12px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.96);
+            padding: 10px;
+            margin-bottom: 14px;
+            transition: transform 0.4s ease;
+        }
+        .product-card:hover img { transform: scale(1.05) rotate(-1deg); }
+
+        .product-card h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gold);
+            margin: 10px 0 6px;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
         }
 
-        /* Product name */
-        .product-card h3 {
+        .product-card p {
+            font-size: 12.5px;
+            color: var(--txt-dim);
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .price {
             font-size: 20px;
             font-weight: 800;
-            color: #ffd700;   /* gold */
-            margin: 10px 0 6px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Description */
-        .product-card p {
-            font-size: 13px;
-            opacity: 0.95;
-            margin-bottom: 8px;
-        }
-
-        /* Price */
-        .price {
-            font-size: 18px;
-            font-weight: 900;
-            color: #ffdf8a;
+            color: var(--gold-l);
             margin: 8px 0;
+            font-family: 'Cinzel', serif;
         }
 
-        /* Stock */
         .stock {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            color: #b6ffb6;  /* greenish for stock */
+            letter-spacing: 0.5px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            display: inline-block;
+            background: rgba(0,220,100,0.1);
+            color: #4ade80;
+            border: 1px solid rgba(0,220,100,0.2);
         }
 
-        /* ===== Qty Controls ===== */
+        /* Qty Controls */
         .qty-controls {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 14px;
-            margin-top: 12px;
+            gap: 16px;
+            margin-top: 14px;
         }
 
-        /* 🔥 Gold buttons */
         .qty-btn {
-            width: 36px;
-            height: 36px;
+            width: 36px; height: 36px;
             border-radius: 50%;
-            border: none;
-            background: linear-gradient(145deg, #ffb703, #ffd166);
-            color: #3b0a0a;
+            border: 1px solid rgba(255,204,68,0.35);
+            background: rgba(255,204,68,0.08);
+            color: var(--gold);
             font-size: 18px;
             font-weight: 900;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(255, 200, 0, 0.6);
-            transition: transform .2s ease, box-shadow .2s ease;
+            transition: var(--transition);
+            display: flex; align-items: center; justify-content: center;
         }
-
-        .qty-btn:hover {
-            transform: scale(1.15);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.9);
-        }
+        .qty-btn:hover { background: var(--gold); color: #1a0505; border-color: var(--gold); transform: scale(1.15); box-shadow: 0 6px 18px rgba(255,204,68,0.4); }
 
         .qty-value {
-            min-width: 24px;
+            min-width: 30px;
             text-align: center;
             font-weight: 800;
             font-size: 18px;
             color: #fff;
+            font-family: 'Cinzel', serif;
         }
 
-        /* Know More Button (if you have it inside card) */
-        .product-card .know-more-btn {
-            display: inline-block;
-            margin-top: 12px;
-            padding: 8px 16px;
-            border-radius: 8px;
-            background: linear-gradient(145deg, #ffd700, #ff9f1c);
-            color: #3b0a0a;
-            font-weight: 800;
-            text-decoration: none;
-            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.6);
-            transition: transform .2s ease;
-        }
-
-        .product-card .know-more-btn:hover {
-            transform: translateY(-2px) scale(1.05);
-        }
-        .image-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 9999;
+        .know-more-btn {
+            display: inline-flex;
             align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+            padding: 9px 18px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(139,0,0,0.6), rgba(255,204,68,0.3));
+            border: 1px solid rgba(255,204,68,0.3);
+            color: var(--gold-l);
+            font-weight: 700;
+            font-size: 12.5px;
+            text-decoration: none;
+            transition: var(--transition);
+            letter-spacing: 0.4px;
+        }
+        .know-more-btn:hover { background: linear-gradient(135deg, var(--crimson), var(--gold)); color: #111; border-color: transparent; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,204,68,0.3); }
+
+        .dim { opacity: 0.2; filter: saturate(0) blur(1px); pointer-events: none; transition: 0.3s ease; }
+
+        /* ============================================================
+           MODALS
+        ============================================================ */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            display: none;
             justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeModal 0.25s ease;
         }
+        @keyframes fadeModal { from { opacity:0; } to { opacity:1; } }
 
-        .image-modal img {
-            max-width: 85%;
-            max-height: 85%;
+        .modal-box {
+            background: linear-gradient(145deg, rgba(17,8,8,0.95), rgba(30,15,0,0.95));
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,204,68,0.2);
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+            animation: modalPop 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        @keyframes modalPop { from { opacity:0; transform: scale(0.85) translateY(20px); } to { opacity:1; transform: scale(1) translateY(0); } }
+        .modal-box img {
+            max-width: 100%;
+            max-height: 70vh;
             border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            background: #fff;
-            padding: 10px;
+            border: 2px solid rgba(255,204,68,0.3);
+            display: block;
         }
+        .close-btn {
+            position: absolute; right: 14px; top: 12px;
+            font-size: 22px; cursor: pointer; color: var(--gold);
+            width: 32px; height: 32px;
+            background: rgba(255,204,68,0.1);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition);
+        }
+        .close-btn:hover { background: var(--gold); color: #1a0505; }
 
-        .image-modal .close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            font-size: 36px;
-            color: #fff;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        /* ============================================================
+           ABOUT SECTION
+        ============================================================ */
         .about-section {
-            margin: 60px auto;
-            max-width: 900px;
-            padding: 40px;
-            background: linear-gradient(135deg, #7a0c0c, #b8860b);
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            color: #fff;
+            position: relative;
+            margin: 0;
+            padding: 100px 40px;
+            background: var(--bg2);
             text-align: center;
+            overflow: hidden;
+            z-index: 1;
         }
 
-        .about-section h2 {
-            font-size: 32px;
-            margin-bottom: 20px;
-            color: #ffd700; /* Gold */
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .about-section::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, rgba(139,0,0,0.2), transparent 70%);
+            pointer-events: none;
+        }
+
+        .about-content {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .about-section p {
-            font-size: 17px;
-            line-height: 1.8;
-            color: #f9f9f9;
+            font-size: 16px;
+            line-height: 1.9;
+            color: var(--txt-dim);
             text-align: justify;
         }
-        .about-section {
-            border: 2px solid #ffd700;
-            background: #7a0c0c;
-        }
 
+        /* ============================================================
+           CONTACT SECTION
+        ============================================================ */
         .contact-section {
-            margin: 80px auto;
-            padding: 50px 30px;
-            background: linear-gradient(135deg, #7a0c0c, #b8860b);
-            border-top: 4px solid #ffd700;
-            color: #fff;
+            position: relative;
+            padding: 100px 40px;
+            background: var(--bg);
             text-align: center;
+            z-index: 1;
+            overflow: hidden;
         }
 
-        .contact-section h2 {
-            font-size: 32px;
-            margin-bottom: 30px;
-            color: #ffd700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .contact-section::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
         }
 
         .contact-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 25px;
+            gap: 20px;
             max-width: 1000px;
             margin: 0 auto;
         }
 
         .contact-card {
-            background: rgba(0, 0, 0, 0.25);
-            padding: 25px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 215, 0, 0.5);
+            background: var(--glass);
+            border: 1px solid var(--glass-b);
+            padding: 30px;
+            border-radius: var(--radius);
+            backdrop-filter: blur(12px);
+            transition: var(--transition);
         }
+        .contact-card:hover { transform: translateY(-5px); border-color: rgba(255,204,68,0.35); }
 
         .contact-card h3 {
-            color: #ffd700;
-            margin-bottom: 12px;
-        }
-
-        .contact-card p {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            margin-bottom: 14px;
             font-size: 15px;
-            line-height: 1.7;
-            color: #f5f5f5;
+            letter-spacing: 1px;
         }
+        .contact-card p { font-size: 14px; line-height: 1.9; color: var(--txt-dim); }
+
+        /* ============================================================
+           FOOTER DIVIDER
+        ============================================================ */
+        .footer-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,204,68,0.3), transparent);
+        }
+
+        /* ============================================================
+           HIGHLIGHT (SEARCH)
+        ============================================================ */
         .highlight {
-            background: #ffd700;
-            color: #7a0000;
-            padding: 2px 4px;
+            background: var(--gold);
+            color: #1a0505;
+            padding: 1px 4px;
             border-radius: 4px;
-        }
-        .product-card.dim {
-            opacity: 0.35;
-            filter: grayscale(40%);
-        }
-        /* ================= MOBILE RESPONSIVE (DO NOT BREAK DESKTOP) ================= */
-        @media (max-width: 768px) {
-
-            .navbar {
-                flex-wrap: wrap;
-                padding: 10px 12px;
-                gap: 10px;
-            }
-
-            .brand {
-                flex: 1;
-            }
-
-
-
-            /* Mobile menu panel */
-            .nav-links {
-                display: none;
-                width: 100%;
-                flex-direction: column;
-                background: #ffffff;
-                border-top: 1px solid #eee;
-                padding: 12px 0;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links a {
-                padding: 10px 16px;
-                font-size: 15px;
-                border-bottom: 1px solid #f1f1f1;
-            }
-
-            .right-actions {
-                width: 100%;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                justify-content: space-between;
-            }
-
-            .right-actions form {
-                width: 100%;
-                display: flex;
-            }
-
-            .right-actions input {
-                flex: 1;
-            }
+            font-weight: 700;
         }
 
-
-
-            /* Hero */
-        @media (max-width: 768px) {
-            .hero-section {
-                min-height: 30vh;
-            }
-
-            .hero-overlay {
-                left: 12px;
-                right: 12px;
-                bottom: 12px;
-            }
-
-            .hero-overlay h1 {
-                font-size: 18px;
-            }
-
-            .hero-overlay p {
-                font-size: 12px;
-            }
+        /* ============================================================
+           AI CHATBOT
+        ============================================================ */
+        #ai-chatbot {
+            position: fixed;
+            bottom: 24px; right: 24px;
+            width: 320px;
+            background: rgba(12,6,6,0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,204,68,0.25);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            overflow: hidden;
+            z-index: 9998;
+            font-family: 'Outfit', sans-serif;
         }
 
-
-        .hero-btn {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-
-            /* Products */
-        @media (max-width: 768px) {
-            .product-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-
-            .product-card {
-                padding: 10px;
-            }
-
-            .product-card img {
-                height: 110px;
-            }
-
-            .product-card h3 {
-                font-size: 14px;
-            }
-
-            .price {
-                font-size: 14px;
-            }
+        #ai-header {
+            background: linear-gradient(135deg, var(--crimson), var(--gold-d));
+            color: white;
+            padding: 12px 16px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: move;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
+        #ai-body {
+            height: 220px;
+            padding: 12px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+        #ai-body::-webkit-scrollbar { width: 4px; }
+        #ai-body::-webkit-scrollbar-track { background: transparent; }
+        #ai-body::-webkit-scrollbar-thumb { background: rgba(255,204,68,0.3); border-radius: 2px; }
 
-        .product-card p {
-                font-size: 12px;
-            }
+        .msg-user { margin: 6px 0; text-align: right; color: var(--txt-dim); }
+        .msg-user b { color: var(--gold); }
+        .msg-ai { margin: 6px 0; text-align: left; color: #4ade80; }
+        .msg-ai b { color: #22c55e; }
+        .typing { font-style: italic; color: rgba(255,255,255,0.4); font-size: 12px; }
 
-            .qty-btn {
-                width: 30px;
-                height: 30px;
-                font-size: 16px;
-            }
+        #ai-input {
+            width: 100%; border: none;
+            border-top: 1px solid rgba(255,204,68,0.15);
+            padding: 11px 14px;
+            outline: none;
+            background: rgba(255,255,255,0.04);
+            color: var(--txt);
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+        }
+        #ai-input::placeholder { color: rgba(255,255,255,0.3); }
 
-            /* Contact */
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
-
-        @media (max-width: 768px) {
-            .cart-btn {
-                position: fixed;
-                bottom: 16px;
-                right: 16px;
-                width: 48px;
-                height: 48px;
-                z-index: 9999;
-            }
+        /* ============================================================
+           TALK TO EXPERT FLOAT
+        ============================================================ */
+        #talkExpertFloat {
+            position: fixed;
+            top: 90px; right: 20px;
+            z-index: 9997;
+            background: linear-gradient(135deg, #15803d, #22c55e);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 0 rgba(34,197,94,0.5);
+            animation: expertPulse 2.5s infinite;
+            transition: var(--transition);
+        }
+        #talkExpertFloat:hover { transform: translateY(-2px) scale(1.05); }
+        @keyframes expertPulse {
+            0%   { box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 0 rgba(34,197,94,0.5); }
+            70%  { box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 12px rgba(34,197,94,0); }
+            100% { box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 0 rgba(34,197,94,0); }
         }
 
+        /* ============================================================
+           ENQUIRY MODAL
+        ============================================================ */
+        .enquiry-modal {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+        }
+        .enquiry-modal.show { display: flex; animation: fadeModal 0.25s ease; }
 
-        /* Chatbot reposition */
-            #ai-chatbot {
-                width: 90%;
-                right: 5%;
-                bottom: 80px;
-            }
+        .enquiry-box {
+            background: linear-gradient(145deg, #110808, #1e0d00);
+            border: 1px solid rgba(255,204,68,0.2);
+            padding: 32px 28px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 440px;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: var(--txt);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+            position: relative;
+            animation: modalPop 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .enquiry-box h2 { font-family: 'Cinzel', serif; margin-bottom: 6px; color: var(--gold); font-size: 20px; }
+        .enquiry-box > p { font-size: 13px; margin-bottom: 20px; color: var(--txt-dim); line-height: 1.6; }
+        .enquiry-box label { display: block; margin-top: 12px; font-weight: 600; font-size: 12.5px; color: var(--txt-dim); margin-bottom: 4px; letter-spacing: 0.4px; }
+        .enquiry-box input, .enquiry-box select, .enquiry-box textarea {
+            width: 100%; padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,204,68,0.2);
+            background: rgba(255,255,255,0.04);
+            color: var(--txt);
+            font-family: 'Outfit', sans-serif;
+            font-size: 13.5px;
+            outline: none;
+            transition: border-color 0.25s ease;
+        }
+        .enquiry-box input:focus, .enquiry-box select:focus, .enquiry-box textarea:focus { border-color: var(--gold); }
+        .enquiry-box select option { background: #1a0808; }
+        .enquiry-box textarea { min-height: 80px; resize: vertical; }
+        .enquiry-box button {
+            width: 100%; margin-top: 20px; padding: 12px;
+            border-radius: 10px; border: none;
+            background: linear-gradient(135deg, var(--gold), #ff9f1c);
+            color: #1a0505; font-weight: 800; font-size: 14px;
+            cursor: pointer; font-family: 'Outfit', sans-serif;
+            transition: var(--transition);
+        }
+        .enquiry-box button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,204,68,0.4); }
+
+        /* ============================================================
+           SCROLL TO TOP
+        ============================================================ */
+        #scrollTop {
+            position: fixed; bottom: 90px; right: 26px;
+            width: 40px; height: 40px;
+            background: rgba(255,204,68,0.12);
+            border: 1px solid rgba(255,204,68,0.3);
+            border-radius: 50%;
+            color: var(--gold);
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9996;
+            transition: var(--transition);
+            backdrop-filter: blur(8px);
+        }
+        #scrollTop.show { display: flex; }
+        #scrollTop:hover { background: var(--gold); color: #1a0505; transform: translateY(-3px); }
+
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
+        @media (max-width: 900px) {
+            .navbar { padding: 0 20px; }
+            .desktop-nav { display: none; }
+            .hamburger { display: flex; }
+            .right-actions { gap: 8px; }
+            .search-wrap input { width: 120px; }
         }
 
-
-        @media (max-width: 768px) {
-            .page h1 {
-                text-align: center;
-                font-size: 20px;
-            }
+        @media (max-width: 600px) {
+            .navbar { padding: 0 12px; flex-wrap: wrap; height: auto; padding: 10px 12px; }
+            .right-actions { width: 100%; justify-content: space-between; margin-top: 6px; }
+            .search-wrap { flex: 1; }
+            .search-wrap input { width: 100%; }
+            .hero-overlay { left: 20px; right: 20px; bottom: 24px; }
+            .hero-overlay h1 { font-size: 22px; }
+            .page { padding: 50px 16px; }
+            .why-choose-us { padding: 50px 16px; }
+            .about-section, .contact-section { padding: 60px 16px; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+            .product-card { padding: 12px; }
+            .product-card img { height: 120px; }
+            .product-card h3 { font-size: 12px; }
+            .price { font-size: 14px; }
+            #ai-chatbot { width: 92%; right: 4%; bottom: 70px; }
+            #ai-body { height: 150px; }
+            #talkExpertFloat { top: 78px; right: 8px; padding: 8px 12px; font-size: 11px; }
+            .cart-btn { position: fixed; bottom: 16px; right: 16px; width: 46px; height: 46px; z-index: 9999; }
         }
 
-
+        /* Stagger delays for cards (applied via JS inline style) */
     </style>
+
+    <!-- ============================================================
+         CART + MODAL SCRIPTS (Preserve all original logic)
+    ============================================================ -->
     <script>
         function updateQty(productId, action) {
             fetch(`/cart/${action}/${productId}`, { method: 'POST' })
@@ -739,41 +1106,22 @@
                         window.location.href = "/login";
                         return null;
                     }
-
-                    if (!res.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-
+                    if (!res.ok) throw new Error("Network response was not ok");
                     return res.text();
                 })
                 .then(qty => {
                     if (!qty) return;
-
                     qty = parseInt(qty);
-
                     if (isNaN(qty)) return;
-
-
                     const qtyEl = document.getElementById(`qty-${productId}`);
                     if (qtyEl) qtyEl.innerText = qty;
-
-
                     const badge = document.getElementById("cartCountBadge");
                     let currentCount = badge ? parseInt(badge.innerText || "0") : 0;
-
-                    if (action === "increase") {
-                        currentCount += 1;
-                    } else if (action === "decrease" && currentCount > 0) {
-                        currentCount -= 1;
-                    }
-
+                    if (action === "increase") currentCount += 1;
+                    else if (action === "decrease" && currentCount > 0) currentCount -= 1;
                     if (badge) {
-                        if (currentCount <= 0) {
-                            badge.style.display = "none";
-                        } else {
-                            badge.style.display = "inline-block";
-                            badge.innerText = currentCount;
-                        }
+                        badge.style.display = currentCount <= 0 ? "none" : "inline-block";
+                        badge.innerText = currentCount;
                     }
                 })
                 .catch(err => {
@@ -782,68 +1130,54 @@
                 });
         }
 
-        function openDetailImage(url) {
-            const modal = document.getElementById("imageModal");
-            const img = document.getElementById("modalImg");
-
-            img.src = url;
-            modal.style.display = "flex";
+        function openKnowMoreFromBtn(btn) {
+            const imgUrl = btn.getAttribute("data-img");
+            document.getElementById("knowMoreImg").src = imgUrl;
+            document.getElementById("knowMoreModal").style.display = "flex";
         }
-
-        function closeModal() {
-            document.getElementById("imageModal").style.display = "none";
+        function closeKnowMore() {
+            document.getElementById("knowMoreModal").style.display = "none";
         }
     </script>
-
 </head>
 
 <body>
+<!-- Ambient Orbs -->
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
 
-<div class="navbar">
-
-    <!-- LEFT -->
-    <a href="/products" style="text-decoration:none; color:inherit;">
-        <div class="brand">
-            <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="MT Animal Care">
-            <span>MT ANIMAL CARE</span>
-        </div>
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<nav class="navbar">
+    <a href="/products" class="brand">
+        <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="MT Animal Care">
+        <span class="brand-name">MT ANIMAL CARE</span>
     </a>
-    <!-- DESKTOP NAV -->
-    <div class="nav-links desktop-nav">
+
+    <div class="desktop-nav">
         <a href="/">Home</a>
         <a href="#shop">Shop</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
-
-        <a href="javascript:void(0)"
-           class="enquiry-link"
-           onclick="openEnquiryModal()">
-            Enquiry
-        </a>
-
+        <a href="javascript:void(0)" class="enquiry-link" onclick="openEnquiryModal()">Enquiry</a>
         <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
     </div>
 
-    <!-- HAMBURGER -->
     <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
     </div>
 
-    <!-- MOBILE OVERLAY -->
     <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
-
-    <!-- MOBILE DRAWER MENU -->
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-header">
             <div class="brand">
-                <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="MT Animal Care">
-                <span>MT ANIMAL CARE</span>
+                <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="">
+                <span class="brand-name">MT ANIMAL CARE</span>
             </div>
             <span class="close-menu" onclick="toggleMenu()">✖</span>
         </div>
-
         <a href="/">Home</a>
         <a href="#shop">Shop</a>
         <a href="#about">About</a>
@@ -852,43 +1186,19 @@
         <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
     </div>
 
-
-
-    <!-- RIGHT -->
     <div class="right-actions">
-
-        <!-- Search -->
-        <div style="display:flex; gap:6px;">
-            <input type="text"
-                   id="liveSearch"
-                   placeholder="Search products..."
-                   oninput="liveSearchProducts(this.value)"
-                   style="padding:6px 10px;border-radius:6px;border:1px solid #ddd;outline:none;" />
-
-            <button type="button"
-                    onclick="alert('Live search is enabled. Just start typing! 🔍')"
-                    style="padding:6px 12px;border:none;border-radius:6px;background:#8b0000;color:white;cursor:pointer;">
-                🔍
-            </button>
+        <div class="search-wrap">
+            <input type="text" id="liveSearch" placeholder="Search products…"
+                   oninput="liveSearchProducts(this.value)" />
+            <button type="button">🔍</button>
         </div>
 
-
-        <!-- WhatsApp -->
-        <a href="https://wa.me/919021466362"
-           target="_blank"
-           class="whatsapp-btn"
-           title="Chat on WhatsApp">
+        <a href="https://wa.me/919021466362" target="_blank" class="whatsapp-btn" title="WhatsApp">
             <img src="/images/whatsapp.png" alt="WhatsApp" class="whatsapp-icon">
         </a>
 
-        <!-- Login -->
-        <a sec:authorize="!isAuthenticated()"
-           href="/oauth2/authorization/google"
-           class="login-btn">
-            Login
-        </a>
+        <a sec:authorize="!isAuthenticated()" href="/oauth2/authorization/google" class="login-btn">Login</a>
 
-        <!-- User -->
         <div class="user-dropdown" sec:authorize="isAuthenticated()">
             <div class="user-btn" onclick="toggleUserMenu()">
                 👤 <span sec:authentication="name"></span> ⌄
@@ -898,1083 +1208,393 @@
             </div>
         </div>
 
-        <!-- Cart -->
         <a href="/cart" class="cart-btn" title="Cart">
             🛒
-            <span class="cart-count"
-                  id="cartCountBadge"
-                  th:if="${cartCount > 0}"
-                  th:text="${cartCount}">
-            </span>
+            <span class="cart-count" id="cartCountBadge"
+                  th:if="${cartCount > 0}" th:text="${cartCount}"></span>
         </a>
-
     </div>
-</div>
+</nav>
 
-</section>
-<style>
-.why-choose-us {
-padding: 60px 20px;
-background: linear-gradient(135deg, #7a0c0c, #b8860b);
-color: white;
-text-align: center;
-}
-
-.why-choose-us h2 {
-font-size: 32px;
-margin-bottom: 30px;
-color: #ffd700;
-letter-spacing: 1px;
-text-transform: uppercase;
-}
-
-.why-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-gap: 20px;
-max-width: 1000px;
-margin: auto;
-}
-
-.why-card {
-background: rgba(0,0,0,0.25);
-padding: 20px;
-border-radius: 12px;
-border: 1px solid rgba(255,215,0,0.6);
-font-weight: 600;
-box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-transition: transform .2s ease, box-shadow .2s ease;
-}
-
-.why-card:hover {
-transform: translateY(-5px) scale(1.02);
-box-shadow: 0 10px 24px rgba(255,215,0,0.4);
-}
-
-@media (max-width: 768px) {
-
-    .why-choose-us {
-        padding: 40px 14px;
-    }
-
-    .why-choose-us h2 {
-        font-size: 22px;
-        margin-bottom: 20px;
-        line-height: 1.2;
-    }
-
-    .why-grid {
-        grid-template-columns: 1fr;   /* 🔥 Single column on mobile */
-        gap: 12px;
-    }
-
-    .why-card {
-        font-size: 14px;
-        padding: 14px;
-        border-radius: 10px;
-        text-align: left;           /* More readable on mobile */
-    }
-    .why-card::before {
-        content: "✔";
-        margin-right: 8px;
-        color: #ffd700;
-        font-weight: bold;
-    }
-}
-</style>
-
-<!-- ===== HOME HERO SECTION ===== -->
+<!-- ============================================================
+     HERO
+============================================================ -->
 <section class="hero-section">
     <img src="/images/home-banner.png" alt="MT Animal Care Banner" class="hero-image">
-
     <div class="hero-overlay">
-        <h1>Leading Name in Contract Manufacturing</h1>
-        <p>WHO • GMP • ISO Certified Manufacturing Facility & Global Export</p>
-
-        <a href="/pdf/mt-animal-care-brochure.pdf"
-           target="_blank"
-           class="hero-btn">
-            📄 Know More
+        <div class="hero-badge">🏆 WHO • GMP • ISO Certified</div>
+        <h1>Leading Name in<br><span>Contract Manufacturing</span></h1>
+        <p>Premium poultry nutrition, veterinary medicines & livestock healthcare solutions with global export support.</p>
+        <a href="/pdf/mt-animal-care-brochure.pdf" target="_blank" class="hero-btn">
+            📄 Download Brochure
         </a>
     </div>
 </section>
 
+<!-- ============================================================
+     WHY CHOOSE US
+============================================================ -->
 <section class="why-choose-us" id="why-us">
-    <h2>Why Choose MT Animal Care?</h2>
-
+    <div class="section-label">Our Strengths</div>
+    <h2 class="section-title">Why Choose <span>MT Animal Care?</span></h2>
     <div class="why-grid">
-        <div class="why-card">✅ WHO-GMP Certified Facility</div>
-        <div class="why-card">✅ Custom Formulation for Poultry & Livestock</div>
-        <div class="why-card">✅ Bulk Manufacturing & Export Support</div>
-        <div class="why-card">✅ Experienced Veterinary Team</div>
-
+        <div class="why-card reveal">✅ WHO-GMP Certified Facility</div>
+        <div class="why-card reveal">✅ Custom Formulation for Poultry & Livestock</div>
+        <div class="why-card reveal">✅ Bulk Manufacturing & Export Support</div>
+        <div class="why-card reveal">✅ Experienced Veterinary Team</div>
     </div>
-<!-- ===== PAGE CONTENT ===== -->
-<div class="page">
+</section>
 
-    <!--  Search Result Heading -->
-    <h1 th:if="${searchQuery != null}">
-        Search Results for "<span th:text="${searchQuery}"></span>"
-    </h1>
-
-    <h1 th:if="${searchQuery == null}">
-        Available Products
-    </h1>
-
-    <!-- Empty result handling -->
-    <div th:if="${#lists.isEmpty(products)}"
-         style="text-align:center; padding:40px; color:#8b0000; font-weight:700;">
-        ❌ No products found.
+<!-- ============================================================
+     PRODUCTS
+============================================================ -->
+<section class="page" id="shop">
+    <div class="page-header reveal">
+        <div>
+            <div class="section-label">Our Catalogue</div>
+            <h1 class="page-heading" th:if="${searchQuery != null}">
+                Results for "<span th:text="${searchQuery}"></span>"
+            </h1>
+            <h1 class="page-heading" th:if="${searchQuery == null}">
+                Available <span>Products</span>
+            </h1>
+        </div>
     </div>
 
-    <!-- 🛍 Product Grid -->
-    <!-- 🛍 Product Grid -->
-    <div id="shop" class="product-grid" th:if="${!#lists.isEmpty(products)}">
+    <div th:if="${#lists.isEmpty(products)}" class="no-products">
+        ❌ No products found matching your search.
+    </div>
 
-
-    <div class="product-card"
+    <div class="product-grid" th:if="${!#lists.isEmpty(products)}">
+        <div class="product-card"
              th:each="product : ${products}"
              th:attr="data-name=${product.name}, data-desc=${product.description}">
 
+            <div class="card-glow"></div>
 
-        <img th:src="${product.imageUrl}"
-                 alt="Product Image"
+            <img th:src="${product.imageUrl}"
+                 alt="Product"
                  onerror="this.src='/images/no-image.png'">
+
             <h3 class="product-name" th:text="${product.name}"></h3>
             <p class="product-desc" th:text="${product.description}"></p>
 
-
-            <div class="price">
-                ₹ <span th:text="${product.price}"></span>
-            </div>
+            <div class="price">₹ <span th:text="${product.price}"></span></div>
 
             <div class="stock"
-                 th:text="${product.stock > 0 ? 'In Stock' : 'Out of Stock'}">
+                 th:text="${product.stock > 0 ? '✓ In Stock' : '✗ Out of Stock'}"
+                 th:style="${product.stock > 0 ? '' : 'background:rgba(239,68,68,0.1);color:#f87171;border-color:rgba(239,68,68,0.25);'}">
             </div>
 
             <div class="qty-controls">
-                <button type="button"
-                        class="qty-btn"
-                        th:attr="onclick=|updateQty(${product.id}, 'decrease')|">
-                    −
-                </button>
-
+                <button type="button" class="qty-btn"
+                        th:attr="onclick=|updateQty(${product.id}, 'decrease')|">−</button>
                 <span class="qty-value"
                       th:id="'qty-' + ${product.id}"
-                      th:text="${cart[product.id] != null ? cart[product.id] : 0}">
-                0
-            </span>
-
-                <button type="button"
-                        class="qty-btn"
-                        th:attr="onclick=|updateQty(${product.id}, 'increase')|">
-                    +
-                </button>
+                      th:text="${cart[product.id] != null ? cart[product.id] : 0}">0</span>
+                <button type="button" class="qty-btn"
+                        th:attr="onclick=|updateQty(${product.id}, 'increase')|">+</button>
             </div>
+
             <a href="javascript:void(0)"
                class="know-more-btn"
                th:attr="data-img=${product.knowMoreImageUrl}"
                onclick="openKnowMoreFromBtn(this)">
                 🔍 Know More
             </a>
-
         </div>
-
-
-
-
-</div>
+    </div>
+</section>
 
 <!-- Know More Modal -->
-<div id="knowMoreModal" class="modal-overlay">
+<div id="knowMoreModal" class="modal-overlay" onclick="if(event.target===this)closeKnowMore()">
     <div class="modal-box">
         <span class="close-btn" onclick="closeKnowMore()">✖</span>
-        <img id="knowMoreImg" src="" alt="Know More Image"/>
+        <img id="knowMoreImg" src="" alt="Know More">
     </div>
 </div>
 
-<style>
-    .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.7);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    .modal-box {
-        background: linear-gradient(135deg, #7a0000, #ffcc70);
-        padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 20px 50px rgba(255,215,0,0.5);
-        max-width: 90%;
-        max-height: 90%;
-    }
-
-    .modal-box img {
-        max-width: 100%;
-        max-height: 70vh;
-        border-radius: 12px;
-        border: 4px solid gold;
-    }
-
-    .close-btn {
-        position: absolute;
-        right: 20px;
-        top: 10px;
-        font-size: 24px;
-        cursor: pointer;
-        color: white;
-    }
-</style>
-
-<script>
-    function openKnowMoreFromBtn(btn) {
-        const imgUrl = btn.getAttribute("data-img");
-        document.getElementById("knowMoreImg").src = imgUrl;
-        document.getElementById("knowMoreModal").style.display = "flex";
-    }
-
-    function closeKnowMore() {
-        document.getElementById("knowMoreModal").style.display = "none";
-    }
-</script>
-
+<!-- ============================================================
+     ABOUT
+============================================================ -->
 <section id="about" class="about-section">
-    <h2>About Our Manufacturing Unit</h2>
-    <p>
-        We are a quality-driven manufacturing unit specializing in poultry nutrition, veterinary medicines,
-        and animal healthcare products designed to enhance growth, immunity, and overall farm productivity.
-        Our facility follows strict industrial standards, modern production processes, and quality control systems
-        to ensure every product meets safety, performance, and regulatory requirements. From poultry feed supplements
-        and disease-prevention formulations to healthcare solutions for other livestock and animals, we are committed
-        to delivering reliable, effective, and scientifically developed products that support farmers, integrators,
-        and veterinary professionals across the industry. Our focus on innovation, hygiene, and consistency helps
-        build healthier flocks and sustainable farming outcomes.
-    </p>
+    <div class="about-content reveal">
+        <div class="section-label">Who We Are</div>
+        <h2 class="section-title" style="margin-bottom:28px;">About Our <span>Manufacturing Unit</span></h2>
+        <p>
+            We are a quality-driven manufacturing unit specializing in poultry nutrition, veterinary medicines,
+            and animal healthcare products designed to enhance growth, immunity, and overall farm productivity.
+            Our facility follows strict industrial standards, modern production processes, and quality control systems
+            to ensure every product meets safety, performance, and regulatory requirements. From poultry feed supplements
+            and disease-prevention formulations to healthcare solutions for other livestock and animals, we are committed
+            to delivering reliable, effective, and scientifically developed products that support farmers, integrators,
+            and veterinary professionals across the industry. Our focus on innovation, hygiene, and consistency helps
+            build healthier flocks and sustainable farming outcomes.
+        </p>
+    </div>
 </section>
+
+<!-- ============================================================
+     CONTACT
+============================================================ -->
 <section id="contact" class="contact-section">
-    <h2>Contact Us</h2>
+    <div class="section-label reveal">Get in Touch</div>
+    <h2 class="section-title reveal" style="margin-bottom:48px;">Contact <span>Us</span></h2>
 
     <div class="contact-grid">
-        <!-- Address -->
-        <div class="contact-card">
-            <h3>Registered Address</h3>
-            <p>
-                B/201, Mauli Apartment 3, Manvel Pada Road,<br>
-                Nearby Landmark: Jaydeep English Primary School,<br>
-                Kargil Nagar, Vasai Virar, District: Palghar,<br>
-                Maharashtra – 401305
-            </p>
+        <div class="contact-card reveal">
+            <h3>📍 Registered Address</h3>
+            <p>B/201, Mauli Apartment 3, Manvel Pada Road,<br>
+                Nearby: Jaydeep English Primary School,<br>
+                Kargil Nagar, Vasai Virar, Palghar,<br>
+                Maharashtra – 401305</p>
         </div>
-
-        <!-- Phone & Email -->
-        <div class="contact-card">
-            <h3>Contact</h3>
-            <p>
-                📞 9503569405<br>
-                📞 97734 05980<br><br>
-                ✉️ mtanimalhealthcare@gmail.com
-            </p>
+        <div class="contact-card reveal">
+            <h3>📞 Contact</h3>
+            <p>9503569405<br>97734 05980<br><br>✉️ mtanimalhealthcare@gmail.com</p>
         </div>
-
-        <!-- Registrations -->
-        <div class="contact-card">
-            <h3>Registrations</h3>
-            <p>
-                MSME: UDYAM-MH-19-0395860<br>
-                GST: 27ACFFM7590J1ZN
-            </p>
+        <div class="contact-card reveal">
+            <h3>📋 Registrations</h3>
+            <p>MSME: UDYAM-MH-19-0395860<br><br>GST: 27ACFFM7590J1ZN</p>
         </div>
     </div>
 </section>
-    <script>
-        function liveSearchProducts(query) {
-            query = query.toLowerCase().trim();
 
-            const cards = document.querySelectorAll(".product-card");
-            let firstMatch = null;
+<div class="footer-divider"></div>
 
-            cards.forEach(card => {
-                const nameEl = card.querySelector(".product-name");
-                const descEl = card.querySelector(".product-desc");
+<!-- Scroll to top -->
+<button id="scrollTop" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-                const name = nameEl.innerText.toLowerCase();
-                const desc = descEl.innerText.toLowerCase();
+<!-- Talk to Expert -->
+<a href="tel:+919503569405" id="talkExpertFloat" title="Call Poultry Expert">
+    📞 Talk to an Expert
+</a>
 
-                // Reset previous highlights
-                nameEl.innerHTML = nameEl.innerText;
-                descEl.innerHTML = descEl.innerText;
-
-                if (!query) {
-                    card.classList.remove("dim");
-                    return;
-                }
-
-                if (name.includes(query) || desc.includes(query)) {
-                    card.classList.remove("dim");
-
-                    // Highlight text
-                    highlightText(nameEl, query);
-                    highlightText(descEl, query);
-
-                    if (!firstMatch) {
-                        firstMatch = card;
-                    }
-                } else {
-                    card.classList.add("dim");
-                }
-            });
-
-            // Auto scroll to first match
-            if (firstMatch) {
-                firstMatch.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
-            }
-        }
-
-        function highlightText(element, query) {
-            const text = element.innerText;
-            const regex = new RegExp(`(${query})`, "ig");
-            element.innerHTML = text.replace(regex, `<span class="highlight">$1</span>`);
-        }
-    </script>
-
-    <!-- 🤖 AI Chatbot -->
-
-    <!-- 🤖 AI Chatbot -->
-    <div id="ai-chatbot">
-        <div id="ai-header">
-            🤖 Ask MT Assistant <span onclick="toggleChatbot()" style="float:right; cursor:pointer;">➖</span>
-        </div>
-        <div id="ai-body"></div>
-        <input type="text" id="ai-input" placeholder="Ask about products, GST, delivery..." />
+<!-- ============================================================
+     AI CHATBOT
+============================================================ -->
+<div id="ai-chatbot">
+    <div id="ai-header">
+        <span>🤖 Ask MT Assistant</span>
+        <span onclick="toggleChatbot()" style="cursor:pointer; opacity:0.7;">—</span>
     </div>
+    <div id="ai-body"></div>
+    <input type="text" id="ai-input" placeholder="Ask about products, GST, delivery…" />
+</div>
 
-    <style>
-
-    #ai-chatbot {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 320px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    overflow: hidden;
-    z-index: 9999;
-    font-family: Arial;
-    }
-
-    #ai-header {
-    background: linear-gradient(135deg, #7a0000, #ffcc66);
-    color: white;
-    padding: 10px;
-    font-weight: bold;
-    text-align: center;
-    cursor: move;
-    user-select: none;
-    }
-
-    #ai-body {
-    height: 240px;
-    padding: 10px;
-    overflow-y: auto;
-    font-size: 13px;
-    background: #fafafa;
-    }
-
-    .msg-user {
-    margin: 6px 0;
-    text-align: right;
-    color: #333;
-    }
-
-    .msg-ai {
-    margin: 6px 0;
-    text-align: left;
-    color: green;
-    }
-
-    .typing {
-    font-style: italic;
-    color: gray;
-    }
-
-    #ai-input {
-    width: 100%;
-    border: none;
-    border-top: 1px solid #eee;
-    padding: 10px;
-    outline: none;
-    }
-
-
-    </style>
-
-    <script>
-        const aiBody = document.getElementById("ai-body");
-        const aiInput = document.getElementById("ai-input");
-
-        aiInput.addEventListener("keydown", function(e) {
-            if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        function sendMessage() {
-            const msg = aiInput.value.trim();
-            if (!msg) return;
-
-            aiBody.innerHTML += `<div class="msg-user"><b>You:</b> ${escapeHtml(msg)}</div>`;
-            aiInput.value = "";
-
-            const typingEl = document.createElement("div");
-            typingEl.className = "typing";
-            typingEl.innerText = "AI is typing...";
-            aiBody.appendChild(typingEl);
-            aiBody.scrollTop = aiBody.scrollHeight;
-
-            fetch("/ai-chat", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "text/plain"
-                },
-                body: msg   // ✅ FIXED: send the actual message
-            })
-                .then(res => res.text())
-                .then(reply => {
-                    typingEl.remove();
-                    aiBody.innerHTML += `<div class="msg-ai"><b>AI:</b> ${escapeHtml(reply)}</div>`;
-                    aiBody.scrollTop = aiBody.scrollHeight;
-                })
-                .catch(err => {
-                    typingEl.innerText = "AI is not available right now.";
-                    console.error("AI call failed", err);
-                });
-        }
-
-        function escapeHtml(text) {
-            return text.replace(/[&<>"']/g, function (m) {
-                return ({
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                })[m];
-            });
-        }
-    </script>
-
-
-    <script>
-        function toggleUserMenu() {
-            const menu = document.getElementById("userMenu");
-            menu.style.display = (menu.style.display === "block") ? "none" : "block";
-        }
-
-        // Prevent dropdown from closing when clicking inside it
-        document.getElementById("userMenu").addEventListener("click", function (e) {
-            e.stopPropagation();
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener("click", function (e) {
-            const dropdown = document.querySelector(".user-dropdown");
-            const menu = document.getElementById("userMenu");
-
-            if (!dropdown.contains(e.target)) {
-                menu.style.display = "none";
-            }
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
-            const aiBody = document.getElementById("ai-body");
-            const aiInput = document.getElementById("ai-input");
-            const chatbot = document.getElementById("ai-chatbot");
-            const header = document.getElementById("ai-header");
-
-            if (!chatbot || !header) {
-                console.error("Chatbot elements not found in DOM");
-                return;
-            }
-
-            /* ================= Chat Input ================= */
-            aiInput.addEventListener("keydown", function(e) {
-                if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-
-            function sendMessage() {
-                const msg = aiInput.value.trim();
-                if (!msg) return;
-
-                aiBody.innerHTML += `<div class="msg-user"><b>You:</b> ${escapeHtml(msg)}</div>`;
-                aiInput.value = "";
-
-                const typingEl = document.createElement("div");
-                typingEl.className = "typing";
-                typingEl.innerText = "AI is typing...";
-                aiBody.appendChild(typingEl);
-                aiBody.scrollTop = aiBody.scrollHeight;
-
-                fetch("/ai-chat", {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain" },
-                    body: msg
-                })
-                    .then(res => res.text())
-                    .then(reply => {
-                        typingEl.remove();
-                        aiBody.innerHTML += `<div class="msg-ai"><b>AI:</b> ${escapeHtml(reply)}</div>`;
-                        aiBody.scrollTop = aiBody.scrollHeight;
-                    })
-                    .catch(() => {
-                        typingEl.innerText = "AI is not available right now.";
-                    });
-            }
-
-            function escapeHtml(text) {
-                return text.replace(/[&<>"']/g, function (m) {
-                    return ({
-                        '&': '&amp;',
-                        '<': '&lt;',
-                        '>': '&gt;',
-                        '"': '&quot;',
-                        "'": '&#039;'
-                    })[m];
-                });
-            }
-
-            /* ================= Drag Logic (Desktop + Mobile) ================= */
-
-            let isDragging = false;
-            let offsetX = 0, offsetY = 0;
-
-            function startDrag(x, y) {
-                const rect = chatbot.getBoundingClientRect();
-                offsetX = x - rect.left;
-                offsetY = y - rect.top;
-                isDragging = true;
-            }
-
-            function moveDrag(x, y) {
-                if (!isDragging) return;
-                chatbot.style.left = (x - offsetX) + "px";
-                chatbot.style.top = (y - offsetY) + "px";
-                chatbot.style.right = "auto";
-                chatbot.style.bottom = "auto";
-                chatbot.style.position = "fixed";
-            }
-
-            function stopDrag() {
-                isDragging = false;
-            }
-
-            // 🖱️ Desktop
-            header.addEventListener("mousedown", e => {
-                startDrag(e.clientX, e.clientY);
-                e.preventDefault();
-            });
-
-            document.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
-            document.addEventListener("mouseup", stopDrag);
-
-            // 📱 Mobile (Touch support)
-            header.addEventListener("touchstart", e => {
-                const t = e.touches[0];
-                startDrag(t.clientX, t.clientY);
-            });
-
-            document.addEventListener("touchmove", e => {
-                const t = e.touches[0];
-                moveDrag(t.clientX, t.clientY);
-            });
-
-            document.addEventListener("touchend", stopDrag);
-
-        });
-    </script>
-
-    <!-- 📨 Enquiry Modal -->
-    <div id="enquiryModal" class="enquiry-modal" onclick="backdropClose(event)">
-        <div class="enquiry-box">
-            <span class="close-btn" onclick="closeEnquiryModal()">✖</span>
-
-            <h2>📩 Custom Product Enquiry</h2>
-            <p>Tell us your requirement and we will design a custom solution for your animals.</p>
-
-            <form id="enquiryForm" onsubmit="submitEnquiry(event)">
-                <label>Animal Type</label>
-                <select name="animalType" required>
-                    <option value="">Select Animal</option>
-                    <option value="Chicken">Chicken</option>
-                    <option value="Cow">Cow</option>
-                    <option value="Goat">Goat</option>
-                    <option value="Pig">Pig</option>
-                    <option value="Other">Other</option>
-                </select>
-
-                <label>Requirement (Medicine / Supplement)</label>
-                <textarea name="requirement" placeholder="Describe the problem or supplement needed..." required></textarea>
-
-                <label>Your Name</label>
-                <input type="text" name="name" required />
-
-                <label>Contact Number</label>
-                <input type="tel" name="phone" required />
-
-                <label>Number of Animals</label>
-                <input type="number" name="animalCount" placeholder="e.g. 500" min="1" required />
-
-                <label>Expected Monthly Requirement</label>
-                <input type="text" name="monthlyRequirement" placeholder="e.g. 10 kg / 100 bottles" required />
-
-                <button type="submit">Send Enquiry</button>
-            </form>
-        </div>
+<!-- ============================================================
+     ENQUIRY MODAL
+============================================================ -->
+<div id="enquiryModal" class="enquiry-modal" onclick="backdropClose(event)">
+    <div class="enquiry-box">
+        <span class="close-btn" onclick="closeEnquiryModal()">✖</span>
+        <h2>📩 Custom Product Enquiry</h2>
+        <p>Tell us your requirement and we'll design a custom solution for your animals.</p>
+        <form id="enquiryForm" onsubmit="submitEnquiry(event)">
+            <label>Animal Type</label>
+            <select name="animalType" required>
+                <option value="">Select Animal</option>
+                <option>Chicken</option><option>Cow</option>
+                <option>Goat</option><option>Pig</option><option>Other</option>
+            </select>
+            <label>Requirement (Medicine / Supplement)</label>
+            <textarea name="requirement" placeholder="Describe the problem or supplement needed…" required></textarea>
+            <label>Your Name</label>
+            <input type="text" name="name" required />
+            <label>Contact Number</label>
+            <input type="tel" name="phone" required />
+            <label>Number of Animals</label>
+            <input type="number" name="animalCount" placeholder="e.g. 500" min="1" required />
+            <label>Expected Monthly Requirement</label>
+            <input type="text" name="monthlyRequirement" placeholder="e.g. 10 kg / 100 bottles" required />
+            <button type="submit">Send Enquiry 🚀</button>
+        </form>
     </div>
+</div>
 
-    <style>
-        .enquiry-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 99999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .enquiry-modal.show {
-            display: flex;
-        }
-
-        .enquiry-box {
-            background: linear-gradient(135deg, #7a0000, #ffcc66);
-            padding: 30px;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 420px;
-            color: #fff;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            position: relative;
-        }
-
-        .enquiry-box h2 {
-            margin-bottom: 10px;
-            color: #ffd700;
-        }
-
-        .enquiry-box p {
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
-
-        .enquiry-box label {
-            display: block;
-            margin-top: 10px;
-            font-weight: 600;
-        }
-
-        .enquiry-box input,
-        .enquiry-box select,
-        .enquiry-box textarea {
-            width: 100%;
-            padding: 8px 10px;
-            margin-top: 6px;
-            border-radius: 6px;
-            border: none;
-            outline: none;
-        }
-
-        .enquiry-box textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
-        .enquiry-box button {
-            width: 100%;
-            margin-top: 18px;
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            background: #ffd700;
-            color: #7a0000;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .enquiry-box button:hover {
-            background: #ffea00;
-        }
-
-        .enquiry-box .close-btn {
-            position: absolute;
-            right: 14px;
-            top: 10px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-    </style>
-
-    <script>
-        function openEnquiryModal() {
-            document.getElementById("enquiryModal").classList.add("show");
-        }
-
-        function closeEnquiryModal() {
-            document.getElementById("enquiryModal").classList.remove("show");
-        }
-
-        function backdropClose(e) {
-            if (e.target.id === "enquiryModal") {
-                closeEnquiryModal();
+<!-- ============================================================
+     ALL SCRIPTS
+============================================================ -->
+<script>
+    /* ---------- Scroll Reveal ---------- */
+    const revealEls = document.querySelectorAll('.reveal, .reveal-left');
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                revealObserver.unobserve(e.target);
             }
-        }
+        });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => revealObserver.observe(el));
 
-        function submitEnquiry(e) {
-            e.preventDefault();
-
-            const form = document.getElementById("enquiryForm");
-            const data = new FormData(form);
-
-            const whatsappMsg = encodeURIComponent(
-                `Hello, I submitted an enquiry on MT Animal Care.\n\n` +
-                `Animal: ${data.get("animalType")}\n` +
-                `Number of Animals: ${data.get("animalCount")}\n` +
-                `Monthly Requirement: ${data.get("monthlyRequirement")}\n` +
-                `Requirement: ${data.get("requirement")}\n` +
-                `Name: ${data.get("name")}\n` +
-                `Contact: ${data.get("phone")}`
-            );
-
-            const whatsappNumber = "919021466362";
-
-            // Optional backend call (won't break if API not present)
-            fetch("/enquiry", { method: "POST", body: data }).catch(() => {});
-
-            alert("✅ Your enquiry has been sent.\n👉 Chat instantly with our expert on WhatsApp.");
-
-            window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, "_blank");
-
-            form.reset();
-            closeEnquiryModal();
-        }
-
-        // 🔥 Auto popup on page load (only once per session)
-        document.addEventListener("DOMContentLoaded", function () {
-            if (!sessionStorage.getItem("enquiryPopupShown")) {
+    /* ---------- Product Cards Stagger ---------- */
+    const productCards = document.querySelectorAll('.product-card');
+    const cardObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                const idx = Array.from(productCards).indexOf(e.target);
                 setTimeout(() => {
-                    openEnquiryModal();
-                    sessionStorage.setItem("enquiryPopupShown", "true");
-                }, 1200);
+                    e.target.classList.add('card-visible');
+                }, idx * 80);
+                cardObserver.unobserve(e.target);
             }
         });
-    </script>
+    }, { threshold: 0.05, rootMargin: '0px 0px -50px 0px' });
+    productCards.forEach(card => cardObserver.observe(card));
 
-    <script>
-        function toggleMenu() {
-            const menu = document.getElementById("mobileMenu");
-            const overlay = document.getElementById("mobileOverlay");
-            const burger = document.getElementById("hamburgerBtn");
+    /* ---------- Scroll To Top ---------- */
+    const scrollTopBtn = document.getElementById('scrollTop');
+    window.addEventListener('scroll', () => {
+        scrollTopBtn.classList.toggle('show', window.scrollY > 500);
+    });
 
-            menu.classList.toggle("active");
-            overlay.classList.toggle("active");
-            burger.classList.toggle("active");
-        }
-    </script>
-
-
-    </script>
-   <style>
-
-
-       @media (max-width: 768px) {
-        #ai-chatbot {
-            width: 92%;
-            right: 4%;
-            bottom: 70px;     /* above cart button */
-            max-height: 300px;
-        }
-
-        #ai-body {
-            height: 140px;
-        }
-    }
-
-
-   </style>
-    <script>
-        let chatbotMinimized = false;
-
-        function toggleChatbot() {
-            const body = document.getElementById("ai-body");
-            const input = document.getElementById("ai-input");
-
-            chatbotMinimized = !chatbotMinimized;
-
-            if (chatbotMinimized) {
-                body.style.display = "none";
-                input.style.display = "none";
+    /* ---------- Live Search ---------- */
+    function liveSearchProducts(query) {
+        query = query.toLowerCase().trim();
+        const cards = document.querySelectorAll('.product-card');
+        let firstMatch = null;
+        cards.forEach(card => {
+            const nameEl = card.querySelector('.product-name');
+            const descEl = card.querySelector('.product-desc');
+            const name = nameEl.innerText.toLowerCase();
+            const desc = descEl.innerText.toLowerCase();
+            nameEl.innerHTML = nameEl.innerText;
+            descEl.innerHTML = descEl.innerText;
+            if (!query) { card.classList.remove('dim'); return; }
+            if (name.includes(query) || desc.includes(query)) {
+                card.classList.remove('dim');
+                highlightText(nameEl, query);
+                highlightText(descEl, query);
+                if (!firstMatch) firstMatch = card;
             } else {
-                body.style.display = "block";
-                input.style.display = "block";
-            }
-        }
-    </script>
-<style>
-    /* ===== MOBILE DRAWER MENU ===== */
-    .mobile-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 998;
-    }
-
-    .mobile-overlay.active {
-        display: block;
-    }
-
-    .mobile-menu {
-        position: fixed;
-        top: 0;
-        left: -80%;
-        width: 80%;
-        max-width: 300px;
-        height: 100vh;
-        background: #ffffff;
-        z-index: 999;
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        box-shadow: 4px 0 20px rgba(0,0,0,0.3);
-        transition: left 0.3s ease;
-    }
-
-    .mobile-menu.active {
-        left: 0;
-    }
-
-
-</style>
-    <style>
-        .navbar {
-            min-height: 64px;
-        }
-
-        /* ===== HAMBURGER (DESKTOP HIDDEN BY DEFAULT) ===== */
-        .hamburger {
-            display: none;              /* ❌ hidden on desktop */
-            flex-direction: column;
-            gap: 4px;
-            cursor: pointer;
-            padding: 6px;
-        }
-
-        .hamburger span {
-            width: 22px;
-            height: 2px;
-            background: #111;
-            border-radius: 2px;
-            transition: 0.3s ease;
-        }
-
-        /* ===== MOBILE ONLY ===== */
-        @media (max-width: 768px) {
-            .hamburger {
-                display: flex;          /* ✅ visible only on mobile */
-                margin-left: auto;
-            }
-        }
-
-        /* Hamburger animation */
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
-        }
-
-        </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            if (!sessionStorage.getItem("enquiryShown")) {
-                setTimeout(() => {
-                    openEnquiryModal();
-                    sessionStorage.setItem("enquiryShown", "true");
-                }, 1000);
+                card.classList.add('dim');
             }
         });
-    </script>
-
-    <!-- 📞 Floating Talk to an Expert -->
-    <!-- 📞 Floating Talk to an Expert -->
-    <a href="tel:+919503569405" id="talkExpertFloat" title="Call Poultry Expert">
-        📞 Talk to an Expert
-    </a>
-
-    <style>
-        /* ===== Floating Talk to an Expert (Right Side) ===== */
-        #talkExpertFloat {
-            position: fixed;        /* floating */
-            top: 110px;             /* 🔼 move up/down by changing this */
-            right: 20px;
-            z-index: 9999;
-
-            background: linear-gradient(135deg, #16a34a, #22c55e);
-            color: #ffffff;
-            text-decoration: none;
-
-            padding: 12px 18px;
-            border-radius: 999px;
-
-            font-weight: 800;
-            font-size: 13px;
-            letter-spacing: 0.3px;
-
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-
-            box-shadow:
-                    0 10px 24px rgba(0,0,0,0.35),
-                    0 0 0 0 rgba(34, 197, 94, 0.6);
-
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            animation: expertPulse 2.2s infinite;
-        }
-
-        #talkExpertFloat:hover {
-            transform: translateY(-2px) scale(1.06);
-            box-shadow:
-                    0 14px 32px rgba(0,0,0,0.45),
-                    0 0 0 8px rgba(34, 197, 94, 0.25);
-        }
-
-        /* Subtle pulse glow */
-        @keyframes expertPulse {
-            0% {
-                box-shadow: 0 10px 24px rgba(0,0,0,0.35), 0 0 0 0 rgba(34, 197, 94, 0.5);
-            }
-            70% {
-                box-shadow: 0 12px 30px rgba(0,0,0,0.45), 0 0 0 10px rgba(34, 197, 94, 0);
-            }
-            100% {
-                box-shadow: 0 10px 24px rgba(0,0,0,0.35), 0 0 0 0 rgba(34, 197, 94, 0);
-            }
-        }
-
-        /* 📱 Mobile tweak */
-        @media (max-width: 768px) {
-            #talkExpertFloat {
-                top: 90px;        /* a bit higher on mobile */
-                right: 10px;
-                padding: 10px 14px;
-                font-size: 11px;
-            }
-        }
-
-    </style>
-    <script>
-        // Optional: adjust position dynamically if navbar height changes
-        window.addEventListener("load", function () {
-            const btn = document.getElementById("talkExpertFloat");
-            const navbar = document.querySelector(".navbar");
-
-            if (btn && navbar) {
-                const navHeight = navbar.offsetHeight || 80;
-                btn.style.top = (navHeight + 20) + "px"; // keeps it just below navbar
-            }
-        });
-    </script>
-
-<style>
-    /* 🔥 Remove weird white line / stray element near hamburger */
-    @media (max-width: 768px) {
-        .mobile-menu-header::before,
-        .mobile-menu-header::after {
-            content: none !important;
-            display: none !important;
-        }
-
-        .mobile-menu-header {
-            border: none !important;
-            box-shadow: none !important;
-        }
-        /* ===== MOBILE DRAWER MENU LINKS (CLEAN UI) ===== */
-        .mobile-menu a {
-            padding: 14px 16px;
-            text-decoration: none;
-            color: #8b0000;
-            font-size: 16px;
-            font-weight: 700;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #fff7ed, #fff1c1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            transition: all 0.2s ease;
-        }
-
-        .mobile-menu a:hover {
-            transform: translateX(6px);
-            background: linear-gradient(135deg, #8b0000, #ffcc66);
-            color: white;
-        }
-
+        if (firstMatch) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-</style>
-    <style>
-        /* 🔥 FINAL FIX: remove white line near hamburger (mobile only) */
-        @media (max-width: 768px) {
+    function highlightText(element, query) {
+        const text = element.innerText;
+        const regex = new RegExp(`(${query})`, 'ig');
+        element.innerHTML = text.replace(regex, `<span class="highlight">$1</span>`);
+    }
 
-            /* Kill any stray borders or outlines near navbar */
-            .navbar,
-            .brand,
-            .mobile-menu,
-            .mobile-menu-header {
-                border: none !important;
-                outline: none !important;
-                box-shadow: none !important;
-            }
+    /* ---------- User Dropdown ---------- */
+    function toggleUserMenu() {
+        const menu = document.getElementById('userMenu');
+        if (menu) menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    }
+    const userMenu = document.getElementById('userMenu');
+    if (userMenu) {
+        userMenu.addEventListener('click', e => e.stopPropagation());
+        document.addEventListener('click', e => {
+            const dropdown = document.querySelector('.user-dropdown');
+            if (dropdown && !dropdown.contains(e.target)) userMenu.style.display = 'none';
+        });
+    }
 
-            /* Prevent any horizontal overflow causing white sliver */
-            html, body {
-                overflow-x: hidden !important;
-            }
+    /* ---------- Mobile Menu ---------- */
+    function toggleMenu() {
+        document.getElementById('mobileMenu').classList.toggle('active');
+        document.getElementById('mobileOverlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('active');
+    }
 
-            /* Ensure mobile drawer is fully off-canvas */
-            .mobile-menu {
-                left: -100% !important;
-            }
-
-            .mobile-menu.active {
-                left: 0 !important;
-            }
-
-            /* Remove any accidental left pseudo elements */
-            .mobile-menu::before,
-            .mobile-menu-header::before {
-                content: none !important;
-                display: none !important;
-            }
+    /* ---------- Enquiry Modal ---------- */
+    function openEnquiryModal() { document.getElementById('enquiryModal').classList.add('show'); }
+    function closeEnquiryModal() { document.getElementById('enquiryModal').classList.remove('show'); }
+    function backdropClose(e) { if (e.target.id === 'enquiryModal') closeEnquiryModal(); }
+    function submitEnquiry(e) {
+        e.preventDefault();
+        const form = document.getElementById('enquiryForm');
+        const data = new FormData(form);
+        const msg = encodeURIComponent(
+            `Hello, I submitted an enquiry on MT Animal Care.\n\n` +
+            `Animal: ${data.get('animalType')}\nCount: ${data.get('animalCount')}\n` +
+            `Monthly Requirement: ${data.get('monthlyRequirement')}\n` +
+            `Requirement: ${data.get('requirement')}\nName: ${data.get('name')}\nContact: ${data.get('phone')}`
+        );
+        fetch('/enquiry', { method: 'POST', body: data }).catch(() => {});
+        alert('✅ Your enquiry has been sent!\n👉 Chat instantly with our expert on WhatsApp.');
+        window.open(`https://wa.me/919021466362?text=${msg}`, '_blank');
+        form.reset();
+        closeEnquiryModal();
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!sessionStorage.getItem('enquiryShown')) {
+            setTimeout(() => { openEnquiryModal(); sessionStorage.setItem('enquiryShown', 'true'); }, 1200);
         }
-</style>
-        </body>
+    });
+
+    /* ---------- AI Chatbot ---------- */
+    const aiBody = document.getElementById('ai-body');
+    const aiInput = document.getElementById('ai-input');
+    let chatbotMinimized = false;
+
+    function escapeHtml(text) {
+        return text.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    }
+
+    function sendMessage() {
+        const msg = aiInput.value.trim();
+        if (!msg) return;
+        aiBody.innerHTML += `<div class="msg-user"><b>You:</b> ${escapeHtml(msg)}</div>`;
+        aiInput.value = '';
+        const typingEl = document.createElement('div');
+        typingEl.className = 'typing'; typingEl.innerText = 'AI is typing…';
+        aiBody.appendChild(typingEl);
+        aiBody.scrollTop = aiBody.scrollHeight;
+        fetch('/ai-chat', { method: 'POST', headers: {'Content-Type':'text/plain'}, body: msg })
+            .then(r => r.text())
+            .then(reply => {
+                typingEl.remove();
+                aiBody.innerHTML += `<div class="msg-ai"><b>AI:</b> ${escapeHtml(reply)}</div>`;
+                aiBody.scrollTop = aiBody.scrollHeight;
+            })
+            .catch(() => { typingEl.innerText = 'AI is not available right now.'; });
+    }
+    aiInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+
+    function toggleChatbot() {
+        const body = document.getElementById('ai-body');
+        const input = document.getElementById('ai-input');
+        chatbotMinimized = !chatbotMinimized;
+        body.style.display = chatbotMinimized ? 'none' : 'block';
+        input.style.display = chatbotMinimized ? 'none' : 'block';
+    }
+
+    /* Draggable chatbot */
+    document.addEventListener('DOMContentLoaded', () => {
+        const chatbot = document.getElementById('ai-chatbot');
+        const header = document.getElementById('ai-header');
+        if (!chatbot || !header) return;
+        let isDragging = false, offsetX = 0, offsetY = 0;
+        const startDrag = (x, y) => {
+            const r = chatbot.getBoundingClientRect();
+            offsetX = x - r.left; offsetY = y - r.top; isDragging = true;
+        };
+        const moveDrag = (x, y) => {
+            if (!isDragging) return;
+            chatbot.style.left = (x - offsetX) + 'px';
+            chatbot.style.top  = (y - offsetY) + 'px';
+            chatbot.style.right = 'auto'; chatbot.style.bottom = 'auto';
+        };
+        const stopDrag = () => { isDragging = false; };
+        header.addEventListener('mousedown', e => { startDrag(e.clientX, e.clientY); e.preventDefault(); });
+        document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
+        document.addEventListener('mouseup', stopDrag);
+        header.addEventListener('touchstart', e => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); });
+        document.addEventListener('touchmove', e => { const t = e.touches[0]; moveDrag(t.clientX, t.clientY); });
+        document.addEventListener('touchend', stopDrag);
+    });
+
+    /* Talk to expert - position below navbar */
+    window.addEventListener('load', () => {
+        const btn = document.getElementById('talkExpertFloat');
+        const navbar = document.querySelector('.navbar');
+        if (btn && navbar) btn.style.top = (navbar.offsetHeight + 14) + 'px';
+    });
+</script>
+
+</body>
 </html>
