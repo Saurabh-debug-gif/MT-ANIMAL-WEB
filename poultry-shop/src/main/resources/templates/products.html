@@ -309,7 +309,29 @@
         #ai-input::placeholder { color:rgba(255,255,255,0.25); }
 
         /* TALK TO EXPERT */
-        #talkExpertFloat { position:fixed;top:90px;right:20px;z-index:9994;background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;text-decoration:none;padding:10px 18px;border-radius:999px;font-weight:700;font-size:12px;letter-spacing:0.3px;display:inline-flex;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(0,0,0,0.35);animation:expertPulse 2.5s infinite;transition:var(--t) var(--ease);cursor:none; }
+        #talkExpertFloat {
+            position:fixed;
+            top:130px;   /* moved a little lower */
+            right:20px;
+            z-index:9994;
+            background:linear-gradient(135deg,#15803d,#22c55e);
+            color:#fff;
+            text-decoration:none;
+            padding:10px 18px;
+            border-radius:999px;
+            font-weight:700;
+            font-size:12px;
+            letter-spacing:0.3px;
+            display:inline-flex;
+            align-items:center;
+            gap:7px;
+            box-shadow:0 8px 24px rgba(0,0,0,0.35);
+            animation:expertPulse 2.5s infinite;
+            transition:var(--t) var(--ease);
+            cursor:none;
+        }
+
+
         #talkExpertFloat:hover { transform:translateY(-2px) scale(1.05); }
         @keyframes expertPulse { 0%{box-shadow:0 8px 24px rgba(0,0,0,0.3),0 0 0 0 rgba(34,197,94,0.5)}70%{box-shadow:0 8px 24px rgba(0,0,0,0.3),0 0 0 12px rgba(34,197,94,0)}100%{box-shadow:0 8px 24px rgba(0,0,0,0.3),0 0 0 0 rgba(34,197,94,0)} }
 
@@ -352,7 +374,14 @@
             .about-inner{gap:36px} .about-visual{grid-template-columns:1fr 1fr}
             .about-stat-card:nth-child(2),.about-stat-card:nth-child(4){margin-top:0}
             #ai-chatbot{width:92%;right:4%;bottom:72px} #ai-body{height:150px}
-            #talkExpertFloat{top:80px;right:8px;padding:8px 12px;font-size:11px}
+                #talkExpertFloat {
+                    top:120px;   /* lower on mobile */
+                    right:8px;
+                    padding:8px 12px;
+                    font-size:11px;
+                }
+
+
             .cart-btn{position:fixed;bottom:16px;right:16px;width:46px;height:46px;z-index:9999}
             .footer{padding:20px 18px;flex-direction:column;text-align:center} .footer-links{justify-content:center}
             body{cursor:auto} #cursor-dot,#cursor-ring{display:none}
