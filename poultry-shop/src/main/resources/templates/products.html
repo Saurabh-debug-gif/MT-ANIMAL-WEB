@@ -253,7 +253,8 @@
             border-radius: 12px;
             min-width: 150px;
             box-shadow: var(--shadow-dark);
-            overflow: hidden;
+            overflow: visible;
+            z-index: 200;
         }
         .dropdown-menu a {
             display: block; padding: 11px 16px;
@@ -1009,7 +1010,7 @@
                 justify-content: flex-end;
                 gap: 6px;
                 flex-wrap: nowrap;
-                overflow: hidden;
+                overflow: visible; /* must be visible so dropdown isn't clipped */
             }
 
             /* Hide search on mobile to save space */
@@ -1224,6 +1225,10 @@
         <a href="#contact" onclick="toggleMenu()">Contact</a>
         <a href="javascript:void(0)" onclick="closeMenuAndEnquiry()">Enquiry</a>
         <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
+        <a th:if="${#authentication.authenticated}" href="/logout"
+           style="color:#b91c1c; border-color: rgba(185,28,28,0.2); background: rgba(185,28,28,0.05);">
+            🚪 Logout
+        </a>
     </div>
 
     <div class="right-actions">
@@ -1637,3 +1642,4 @@
             </form>
         </div>
     </div>
+
