@@ -11,19 +11,19 @@ public class HomeController {
     @GetMapping("/")
     public String home(Authentication authentication) {
 
-        // Not logged in
+        // 🌍 If not logged in → show public homepage (or products page)
         if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
+            return "redirect:/products";   // or return "index" if you have a homepage template
         }
 
-        // Logged in → check role
+        // 🔐 Logged in → Admin goes to admin panel
         for (GrantedAuthority authority : authentication.getAuthorities()) {
             if (authority.getAuthority().equals("ROLE_ADMIN")) {
                 return "redirect:/admin/products";
             }
         }
 
-        // Default USER
+        // 👤 Logged in normal user
         return "redirect:/products";
     }
 }

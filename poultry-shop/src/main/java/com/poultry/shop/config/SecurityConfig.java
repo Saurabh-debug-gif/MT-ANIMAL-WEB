@@ -26,7 +26,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // 🌍 Public pages
+                        // 🌍 Public pages (Homepage MUST be public)
                         .requestMatchers(
                                 "/",
                                 "/products",
@@ -41,34 +41,40 @@ public class SecurityConfig {
                                 "/sitemap.xml",
                                 "/google491b0d2ab3dfd7d4.html",
                                 "/oauth2/**",
+                                "/login",
                                 "/login/**"
                         ).permitAll()
 
                         // 🔐 Admin only
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                        // 🔐 Login required
+                        // 🔐 Login required only for these
                         .requestMatchers("/cart/**", "/checkout/**", "/my-orders").authenticated()
 
                         // 🌍 Everything else public
                         .anyRequest().permitAll()
                 )
 
+                // 🔑 OAuth Login
                 .oauth2Login(oauth -> oauth
-                        .loginPage("/login")   // optional custom login page
+                        .loginPage("/login")
                         .userInfoEndpoint(userInfo ->
                                 userInfo.userService(customOAuthUserService)
                         )
                         .successHandler(customLoginSuccessHandler)
                 )
 
+                // 🚪 Logout
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")   // ✅ go back to homepage, not login
+                        .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
-                );
+                )
+
+                // ❌ Important: Disable default login redirect
+                .formLogin(form -> form.disable());
 
         return http.build();
     }
