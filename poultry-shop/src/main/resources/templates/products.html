@@ -1,1404 +1,1728 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-    <title>MT Animal Care – Premium Products</title>
+    <title>MT Animal Care – Premium Veterinary Manufacturing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WHO-GMP Certified veterinary contract manufacturer. Premium formulations for poultry, livestock & animal healthcare. Custom manufacturing available.">
+    <meta name="keywords" content="Top 10 Veterinary Companies In India, Veterinary Medicine Manufacturers In India, Cattle Feed Manufacturers, Poultry Feed Manufacturers India, Veterinary Third Party Manufacturing, Veterinary Feed Supplements, Veterinary Medicine Company India, Contract Manufacturing Veterinary, Custom Veterinary Formulation, Poultry Health Products, Livestock Supplements India">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
 
     <style>
-        /* ============================================================
-           DESIGN SYSTEM — MT ANIMAL CARE PREMIUM
-           Palette: Deep Crimson · Burnished Gold · Ivory · Obsidian
-        ============================================================ */
+        /* ================================================================
+           DESIGN SYSTEM — MT ANIMAL CARE  |  Deep Crimson · Gold · Ivory
+        ================================================================ */
         :root {
             --crimson:       #7a0000;
             --crimson-deep:  #4d0000;
+            --crimson-mid:   #8b1a1a;
             --crimson-light: #b91c1c;
             --gold:          #c9972c;
             --gold-light:    #e8c060;
-            --gold-pale:     #f9efc7;
+            --gold-pale:     #fdf3dc;
             --ivory:         #fdf8f0;
-            --ivory-dark:    #f5ede0;
+            --ivory-mid:     #f7f0e4;
+            --ivory-dark:    #f0e5d2;
             --obsidian:      #0d0d0d;
-            --text-primary:  #1a0a00;
+            --text-dark:     #1a0a00;
             --text-muted:    #6b5b4e;
             --white:         #ffffff;
             --border:        rgba(201,151,44,0.22);
-            --shadow-gold:   0 8px 40px rgba(201,151,44,0.18);
+            --shadow-crimson:0 8px 40px rgba(122,0,0,0.18);
             --shadow-dark:   0 12px 48px rgba(13,13,13,0.22);
             --radius-card:   20px;
+            --radius-lg:     28px;
             --radius-pill:   999px;
-            --font-display:  'Playfair Display', serif;
-            --font-serif:    'Cormorant Garamond', serif;
+            --font-display:  'Playfair Display', Georgia, serif;
+            --font-serif:    'Cormorant Garamond', Georgia, serif;
             --font-body:     'DM Sans', sans-serif;
             --nav-h:         72px;
+            --T:             cubic-bezier(0.22,1,0.36,1);
         }
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+        *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
         html { scroll-behavior: smooth; overflow-x: hidden; }
+        body { font-family: var(--font-body); background: var(--ivory); color: var(--text-dark); overflow-x: hidden; }
 
-        body {
-            font-family: var(--font-body);
-            background: var(--ivory);
-            color: var(--text-primary);
-            overflow-x: hidden;
-        }
-
-        /* ===== CUSTOM SCROLLBAR ===== */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: var(--ivory-dark); }
-        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(var(--crimson), var(--gold)); border-radius: 3px; }
 
-        /* ============================================================
-           NAVBAR
-        ============================================================ */
+        /* ── ANNOUNCEMENT BAR ── */
+        .ann-bar {
+            background: linear-gradient(90deg, var(--crimson-deep), var(--crimson), var(--crimson-deep));
+            color: rgba(255,255,255,0.88); padding: 9px 20px;
+            font-size: 12px; font-weight: 500; letter-spacing: 0.5px;
+            overflow: hidden; position: relative; white-space: nowrap;
+        }
+        .ann-inner {
+            display: inline-flex; align-items: center; gap: 40px;
+            animation: tickScroll 28s linear infinite;
+        }
+        .ann-dot { color: var(--gold-light); font-size: 8px; }
+        .ann-bar span.hi { color: var(--gold-light); font-weight: 700; }
+        @keyframes tickScroll { from{transform:translateX(20%)} to{transform:translateX(-100%)} }
+
+        /* ── NAVBAR ── */
         .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            height: var(--nav-h);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            background: rgba(253,248,240,0.95);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--border);
+            position: sticky; top:0; z-index:500; height:var(--nav-h);
+            display:flex; align-items:center; justify-content:space-between;
+            padding:0 44px; overflow:hidden;
+            background: rgba(253,248,240,0.97);
+            backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+            border-bottom:1px solid var(--border);
+            transition: box-shadow 0.3s;
         }
-
-        /* subtle gold accent line on top */
+        .navbar.scrolled { box-shadow:0 4px 28px rgba(122,0,0,0.10); }
         .navbar::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--crimson), var(--gold), var(--crimson));
+            content:''; position:absolute; top:0; left:0; right:0; height:3px;
+            background: linear-gradient(90deg, var(--crimson), var(--gold), var(--crimson-light), var(--gold-light));
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: inherit;
+        .brand { display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; flex-shrink:0; }
+        .brand-logo-ring { position:relative; width:46px; height:46px; }
+        .brand-logo-ring::after {
+            content:''; position:absolute; inset:-3px;
+            border-radius:14px; border:1.5px solid var(--gold); opacity:0.65;
         }
+        .brand-logo { width:46px; height:46px; border-radius:12px; object-fit:cover; display:block; }
+        .brand-text { display:flex; flex-direction:column; line-height:1; gap:3px; }
+        .brand-name { font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--crimson); letter-spacing:0.3px; }
+        .brand-sub  { font-size:10px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); }
 
-        .brand-logo {
-            height: 42px;
-            width: 42px;
-            border-radius: 10px;
-            object-fit: cover;
-            border: 2px solid var(--gold);
-        }
-
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.1;
-        }
-
-        .brand-text span:first-child {
-            font-family: var(--font-display);
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--crimson);
-            letter-spacing: 0.5px;
-        }
-
-        .brand-text span:last-child {
-            font-size: 10px;
-            font-weight: 500;
-            color: var(--gold);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* Desktop nav links */
-        .desktop-nav {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
+        .desktop-nav { display:flex; align-items:center; gap:4px; }
         .desktop-nav a {
-            position: relative;
-            text-decoration: none;
-            color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 500;
-            padding: 8px 14px;
-            border-radius: 8px;
-            transition: all 0.22s ease;
-            letter-spacing: 0.2px;
+            text-decoration:none; color:var(--text-dark); font-size:14px; font-weight:500;
+            padding:8px 14px; border-radius:9px; letter-spacing:0.2px; transition:all 0.22s; position:relative;
         }
-
-        .desktop-nav a:hover {
-            color: var(--crimson);
-            background: rgba(122,0,0,0.06);
+        .desktop-nav a::after {
+            content:''; position:absolute; bottom:4px; left:50%; right:50%;
+            height:2px; background:var(--gold); border-radius:1px; transition:all 0.3s var(--T);
         }
-
-        .desktop-nav a.enquiry-link {
-            background: linear-gradient(135deg, var(--crimson), var(--crimson-light));
-            color: var(--white) !important;
-            font-weight: 700;
-            padding: 9px 20px;
-            border-radius: var(--radius-pill);
-            letter-spacing: 0.4px;
-            box-shadow: 0 4px 16px rgba(122,0,0,0.30);
-            transition: all 0.25s ease;
+        .desktop-nav a:hover { color:var(--crimson); }
+        .desktop-nav a:hover::after { left:14px; right:14px; }
+        .nav-cta {
+            background: linear-gradient(135deg,var(--crimson),var(--crimson-light)) !important;
+            color:var(--white) !important; padding:10px 22px !important;
+            border-radius:var(--radius-pill) !important; font-weight:700 !important;
+            box-shadow:0 4px 16px rgba(122,0,0,0.32) !important;
         }
+        .nav-cta:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(122,0,0,0.45) !important; }
+        .nav-cta::after { display:none !important; }
 
-        .desktop-nav a.enquiry-link:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 24px rgba(122,0,0,0.40);
-        }
+        .right-actions { display:flex; align-items:center; gap:8px; flex-shrink:1; min-width:0; overflow:hidden; }
 
-        /* Right actions */
-        .right-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Search */
-        .search-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
+        .search-wrap { position:relative; display:flex; align-items:center; }
         .search-wrap input {
-            font-family: var(--font-body);
-            width: 200px;
-            padding: 9px 38px 9px 14px;
-            border-radius: var(--radius-pill);
-            border: 1.5px solid var(--border);
-            background: var(--white);
-            font-size: 13px;
-            color: var(--text-primary);
-            outline: none;
-            transition: border 0.2s, box-shadow 0.2s, width 0.3s;
+            font-family:var(--font-body); width:160px; padding:9px 38px 9px 14px;
+            border-radius:var(--radius-pill); border:1.5px solid var(--border);
+            background:var(--white); font-size:13px; color:var(--text-dark); outline:none; transition:all 0.25s;
         }
+        .search-wrap input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,151,44,0.12); width:200px; }
+        .search-wrap button { position:absolute; right:10px; background:none; border:none; cursor:pointer; font-size:14px; color:var(--text-muted); padding:0; }
 
-        .search-wrap input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(201,151,44,0.12);
-            width: 240px;
-        }
-
-        .search-wrap button {
-            position: absolute;
-            right: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            color: var(--text-muted);
-            padding: 0;
-        }
-
-        /* WhatsApp */
         .whatsapp-btn {
-            width: 38px; height: 38px;
-            border-radius: 50%;
-            background: #25D366;
-            display: flex; align-items: center; justify-content: center;
-            text-decoration: none;
-            box-shadow: 0 4px 12px rgba(37,211,102,0.35);
-            transition: transform 0.2s, box-shadow 0.2s;
+            width:40px; height:40px; border-radius:50%; background:#25D366;
+            display:flex; align-items:center; justify-content:center; text-decoration:none;
+            box-shadow:0 4px 14px rgba(37,211,102,0.4); transition:all 0.22s; flex-shrink:0;
         }
-        .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,211,102,0.45); }
-        .whatsapp-icon { width: 20px; height: 20px; object-fit: contain; }
+        .whatsapp-btn:hover { transform:translateY(-2px) scale(1.1); }
+        .whatsapp-icon { width:20px; height:20px; object-fit:contain; }
 
-        /* Login */
         .login-btn {
-            display: flex; align-items: center; gap: 6px;
-            text-decoration: none;
-            padding: 8px 18px;
-            border-radius: var(--radius-pill);
-            border: 1.5px solid var(--border);
-            color: var(--text-primary);
-            font-weight: 600;
-            font-size: 13px;
-            background: var(--white);
-            transition: all 0.2s;
+            display:flex; align-items:center; gap:6px; text-decoration:none;
+            padding:9px 20px; border-radius:var(--radius-pill); border:1.5px solid var(--border);
+            color:var(--text-dark); font-weight:600; font-size:13px; background:var(--white); transition:all 0.22s;
         }
-        .login-btn:hover { border-color: var(--gold); background: var(--gold-pale); }
+        .login-btn:hover { border-color:var(--gold); background:var(--gold-pale); color:var(--crimson); }
 
-        /* User dropdown */
-        .user-dropdown { position: relative; }
+        .user-dropdown { position:relative; max-width:180px; }
         .user-btn {
-            display: flex; align-items: center; gap: 6px;
-            cursor: pointer;
-            padding: 8px 16px;
-            border-radius: var(--radius-pill);
-            border: 1.5px solid var(--border);
-            font-weight: 600;
-            font-size: 13px;
-            background: var(--white);
-            transition: all 0.2s;
+            display:flex; align-items:center; gap:6px; cursor:pointer;
+            padding:9px 14px; border-radius:var(--radius-pill); border:1.5px solid var(--border);
+            font-weight:600; font-size:13px; background:var(--white); transition:all 0.22s;
+            max-width:180px; overflow:hidden; white-space:nowrap;
         }
-        .user-btn:hover { border-color: var(--gold); }
+        .user-btn span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:110px; display:inline-block; vertical-align:middle; }
+        .user-btn:hover { border-color:var(--gold); }
         .dropdown-menu {
-            display: none;
-            position: absolute; right: 0; top: calc(100% + 8px);
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            min-width: 150px;
-            box-shadow: var(--shadow-dark);
-            overflow: visible;
-            z-index: 200;
+            display:none; position:absolute; right:0; top:calc(100% + 8px);
+            background:var(--white); border:1px solid var(--border); border-radius:14px;
+            min-width:160px; box-shadow:var(--shadow-dark); z-index:600; overflow:hidden;
         }
         .dropdown-menu a {
-            display: block; padding: 11px 16px;
-            text-decoration: none; color: var(--text-primary);
-            font-size: 13px; font-weight: 500;
-            transition: background 0.15s;
+            display:block; padding:12px 18px; text-decoration:none; color:var(--text-dark);
+            font-size:13.5px; font-weight:500; transition:all 0.15s;
         }
-        .dropdown-menu a:hover { background: var(--ivory-dark); color: var(--crimson); }
+        .dropdown-menu a:hover { background:var(--ivory-mid); color:var(--crimson); padding-left:22px; }
 
-        /* Cart */
         .cart-btn {
-            position: relative;
-            width: 42px; height: 42px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--crimson), var(--crimson-light));
-            color: var(--white);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
-            text-decoration: none;
-            box-shadow: 0 4px 14px rgba(122,0,0,0.28);
-            transition: transform 0.2s, box-shadow 0.2s;
-            flex-shrink: 0;
+            position:relative; width:44px; height:44px; border-radius:12px;
+            background:linear-gradient(135deg,var(--crimson),var(--crimson-light));
+            color:var(--white); display:flex; align-items:center; justify-content:center;
+            font-size:19px; text-decoration:none; flex-shrink:0;
+            box-shadow:0 4px 14px rgba(122,0,0,0.30); transition:all 0.22s;
         }
-        .cart-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(122,0,0,0.38); }
+        .cart-btn:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(122,0,0,0.42); }
         .cart-count {
-            position: absolute; top: -5px; right: -5px;
-            background: var(--gold); color: var(--obsidian);
-            font-size: 10px; font-weight: 800;
-            padding: 2px 6px; border-radius: var(--radius-pill);
-            line-height: 1.4;
-            border: 2px solid var(--ivory);
+            position:absolute; top:-6px; right:-6px;
+            background:var(--gold); color:var(--obsidian); font-size:10px; font-weight:800;
+            padding:2px 6px; border-radius:var(--radius-pill); line-height:1.4; border:2px solid var(--ivory);
         }
 
-        /* Hamburger */
-        .hamburger {
-            display: none;
-            flex-direction: column; gap: 5px;
-            cursor: pointer; padding: 6px; margin-left: auto;
-        }
-        .hamburger span {
-            width: 24px; height: 2px;
-            background: var(--crimson); border-radius: 2px;
-            transition: 0.3s ease;
-        }
-        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-        .hamburger.active span:nth-child(2) { opacity: 0; }
-        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:6px; }
+        .hamburger span { width:24px; height:2px; background:var(--crimson); border-radius:2px; transition:0.3s; }
+        .hamburger.active span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
+        .hamburger.active span:nth-child(2) { opacity:0; }
+        .hamburger.active span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
 
-        /* Mobile overlay */
-        .mobile-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(13,13,13,0.5); z-index: 998;
-        }
-        .mobile-overlay.active { display: block; }
-
-        /* Mobile drawer */
+        .mobile-overlay { display:none; position:fixed; inset:0; background:rgba(13,13,13,0.55); z-index:998; }
+        .mobile-overlay.active { display:block; }
         .mobile-menu {
-            position: fixed; top: 0; left: -85%; width: 85%; max-width: 300px;
-            height: 100vh; background: var(--ivory); z-index: 999;
-            padding: 20px; display: flex; flex-direction: column; gap: 6px;
-            box-shadow: 4px 0 32px rgba(0,0,0,0.25); transition: left 0.35s cubic-bezier(.4,0,.2,1);
+            position:fixed; top:0; left:-88%; width:88%; max-width:310px; height:100vh;
+            background:var(--ivory); z-index:999; padding:22px 18px;
+            display:flex; flex-direction:column; gap:5px;
+            box-shadow:5px 0 36px rgba(0,0,0,0.22); transition:left 0.38s var(--T); overflow-y:auto;
         }
-        .mobile-menu.active { left: 0; }
+        .mobile-menu.active { left:0; }
         .mobile-menu-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 10px;
+            display:flex; align-items:center; justify-content:space-between;
+            padding-bottom:18px; border-bottom:1px solid var(--border); margin-bottom:8px;
         }
         .mobile-menu a {
-            padding: 13px 16px; text-decoration: none;
-            color: var(--crimson); font-size: 15px; font-weight: 600;
-            border-radius: 10px; transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-        .mobile-menu a:hover {
-            background: var(--gold-pale); border-color: var(--border);
-            padding-left: 22px;
-        }
-        .close-menu { font-size: 22px; cursor: pointer; color: var(--text-muted); }
-
-        /* ============================================================
-           HERO SECTION
-        ============================================================ */
-        .hero-section {
-            position: relative; width: 100%;
-            min-height: 68vh; max-height: 82vh;
-            overflow: hidden; background: var(--obsidian);
-        }
-
-        .hero-image {
-            width: 100%; height: 100%;
-            object-fit: cover; object-position: center; display: block;
-            opacity: 0.7;
-            transform: scale(1.03);
-            transition: transform 6s ease;
-        }
-
-        .hero-section:hover .hero-image { transform: scale(1); }
-
-        .hero-section::after {
-            content: '';
-            position: absolute; inset: 0;
-            background: linear-gradient(
-                    105deg,
-                    rgba(13,13,13,0.85) 0%,
-                    rgba(77,0,0,0.65) 40%,
-                    rgba(13,13,13,0.15) 100%
-            );
-            z-index: 1;
-        }
-
-        /* Decorative grain overlay */
-        .hero-section::before {
-            content: '';
-            position: absolute; inset: 0; z-index: 2;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        .hero-overlay {
-            position: absolute; bottom: 60px; left: 60px;
-            z-index: 3; color: var(--white); max-width: 540px;
-        }
-
-        .hero-eyebrow {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-size: 11px; font-weight: 700; letter-spacing: 3px;
-            text-transform: uppercase; color: var(--gold-light);
-            margin-bottom: 16px;
-        }
-
-        .hero-eyebrow::before {
-            content: ''; width: 32px; height: 1px; background: var(--gold-light);
-        }
-
-        .hero-overlay h1 {
-            font-family: var(--font-display);
-            font-size: clamp(32px, 4.5vw, 54px);
-            line-height: 1.08;
-            font-weight: 900;
-            margin-bottom: 16px;
-            color: var(--white);
-        }
-
-        .hero-overlay h1 em {
-            font-style: italic;
-            color: var(--gold-light);
-        }
-
-        .hero-overlay p {
-            font-size: 15px; line-height: 1.65;
-            opacity: 0.82; margin-bottom: 28px;
-            font-weight: 300;
-        }
-
-        .hero-btn {
-            display: inline-flex; align-items: center; gap: 10px;
-            padding: 14px 28px;
-            background: linear-gradient(135deg, var(--gold), var(--gold-light));
-            color: var(--obsidian);
-            text-decoration: none; border-radius: 10px;
-            font-weight: 800; font-size: 14px; letter-spacing: 0.3px;
-            box-shadow: 0 8px 28px rgba(0,0,0,0.50), 0 0 0 1px rgba(255,255,255,0.15) inset;
-            transition: all 0.25s ease;
-        }
-        .hero-btn:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,0.60); }
-
-        /* ============================================================
-           WHY US STRIP
-        ============================================================ */
-        .why-choose-us {
-            padding: 56px 40px;
-            background: linear-gradient(160deg, var(--crimson-deep) 0%, var(--crimson) 55%, #8b4a00 100%);
-            position: relative; overflow: hidden;
-        }
-
-        .why-choose-us::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-
-        .why-choose-us h2 {
-            font-family: var(--font-display);
-            font-size: 36px; font-weight: 700;
-            color: var(--gold-light); text-align: center;
-            margin-bottom: 36px; letter-spacing: 1px;
-            position: relative;
-        }
-
-        .why-choose-us h2::after {
-            content: ''; display: block;
-            width: 64px; height: 3px;
-            background: linear-gradient(90deg, var(--gold), transparent);
-            margin: 12px auto 0;
-            border-radius: 2px;
-        }
-
-        .why-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px; max-width: 1000px; margin: 0 auto;
-            position: relative;
-        }
-
-        .why-card {
-            background: rgba(255,255,255,0.06);
-            padding: 20px 22px;
-            border-radius: 14px;
-            border: 1px solid rgba(201,151,44,0.3);
-            color: var(--ivory);
-            font-weight: 500; font-size: 14px;
-            backdrop-filter: blur(4px);
-            transition: all 0.25s ease;
-            display: flex; align-items: center; gap: 12px;
-        }
-
-        .why-card::before {
-            content: '✦'; color: var(--gold-light);
-            font-size: 12px; flex-shrink: 0;
-        }
-
-        .why-card:hover {
-            background: rgba(255,255,255,0.11);
-            border-color: rgba(201,151,44,0.65);
-            transform: translateY(-4px);
-        }
-
-        /* ============================================================
-           PAGE / PRODUCTS SECTION
-        ============================================================ */
-        .page {
-            padding: 56px 40px 72px;
-            background: var(--ivory);
-        }
-
-        .section-header {
-            display: flex; align-items: flex-end;
-            justify-content: space-between;
-            margin-bottom: 40px; flex-wrap: wrap; gap: 16px;
-        }
-
-        .section-header-left {}
-
-        .section-eyebrow {
-            font-size: 11px; font-weight: 700; letter-spacing: 3px;
-            text-transform: uppercase; color: var(--gold);
-            display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
-        }
-        .section-eyebrow::before {
-            content: ''; width: 24px; height: 1.5px; background: var(--gold);
-        }
-
-        .page h1 {
-            font-family: var(--font-display);
-            font-size: clamp(28px, 3vw, 42px);
-            font-weight: 900;
-            color: var(--crimson);
-            line-height: 1.1;
-        }
-
-        /* Empty */
-        .empty-state {
-            text-align: center; padding: 80px 20px;
-            color: var(--text-muted); font-size: 18px; font-weight: 600;
-        }
-
-        /* ============================================================
-           PRODUCT GRID + CARDS
-        ============================================================ */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-            gap: 28px;
-        }
-
-        .product-card {
-            border-radius: var(--radius-card);
-            background: var(--white);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            display: flex; flex-direction: column;
-            box-shadow: 0 2px 16px rgba(122,0,0,0.06);
-            transition: transform 0.28s cubic-bezier(.22,1,.36,1), box-shadow 0.28s ease;
-            position: relative;
-        }
-
-        .product-card::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--crimson), var(--gold));
-            opacity: 0; transition: opacity 0.25s;
-        }
-
-        .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 24px 60px rgba(122,0,0,0.14), 0 8px 20px rgba(0,0,0,0.08);
-        }
-
-        .product-card:hover::before { opacity: 1; }
-
-        /* Image container */
-        .card-img-wrap {
-            width: 100%; height: 200px;
-            background: var(--ivory-dark);
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden; position: relative;
-        }
-
-        .card-img-wrap img {
-            width: 100%; height: 100%;
-            object-fit: contain; padding: 16px;
-            transition: transform 0.4s ease;
-        }
-
-        .product-card:hover .card-img-wrap img { transform: scale(1.06); }
-
-        /* Card body */
-        .card-body {
-            padding: 20px 20px 18px;
-            display: flex; flex-direction: column; flex: 1; gap: 6px;
-        }
-
-        .product-card h3 {
-            font-family: var(--font-display);
-            font-size: 18px; font-weight: 700;
-            color: var(--crimson);
-            letter-spacing: 0.3px; line-height: 1.2;
-            text-transform: uppercase;
-        }
-
-        .product-card p {
-            font-size: 13px; line-height: 1.6;
-            color: var(--text-muted); flex: 1;
-        }
-
-        /* Price row */
-        .price-row {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-top: 10px;
-        }
-
-        .price {
-            font-family: var(--font-serif);
-            font-size: 22px; font-weight: 700;
-            color: var(--crimson);
-        }
-
-        .stock {
-            font-size: 11px; font-weight: 700; letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 4px 10px; border-radius: var(--radius-pill);
-            background: rgba(21,128,61,0.1); color: #166534;
-            border: 1px solid rgba(21,128,61,0.2);
-        }
-        .stock.out { background: rgba(153,27,27,0.08); color: #991b1b; border-color: rgba(153,27,27,0.2); }
-
-        /* Qty controls */
-        .qty-controls {
-            display: flex; align-items: center; justify-content: center;
-            gap: 16px; margin-top: 14px;
-            padding: 12px 16px; border-radius: 12px;
-            background: var(--ivory-dark);
-            border: 1px solid var(--border);
-        }
-
-        .qty-btn {
-            width: 36px; height: 36px; border-radius: 50%;
-            border: none;
-            background: linear-gradient(135deg, var(--gold), var(--gold-light));
-            color: var(--obsidian);
-            font-size: 18px; font-weight: 900; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 3px 10px rgba(201,151,44,0.35);
-            transition: transform 0.18s, box-shadow 0.18s;
-            line-height: 1;
-        }
-        .qty-btn:hover { transform: scale(1.15); box-shadow: 0 6px 18px rgba(201,151,44,0.55); }
-        .qty-btn:active { transform: scale(0.95); }
-
-        .qty-value {
-            min-width: 30px; text-align: center;
-            font-weight: 800; font-size: 18px;
-            color: var(--text-primary);
-        }
-
-        /* Know More btn */
-        .know-more-btn {
-            display: block;
-            margin-top: 12px;
-            padding: 11px 0;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--crimson), var(--crimson-light));
-            color: var(--white);
-            font-weight: 700; font-size: 13px;
-            text-decoration: none; text-align: center;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 16px rgba(122,0,0,0.25);
-            transition: all 0.22s ease;
-        }
-        .know-more-btn:hover {
-            background: linear-gradient(135deg, var(--crimson-deep), var(--crimson));
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(122,0,0,0.35);
-        }
-
-        .product-card.dim {
-            opacity: 0.3;
-            filter: saturate(0.2);
-            transform: none !important;
-        }
-
-        /* ============================================================
-           KNOW MORE MODAL
-        ============================================================ */
-        .modal-overlay {
-            position: fixed; inset: 0;
-            background: rgba(13,13,13,0.8);
-            display: none; justify-content: center; align-items: center;
-            z-index: 9999;
-            backdrop-filter: blur(6px);
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-box {
-            background: var(--white);
-            padding: 8px; border-radius: 20px;
-            box-shadow: 0 32px 80px rgba(0,0,0,0.5);
-            max-width: 92%; max-height: 90%;
-            position: relative;
-            border: 3px solid var(--gold);
-            animation: modalIn 0.3s cubic-bezier(.22,1,.36,1);
-        }
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.92) translateY(20px); }
-            to   { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .modal-box img {
-            max-width: 100%; max-height: 72vh;
-            border-radius: 14px; display: block;
-        }
-        .close-btn {
-            position: absolute; top: -14px; right: -14px;
-            width: 32px; height: 32px; border-radius: 50%;
-            background: var(--crimson); color: var(--white);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; cursor: pointer;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
-        }
-        .close-btn:hover { background: var(--crimson-deep); }
-
-        /* ============================================================
-           HIGHLIGHT
-        ============================================================ */
-        .highlight {
-            background: var(--gold); color: var(--crimson-deep);
-            padding: 1px 4px; border-radius: 4px;
-            font-weight: 700;
-        }
-
-        /* ============================================================
-           ABOUT SECTION
-        ============================================================ */
-        .about-section {
-            margin: 0; padding: 80px 40px;
-            background: linear-gradient(160deg, var(--crimson-deep) 0%, var(--crimson) 60%, #7a4500 100%);
-            color: var(--white); text-align: center;
-            position: relative; overflow: hidden;
-        }
-
-        .about-section::before {
-            content: '';
-            position: absolute; top: -100px; right: -100px;
-            width: 400px; height: 400px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(201,151,44,0.15), transparent 70%);
-            pointer-events: none;
-        }
-
-        .about-inner { max-width: 820px; margin: 0 auto; position: relative; }
-
-        .about-section h2 {
-            font-family: var(--font-display);
-            font-size: 38px; font-weight: 700;
-            color: var(--gold-light); margin-bottom: 28px;
-            letter-spacing: 0.5px;
-        }
-
-        .about-section h2::after {
-            content: ''; display: block;
-            width: 50px; height: 3px;
-            background: var(--gold-light);
-            margin: 14px auto 0; border-radius: 2px;
-        }
-
-        .about-section p {
-            font-size: 16px; line-height: 1.9;
-            color: rgba(255,255,255,0.88); text-align: justify;
-            font-weight: 300;
-        }
-
-        /* ============================================================
-           CONTACT SECTION
-        ============================================================ */
-        .contact-section {
-            padding: 80px 40px;
-            background: var(--ivory-dark);
-            text-align: center;
-        }
-
-        .contact-section h2 {
-            font-family: var(--font-display);
-            font-size: 38px; font-weight: 700;
-            color: var(--crimson); margin-bottom: 40px;
-        }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px; max-width: 1000px; margin: 0 auto;
-        }
-
-        .contact-card {
-            background: var(--white);
-            padding: 32px 28px;
-            border-radius: 16px;
-            border: 1.5px solid var(--border);
-            box-shadow: 0 4px 20px rgba(122,0,0,0.06);
-            text-align: left;
-            transition: transform 0.25s, box-shadow 0.25s;
-        }
-        .contact-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 16px 40px rgba(122,0,0,0.12);
-        }
-
-        .contact-card h3 {
-            font-family: var(--font-display);
-            font-size: 18px; font-weight: 700;
-            color: var(--crimson); margin-bottom: 14px;
-        }
-
-        .contact-card h3::after {
-            content: ''; display: block;
-            width: 32px; height: 2px;
-            background: var(--gold); margin-top: 8px; border-radius: 1px;
-        }
-
-        .contact-card p {
-            font-size: 14px; line-height: 1.9;
-            color: var(--text-muted);
-        }
-
-        /* ============================================================
-           CHATBOT
-        ============================================================ */
-        #ai-chatbot {
-            position: fixed; bottom: 24px; right: 24px;
-            width: 330px;
-            background: var(--white);
-            border-radius: 18px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.20), 0 0 0 1px var(--border);
-            overflow: hidden; z-index: 9999;
-            font-family: var(--font-body);
-        }
-
-        #ai-header {
-            background: linear-gradient(135deg, var(--crimson-deep), var(--crimson), var(--gold));
-            color: var(--white); padding: 14px 16px;
-            font-weight: 700; font-size: 14px;
-            display: flex; align-items: center; justify-content: space-between;
-            cursor: move; user-select: none;
-        }
-
-        #ai-header span:last-child {
-            opacity: 0.7; cursor: pointer; font-size: 18px;
-            transition: opacity 0.2s;
-        }
-        #ai-header span:last-child:hover { opacity: 1; }
-
-        #ai-body {
-            height: 240px; padding: 14px;
-            overflow-y: auto; font-size: 13px;
-            background: var(--ivory);
-        }
-
-        .msg-user {
-            margin: 8px 0; text-align: right;
-        }
-        .msg-user b { color: var(--crimson); }
-
-        .msg-ai {
-            margin: 8px 0; text-align: left;
-        }
-        .msg-ai b { color: var(--gold); }
-
-        .typing { font-style: italic; color: var(--text-muted); font-size: 12px; }
-
-        #ai-input {
-            width: 100%; border: none;
-            border-top: 1px solid var(--border);
-            padding: 12px 14px; outline: none;
-            font-family: var(--font-body); font-size: 13px;
-            color: var(--text-primary); background: var(--white);
-        }
-        #ai-input::placeholder { color: var(--text-muted); }
-
-        /* ============================================================
-           ENQUIRY MODAL
-        ============================================================ */
-        .enquiry-modal {
-            display: none; position: fixed; inset: 0;
-            background: rgba(13,13,13,0.78);
-            z-index: 99999; justify-content: center; align-items: center;
-            backdrop-filter: blur(6px);
-        }
-        .enquiry-modal.show { display: flex; }
-
-        .enquiry-box {
-            background: var(--white);
-            padding: 36px 32px;
-            border-radius: 20px;
-            width: 90%; max-width: 440px;
-            max-height: 90vh; overflow-y: auto;
-            color: var(--text-primary);
-            box-shadow: 0 32px 80px rgba(0,0,0,0.4);
-            position: relative;
-            border: 2px solid var(--border);
-            animation: modalIn 0.3s cubic-bezier(.22,1,.36,1);
-        }
-
-        .enquiry-box::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0;
-            height: 4px; border-radius: 20px 20px 0 0;
-            background: linear-gradient(90deg, var(--crimson), var(--gold));
-        }
-
-        .enquiry-box h2 {
-            font-family: var(--font-display);
-            font-size: 26px; font-weight: 700;
-            color: var(--crimson); margin-bottom: 8px;
-        }
-
-        .enquiry-box p {
-            font-size: 13px; color: var(--text-muted);
-            margin-bottom: 20px; line-height: 1.6;
-        }
-
-        .enquiry-box label {
-            display: block; margin-top: 14px;
-            font-weight: 600; font-size: 12px;
-            letter-spacing: 0.5px; text-transform: uppercase;
-            color: var(--text-muted); margin-bottom: 5px;
-        }
-
-        .enquiry-box input,
-        .enquiry-box select,
-        .enquiry-box textarea {
-            width: 100%; padding: 10px 12px;
-            border-radius: 10px;
-            border: 1.5px solid var(--border);
-            background: var(--ivory); font-size: 13px;
-            font-family: var(--font-body); color: var(--text-primary);
-            outline: none; transition: border 0.2s, box-shadow 0.2s;
-        }
-        .enquiry-box input:focus,
-        .enquiry-box select:focus,
-        .enquiry-box textarea:focus {
-            border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,151,44,0.12);
-        }
-        .enquiry-box textarea { min-height: 80px; resize: vertical; }
-
-        .enquiry-box button {
-            width: 100%; margin-top: 22px; padding: 13px;
-            border-radius: 12px; border: none;
-            background: linear-gradient(135deg, var(--crimson), var(--crimson-light));
-            color: var(--white); font-weight: 800; font-size: 14px;
-            cursor: pointer; letter-spacing: 0.5px;
-            box-shadow: 0 6px 20px rgba(122,0,0,0.30);
-            transition: all 0.22s;
-        }
-        .enquiry-box button:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(122,0,0,0.40); }
-
-        .enquiry-box .close-btn {
-            position: absolute; right: 16px; top: 16px;
-            width: 30px; height: 30px; border-radius: 50%;
-            background: var(--ivory-dark);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; cursor: pointer; color: var(--text-muted);
-            transition: background 0.2s;
-        }
-        .enquiry-box .close-btn:hover { background: var(--ivory); color: var(--crimson); }
-
-        /* ============================================================
-           FLOATING CALL BUTTON
-        ============================================================ */
-        #talkExpertFloat {
-            position: fixed;
-            top: calc(var(--nav-h) + 16px);   /* always snug below navbar */
-            right: 20px;
-            z-index: 90;                        /* below modals/chatbot but above content */
-            background: linear-gradient(135deg, #16a34a, #22c55e);
-            color: var(--white); text-decoration: none;
-            padding: 11px 18px; border-radius: var(--radius-pill);
-            font-weight: 700; font-size: 13px; letter-spacing: 0.3px;
-            display: inline-flex; align-items: center; gap: 8px;
-            box-shadow: 0 8px 24px rgba(22,163,74,0.35);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            animation: expertPulse 2.5s infinite;
-        }
-        #talkExpertFloat:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(22,163,74,0.50); }
-
-        @keyframes expertPulse {
-            0%   { box-shadow: 0 8px 24px rgba(22,163,74,0.35), 0 0 0 0 rgba(34,197,94,0.5); }
-            70%  { box-shadow: 0 10px 30px rgba(22,163,74,0.45), 0 0 0 12px rgba(34,197,94,0); }
-            100% { box-shadow: 0 8px 24px rgba(22,163,74,0.35), 0 0 0 0 rgba(34,197,94,0); }
-        }
-
-        /* ============================================================
-           RESPONSIVE
-        ============================================================ */
-        @media (max-width: 900px) {
-            .desktop-nav { display: none; }
-            .hamburger { display: flex; }
-        }
-
-        @media (max-width: 768px) {
-            :root { --nav-h: 58px; }
-
-            /* ── Navbar: single tight row ── */
-            .navbar {
-                padding: 0 12px;
-                height: var(--nav-h);
-                flex-wrap: nowrap;
-                gap: 8px;
-            }
-
-            /* Logo: smaller, no wrap */
-            .brand { flex-shrink: 0; gap: 8px; }
-            .brand-logo { height: 34px; width: 34px; }
-            .brand-text span:first-child { font-size: 13px; }
-            .brand-text span:last-child { display: none; } /* hide "PREMIUM VETERINARY" on mobile */
-
-            /* Hamburger right after brand */
-            .hamburger { margin-left: 0; flex-shrink: 0; }
-
-            /* Right actions: compact, no wrap */
-            .right-actions {
-                flex: 1;
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-                gap: 6px;
-                flex-wrap: nowrap;
-                overflow: visible; /* must be visible so dropdown isn't clipped */
-            }
-
-            /* Hide search on mobile to save space */
-            .search-wrap { display: none; }
-
-            /* Smaller action buttons */
-            .whatsapp-btn { width: 32px; height: 32px; flex-shrink: 0; }
-            .whatsapp-icon { width: 16px; height: 16px; }
-
-            .login-btn {
-                padding: 6px 10px;
-                font-size: 11px;
-                white-space: nowrap;
-                max-width: 120px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            /* Truncate long usernames */
-            .user-btn {
-                padding: 6px 10px;
-                font-size: 11px;
-                max-width: 130px;
-                overflow: hidden;
-                white-space: nowrap;
-            }
-            .user-btn span[sec\:authentication] {
-                max-width: 70px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-            }
-
-            .cart-btn { width: 34px; height: 34px; font-size: 16px; flex-shrink: 0; }
-
-            /* Hero */
-            .hero-section { min-height: 45vh; max-height: 60vh; }
-            .hero-overlay { left: 20px; right: 20px; bottom: 20px; }
-
-            /* Sections */
-            .why-choose-us { padding: 40px 20px; }
-            .why-choose-us h2 { font-size: 24px; }
-            .why-grid { grid-template-columns: 1fr; }
-            .page { padding: 36px 20px 56px; }
-            .about-section { padding: 56px 20px; }
-            .contact-section { padding: 56px 20px; }
-
-            /* Products */
-            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-            .product-card h3 { font-size: 14px; }
-            .card-img-wrap { height: 140px; }
-            .price { font-size: 16px; }
-
-            /* Chatbot */
-            #ai-chatbot { width: 92%; right: 4%; bottom: 24px; }
-            #ai-body { height: 150px; }
-
-            /* Expert button */
-            #talkExpertFloat {
-                top: calc(var(--nav-h) + 12px);
-                right: 10px;
-                padding: 9px 14px;
-                font-size: 11px;
-            }
-        }
-
-        @media (max-width: 420px) {
-            .product-grid { grid-template-columns: 1fr; }
-            /* On very small screens, truncate username more aggressively */
-            .user-btn span { max-width: 50px; }
-
-            .mobile-cart {
-                display: none;
-                margin-left: 6px;
-                width: 34px;
-                height: 34px;
-                font-size: 16px;
-                flex-shrink: 0;
-            }
-
-        }
-
-        @media (max-width: 420px) {
-            .product-grid { grid-template-columns: 1fr; }
-        }
-
-        /* Mobile search inside drawer */
+            padding:13px 16px; text-decoration:none; color:var(--crimson); font-size:15px; font-weight:600;
+            border-radius:10px; border:1px solid transparent; transition:all 0.22s;
+        }
+        .mobile-menu a:hover { background:var(--gold-pale); border-color:var(--border); padding-left:22px; }
+        .close-menu { font-size:22px; cursor:pointer; color:var(--text-muted); }
         .mobile-search-wrap {
-            display: flex; align-items: center; gap: 8px;
-            background: var(--ivory-dark);
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            padding: 8px 12px;
-            margin-bottom: 4px;
+            display:flex; align-items:center; gap:8px; background:var(--ivory-dark);
+            border:1.5px solid var(--border); border-radius:10px; padding:8px 12px; margin-bottom:4px;
         }
-        .mobile-search-icon { font-size: 14px; flex-shrink: 0; }
-        .mobile-search-wrap input {
-            border: none; background: none; outline: none;
-            font-family: var(--font-body); font-size: 14px;
-            color: var(--text-primary); width: 100%;
-        }
-        .mobile-search-wrap input::placeholder { color: var(--text-muted); }
+        .mobile-search-icon { font-size:14px; flex-shrink:0; }
+        .mobile-search-wrap input { border:none; background:none; outline:none; font-family:var(--font-body); font-size:14px; color:var(--text-dark); width:100%; }
 
-        /* ============================================================
-           IMAGE MODAL (legacy from original — kept for compat)
-        ============================================================ */
-        .image-modal {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.88); z-index: 9999;
-            align-items: center; justify-content: center;
+        /* ── HERO ── */
+        .hero-section {
+            position:relative; width:100%; min-height:88vh; overflow:hidden; background:var(--obsidian);
+            display:flex; align-items:center;
         }
-        .image-modal img {
-            max-width: 85%; max-height: 85%;
-            border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            background: var(--white); padding: 10px;
+        .hero-image {
+            position:absolute; inset:0; width:100%; height:100%;
+            object-fit:cover; object-position:center 30%; opacity:0.5;
+            animation:heroKB 14s ease-in-out infinite alternate;
         }
-        .image-modal .close {
-            position: absolute; top: 20px; right: 30px;
-            font-size: 36px; color: var(--white); cursor: pointer; font-weight: bold;
+        @keyframes heroKB { from{transform:scale(1.06)} to{transform:scale(1.0) translateX(-1%)} }
+        .hero-section::after {
+            content:''; position:absolute; inset:0; z-index:1;
+            background:linear-gradient(115deg, rgba(77,0,0,0.94) 0%, rgba(122,0,0,0.78) 38%, rgba(13,13,13,0.2) 100%);
         }
-        /* Hide cart from right-actions on mobile */
-        .right-actions .mobile-cart-anchor {
-            display: none;
+        .hero-section::before {
+            content:''; position:absolute; inset:0; z-index:2; pointer-events:none; opacity:0.4;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
         }
 
-        /* Show cart next to hamburger */
-        .hamburger + .mobile-cart {
-            display: flex;
+        .hero-inner {
+            position:relative; z-index:3; width:100%; max-width:1280px; margin:0 auto;
+            padding:140px 60px 100px;
+            display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:center;
         }
+        .hero-badge {
+            display:inline-flex; align-items:center; gap:10px;
+            background:rgba(201,151,44,0.16); border:1px solid rgba(201,151,44,0.38);
+            border-radius:var(--radius-pill); padding:7px 18px; margin-bottom:28px;
+        }
+        .hero-badge-dot {
+            width:7px; height:7px; border-radius:50%; background:var(--gold-light);
+            animation:bpulse 2s ease-in-out infinite;
+        }
+        @keyframes bpulse { 0%,100%{box-shadow:0 0 0 0 rgba(232,192,96,0.5)} 50%{box-shadow:0 0 0 6px rgba(232,192,96,0)} }
+        .hero-badge-text { font-size:11px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold-light); }
+
+        .hero-h1 {
+            font-family:var(--font-display); font-size:clamp(38px,5vw,68px); font-weight:900;
+            line-height:1.05; color:var(--white); margin-bottom:20px; letter-spacing:-0.5px;
+        }
+        .hero-h1 em { font-style:italic; color:var(--gold-light); }
+        .hero-h1 .gold-grad {
+            display:block;
+            background:linear-gradient(90deg,var(--gold-light),#f5c842,var(--gold));
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        }
+        .hero-p { font-family:var(--font-serif); font-size:19px; line-height:1.8; color:rgba(255,255,255,0.78); margin-bottom:36px; }
+
+        .hero-actions { display:flex; gap:14px; flex-wrap:wrap; align-items:center; margin-bottom:52px; }
+        .btn-gold {
+            display:inline-flex; align-items:center; gap:10px; padding:14px 30px;
+            background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--obsidian);
+            text-decoration:none; border-radius:12px; font-weight:800; font-size:14px;
+            box-shadow:0 8px 28px rgba(0,0,0,0.45); transition:all 0.28s var(--T); border:none; cursor:pointer;
+        }
+        .btn-gold:hover { transform:translateY(-3px); box-shadow:0 16px 40px rgba(0,0,0,0.6); }
+        .btn-outline-w {
+            display:inline-flex; align-items:center; gap:10px; padding:14px 28px;
+            border:1.5px solid rgba(255,255,255,0.35); color:var(--white); text-decoration:none;
+            border-radius:12px; font-weight:600; font-size:14px;
+            backdrop-filter:blur(6px); background:rgba(255,255,255,0.07); transition:all 0.25s; cursor:pointer;
+        }
+        .btn-outline-w:hover { border-color:rgba(255,255,255,0.7); background:rgba(255,255,255,0.13); transform:translateY(-2px); }
+
+        .hero-stats {
+            display:flex; border-radius:16px; overflow:hidden;
+            border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px);
+            background:rgba(255,255,255,0.05);
+        }
+        .stat-item {
+            flex:1; padding:20px 16px; text-align:center;
+            border-right:1px solid rgba(255,255,255,0.08); transition:background 0.25s;
+        }
+        .stat-item:last-child { border-right:none; }
+        .stat-item:hover { background:rgba(255,255,255,0.08); }
+        .stat-num {
+            font-family:var(--font-display); font-size:32px; font-weight:900; line-height:1;
+            background:linear-gradient(135deg,var(--gold-light),#f5c842);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+            margin-bottom:4px;
+        }
+        .stat-label { font-size:10.5px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:rgba(255,255,255,0.52); }
+
+        /* Hero right — category cards */
+        .hero-right { display:flex; flex-direction:column; gap:14px; }
+        .hero-cert-strip { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:4px; }
+        .hero-cert {
+            background:rgba(201,151,44,0.14); border:1px solid rgba(201,151,44,0.32);
+            color:var(--gold-light); font-size:10.5px; font-weight:700;
+            padding:5px 13px; border-radius:var(--radius-pill); letter-spacing:0.8px; text-transform:uppercase;
+        }
+        .hero-cat-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .hero-cat-card {
+            background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1);
+            border-radius:14px; padding:20px 16px; backdrop-filter:blur(10px); transition:all 0.3s var(--T);
+        }
+        .hero-cat-card:hover { background:rgba(255,255,255,0.13); border-color:rgba(201,151,44,0.4); transform:translateY(-4px); }
+        .hero-cat-icon { font-size:26px; margin-bottom:8px; display:block; }
+        .hero-cat-name { font-family:var(--font-display); font-size:14px; font-weight:700; color:var(--white); margin-bottom:3px; }
+        .hero-cat-count { font-size:11px; color:rgba(255,255,255,0.5); font-weight:500; }
+
+        .scroll-cue {
+            position:absolute; bottom:36px; left:50%; transform:translateX(-50%); z-index:3;
+            display:flex; flex-direction:column; align-items:center; gap:7px; opacity:0.5;
+        }
+        .scroll-cue span { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.6); }
+        .scroll-line { width:1.5px; height:48px; background:linear-gradient(to bottom,rgba(255,255,255,0.6),transparent); animation:sline 2s ease-in-out infinite; }
+        @keyframes sline { 0%,100%{transform:scaleY(1);opacity:0.5} 50%{transform:scaleY(0.6);opacity:1} }
+
+        /* ── TRUST BAR ── */
+        .trust-bar {
+            background:linear-gradient(90deg,var(--crimson-deep),var(--crimson),var(--crimson-mid));
+            padding:18px 44px; display:flex; align-items:center; justify-content:center;
+            gap:44px; flex-wrap:wrap; border-bottom:1px solid rgba(201,151,44,0.12);
+        }
+        .trust-item { display:flex; align-items:center; gap:9px; color:rgba(255,255,255,0.85); font-size:13px; font-weight:500; }
+        .trust-icon { font-size:19px; }
+        .trust-item strong { color:var(--gold-light); font-weight:700; }
+        .trust-sep { width:1px; height:26px; background:rgba(255,255,255,0.12); }
+
+        /* ── SECTION UTILITIES ── */
+        .section-eyebrow {
+            display:inline-flex; align-items:center; gap:9px;
+            font-size:11px; font-weight:700; letter-spacing:3.5px;
+            text-transform:uppercase; color:var(--gold); margin-bottom:12px;
+        }
+        .section-eyebrow::before { content:''; width:26px; height:1.5px; background:var(--gold); }
+        .section-title { font-family:var(--font-display); font-size:clamp(28px,3.5vw,46px); font-weight:900; line-height:1.1; color:var(--crimson); }
+        .section-title em { font-style:italic; color:var(--gold); }
+        .container { max-width:1280px; margin:0 auto; padding:0 48px; }
+
+        /* ── ANIMAL CATEGORIES (image 3 style) ── */
+        .animal-section { padding:100px 0; background:var(--ivory); }
+        .animal-header { text-align:center; margin-bottom:60px; }
+        .animal-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+
+        .animal-card {
+            border-radius:var(--radius-card); overflow:hidden; position:relative;
+            background:var(--white); border:1.5px solid var(--border);
+            box-shadow:0 4px 24px rgba(122,0,0,0.07);
+            display:flex; flex-direction:column;
+            transition:all 0.38s var(--T);
+        }
+        .animal-card:hover { transform:translateY(-10px); box-shadow:0 28px 64px rgba(122,0,0,0.18); border-color:rgba(201,151,44,0.45); }
+
+        .animal-card-top {
+            background:linear-gradient(160deg,var(--crimson-deep),var(--crimson));
+            padding:36px 20px 28px; display:flex; flex-direction:column; align-items:center;
+            position:relative; overflow:hidden;
+        }
+        .animal-card-top::before {
+            content:''; position:absolute; top:-40px; right:-40px;
+            width:120px; height:120px; border-radius:50%;
+            background:radial-gradient(circle,rgba(201,151,44,0.15),transparent 70%);
+        }
+        /* Alternating top colors */
+        .animal-card:nth-child(2) .animal-card-top { background:linear-gradient(160deg,#2d5c1a,#3d7a2a); }
+        .animal-card:nth-child(3) .animal-card-top { background:linear-gradient(160deg,#4a2d00,#7a5200); }
+        .animal-card:nth-child(4) .animal-card-top { background:linear-gradient(160deg,#1a2d4a,#2a4a7a); }
+
+        .animal-emoji { font-size:64px; margin-bottom:12px; display:block; line-height:1; }
+        .animal-name {
+            font-family:var(--font-display); font-size:20px; font-weight:900;
+            color:var(--white); text-align:center; text-transform:uppercase; letter-spacing:1px;
+        }
+        .animal-sub { font-size:12px; color:rgba(255,255,255,0.65); margin-top:4px; text-align:center; }
+
+        .animal-card-body { padding:22px 20px; flex:1; }
+        .animal-products { list-style:none; display:flex; flex-direction:column; gap:8px; }
+        .animal-products li {
+            display:flex; align-items:center; gap:8px;
+            font-size:13px; color:var(--text-muted); font-weight:500;
+        }
+        .animal-products li::before { content:'✦'; color:var(--gold); font-size:9px; flex-shrink:0; }
+
+        .animal-card-footer { padding:0 20px 22px; }
+        .animal-enquire-btn {
+            display:block; width:100%; padding:13px; border-radius:12px; border:none;
+            background:linear-gradient(135deg,var(--crimson),var(--crimson-light));
+            color:var(--white); font-weight:800; font-size:13.5px;
+            text-align:center; cursor:pointer; letter-spacing:0.5px;
+            box-shadow:0 4px 16px rgba(122,0,0,0.28);
+            transition:all 0.25s; font-family:var(--font-body); text-decoration:none;
+        }
+        .animal-enquire-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,0,0,0.4); }
+
+        /* ── MANUFACTURING IMAGES (image 4 style) ── */
+        .mfg-section { padding:100px 0; background:var(--ivory-mid); }
+        .mfg-header { text-align:center; margin-bottom:56px; }
+        .mfg-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+        .mfg-img-card {
+            border-radius:16px; overflow:hidden; position:relative;
+            aspect-ratio:4/3; background:var(--ivory-dark);
+            border:1px solid var(--border);
+            box-shadow:0 4px 20px rgba(122,0,0,0.08);
+            transition:all 0.35s var(--T);
+        }
+        .mfg-img-card:hover { transform:translateY(-6px); box-shadow:0 20px 48px rgba(122,0,0,0.15); border-color:rgba(201,151,44,0.4); }
+        .mfg-img-card img { width:100%; height:100%; object-fit:cover; transition:transform 0.5s var(--T); }
+        .mfg-img-card:hover img { transform:scale(1.07); }
+        .mfg-img-label {
+            position:absolute; bottom:0; left:0; right:0;
+            background:linear-gradient(to top,rgba(77,0,0,0.9),transparent);
+            padding:20px 16px 14px;
+            font-size:13px; font-weight:700; color:var(--white); letter-spacing:0.5px;
+        }
+        /* Fallback colored placeholder for no-image case */
+        .mfg-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:48px; }
+        .mfg-bg-1 { background:linear-gradient(135deg,#3d0000,#7a2c00); }
+        .mfg-bg-2 { background:linear-gradient(135deg,#1a3d0a,#2d5c1a); }
+        .mfg-bg-3 { background:linear-gradient(135deg,#00263d,#004d7a); }
+        .mfg-bg-4 { background:linear-gradient(135deg,#3d3d00,#5c4d0a); }
+
+        /* ── PRODUCTS WE MANUFACTURE DIAGRAM (image 5 style) ── */
+        .manufacture-section { padding:100px 0; background:var(--ivory); }
+        .manufacture-header { text-align:center; margin-bottom:60px; }
+        .manufacture-center { display:flex; flex-direction:column; align-items:center; }
+        .manufacture-diagram {
+            position:relative; display:grid; grid-template-columns:1fr 220px 1fr; grid-template-rows:1fr 1fr;
+            gap:20px; align-items:center; justify-items:center; max-width:1000px; width:100%;
+        }
+        .manufacture-center-circle {
+            grid-column:2; grid-row:1/3;
+            width:180px; height:180px; border-radius:50%;
+            background:linear-gradient(135deg,var(--crimson),var(--crimson-deep));
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            text-align:center; color:var(--white);
+            box-shadow:0 0 0 12px rgba(201,151,44,0.12), 0 0 0 24px rgba(201,151,44,0.06), 0 16px 48px rgba(122,0,0,0.35);
+            z-index:2; position:relative;
+        }
+        .mfg-circle-label { font-size:13px; color:rgba(255,255,255,0.7); letter-spacing:2px; text-transform:uppercase; }
+        .mfg-circle-big { font-family:var(--font-display); font-size:26px; font-weight:900; color:var(--gold-light); margin:4px 0; }
+        .mfg-hexagon {
+            background:var(--white); border:1.5px solid var(--border); border-radius:16px;
+            padding:22px 20px; box-shadow:0 4px 20px rgba(122,0,0,0.06);
+            transition:all 0.32s var(--T); width:100%;
+        }
+        .mfg-hexagon:hover { border-color:rgba(201,151,44,0.42); box-shadow:0 12px 36px rgba(122,0,0,0.12); transform:translateY(-4px); }
+        .mfg-hex-icon { font-size:26px; margin-bottom:10px; display:block; }
+        .mfg-hex-list { list-style:none; display:flex; flex-direction:column; gap:6px; }
+        .mfg-hex-list li { font-size:13px; color:var(--text-muted); font-weight:500; display:flex; align-items:center; gap:7px; }
+        .mfg-hex-list li::before { content:'→'; color:var(--gold); font-weight:700; flex-shrink:0; }
+
+        /* Certification badges row */
+        .cert-badges-row {
+            display:flex; justify-content:center; gap:24px; flex-wrap:wrap; margin-top:64px;
+        }
+        .cert-badge-item {
+            display:flex; flex-direction:column; align-items:center; gap:10px;
+        }
+        .cert-badge-circle {
+            width:88px; height:88px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center; flex-direction:column;
+            font-size:10px; font-weight:800; text-align:center; line-height:1.2; letter-spacing:0.3px;
+            border:3px solid; padding:10px;
+        }
+        .cert-badge-circle.iso   { border-color:#2563eb; color:#2563eb; background:rgba(37,99,235,0.06); }
+        .cert-badge-circle.who   { border-color:#0891b2; color:#0891b2; background:rgba(8,145,178,0.06); }
+        .cert-badge-circle.gmp   { border-color:#16a34a; color:#16a34a; background:rgba(22,163,74,0.06); }
+        .cert-badge-circle.msme  { border-color:var(--crimson); color:var(--crimson); background:rgba(122,0,0,0.06); }
+        .cert-badge-circle.fssai { border-color:#d97706; color:#d97706; background:rgba(217,119,6,0.06); }
+        .cert-badge-circle.vet   { border-color:#7c3aed; color:#7c3aed; background:rgba(124,58,237,0.06); }
+        .cert-badge-icon { font-size:28px; margin-bottom:4px; display:block; }
+        .cert-badge-name { font-size:11px; font-weight:600; color:var(--text-muted); margin-top:4px; text-align:center; }
+
+        /* ── TOP SEARCH TERMS (image 1 style) ── */
+        .search-terms-section { padding:60px 0; background:var(--ivory-dark); }
+        .search-terms-inner { max-width:1000px; margin:0 auto; text-align:center; }
+        .search-terms-title { font-family:var(--font-display); font-size:32px; font-weight:900; color:var(--crimson); margin-bottom:28px; }
+        .search-terms-cloud { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+        .search-term {
+            display:inline-block; padding:7px 16px;
+            border-radius:var(--radius-pill);
+            border:1.5px solid var(--border); background:var(--white);
+            color:var(--crimson); font-size:13px; font-weight:600;
+            text-decoration:none; transition:all 0.22s;
+        }
+        .search-term:hover { background:var(--crimson); color:var(--white); border-color:var(--crimson); transform:translateY(-2px); box-shadow:0 6px 18px rgba(122,0,0,0.22); }
+        .search-sep { color:rgba(201,151,44,0.4); display:flex; align-items:center; }
+
+        /* ── FAQ ── */
+        .faq-section { padding:100px 0; background:var(--ivory); }
+        .faq-header { text-align:center; margin-bottom:56px; }
+        .faq-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        .faq-item {
+            background:var(--white); border:1.5px solid var(--border); border-radius:16px;
+            overflow:hidden; box-shadow:0 2px 16px rgba(122,0,0,0.05); transition:all 0.28s var(--T);
+        }
+        .faq-item:hover { border-color:rgba(201,151,44,0.4); box-shadow:0 8px 32px rgba(122,0,0,0.10); }
+        .faq-q {
+            width:100%; padding:20px 24px; text-align:left; background:none; border:none;
+            font-family:var(--font-body); font-size:15px; font-weight:700; color:var(--crimson);
+            cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:12px;
+            line-height:1.4; transition:all 0.22s;
+        }
+        .faq-q:hover { background:var(--ivory-mid); }
+        .faq-q-icon {
+            width:28px; height:28px; border-radius:50%; background:var(--gold-pale);
+            border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center;
+            font-size:16px; flex-shrink:0; transition:all 0.3s;
+        }
+        .faq-item.open .faq-q-icon { transform:rotate(45deg); background:var(--crimson); border-color:var(--crimson); color:var(--white); }
+        .faq-a {
+            display:none; padding:0 24px 22px; font-size:14px; line-height:1.75; color:var(--text-muted);
+            font-family:var(--font-serif); font-size:16px;
+        }
+        .faq-a.open { display:block; }
+        .faq-divider { width:100%; height:1px; background:var(--border); margin-bottom:18px; }
+
+        /* ── WHY CHOOSE US ── */
+        .why-section {
+            padding:100px 0;
+            background:linear-gradient(160deg,var(--crimson-deep) 0%,var(--crimson) 55%,#8b4a00 100%);
+            position:relative; overflow:hidden;
+        }
+        .why-section::before {
+            content:''; position:absolute; inset:0;
+            background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .why-header { text-align:center; margin-bottom:60px; position:relative; z-index:1; }
+        .why-header .section-eyebrow { color:var(--gold-light); }
+        .why-header .section-eyebrow::before { background:var(--gold-light); }
+        .why-header .section-title { color:var(--white); }
+        .why-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; position:relative; z-index:1; }
+        .why-card {
+            background:rgba(255,255,255,0.06); border:1px solid rgba(201,151,44,0.25);
+            border-radius:var(--radius-card); padding:32px 24px;
+            backdrop-filter:blur(6px); text-align:center; transition:all 0.32s var(--T);
+        }
+        .why-card:hover { background:rgba(255,255,255,0.12); border-color:rgba(201,151,44,0.55); transform:translateY(-6px); }
+        .why-icon { font-size:38px; margin-bottom:14px; display:block; }
+        .why-title { font-family:var(--font-display); font-size:17px; font-weight:700; color:var(--white); margin-bottom:10px; }
+        .why-desc { font-size:13px; color:rgba(255,255,255,0.65); line-height:1.68; }
+
+        /* ── PRODUCTS SECTION ── */
+        .products-section { padding:100px 0; background:var(--ivory-mid); }
+        .products-header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:44px; flex-wrap:wrap; gap:16px; }
+        .view-all-link {
+            display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+            color:var(--crimson); font-weight:700; font-size:14px; padding:10px 22px;
+            border-radius:var(--radius-pill); border:1.5px solid var(--crimson); transition:all 0.25s;
+        }
+        .view-all-link:hover { background:var(--crimson); color:var(--white); }
+        .filter-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:34px; }
+        .filter-tab {
+            padding:8px 20px; border-radius:var(--radius-pill); border:1.5px solid var(--border);
+            background:transparent; cursor:pointer; font-family:var(--font-body);
+            font-size:13px; font-weight:600; color:var(--text-muted); transition:all 0.22s;
+        }
+        .filter-tab:hover { border-color:var(--crimson); color:var(--crimson); }
+        .filter-tab.active { background:var(--crimson); border-color:var(--crimson); color:var(--white); }
+
+        .product-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:28px; }
+        .product-card {
+            border-radius:var(--radius-card); background:var(--white); border:1px solid var(--border);
+            overflow:hidden; display:flex; flex-direction:column;
+            box-shadow:0 2px 16px rgba(122,0,0,0.06); transition:all 0.32s var(--T); position:relative;
+        }
+        .product-card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:4px;
+            background:linear-gradient(90deg,var(--crimson),var(--gold)); opacity:0; transition:opacity 0.25s;
+        }
+        .product-card:hover { transform:translateY(-9px); box-shadow:0 28px 64px rgba(122,0,0,0.14); }
+        .product-card:hover::before { opacity:1; }
+        .product-card.dim { opacity:0.3; filter:saturate(0.2); transform:none !important; }
+
+        .card-img-wrap {
+            width:100%; height:200px; background:var(--ivory-dark);
+            display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative;
+        }
+        .card-img-wrap img { width:100%; height:100%; object-fit:contain; padding:16px; transition:transform 0.45s var(--T); }
+        .product-card:hover .card-img-wrap img { transform:scale(1.07); }
+        .card-badge {
+            position:absolute; top:12px; left:12px;
+            background:linear-gradient(135deg,var(--crimson),var(--crimson-light));
+            color:var(--white); font-size:10px; font-weight:800;
+            padding:4px 10px; border-radius:var(--radius-pill); letter-spacing:0.8px; text-transform:uppercase;
+        }
+        .card-body { padding:20px 20px 18px; display:flex; flex-direction:column; flex:1; gap:6px; }
+        .product-card h3 {
+            font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--crimson);
+            letter-spacing:0.3px; line-height:1.2; text-transform:uppercase;
+        }
+        .product-card p { font-size:13px; line-height:1.6; color:var(--text-muted); flex:1; }
+        .price-row { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
+        .price { font-family:var(--font-serif); font-size:22px; font-weight:700; color:var(--crimson); }
+        .stock {
+            font-size:10.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+            padding:4px 10px; border-radius:var(--radius-pill);
+            background:rgba(21,128,61,0.1); color:#166534; border:1px solid rgba(21,128,61,0.2);
+        }
+        .stock.out { background:rgba(122,0,0,0.08); color:var(--crimson); border-color:rgba(122,0,0,0.2); }
+        .qty-controls {
+            display:flex; align-items:center; justify-content:center; gap:16px; margin-top:14px;
+            padding:12px 16px; border-radius:12px; background:var(--ivory-dark); border:1px solid var(--border);
+        }
+        .qty-btn {
+            width:36px; height:36px; border-radius:50%; border:none;
+            background:linear-gradient(135deg,var(--gold),var(--gold-light));
+            color:var(--obsidian); font-size:18px; font-weight:900; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            box-shadow:0 3px 10px rgba(201,151,44,0.38); transition:all 0.2s; line-height:1;
+        }
+        .qty-btn:hover { transform:scale(1.16); box-shadow:0 6px 18px rgba(201,151,44,0.55); }
+        .qty-btn:active { transform:scale(0.93); }
+        .qty-value { min-width:30px; text-align:center; font-weight:800; font-size:18px; color:var(--text-dark); }
+        .know-more-btn {
+            display:block; margin-top:12px; padding:11px 0; border-radius:10px;
+            background:linear-gradient(135deg,var(--crimson),var(--crimson-light));
+            color:var(--white); font-weight:700; font-size:13px;
+            text-decoration:none; text-align:center; letter-spacing:0.5px;
+            box-shadow:0 4px 16px rgba(122,0,0,0.25); transition:all 0.22s;
+        }
+        .know-more-btn:hover { background:linear-gradient(135deg,var(--crimson-deep),var(--crimson)); transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,0,0,0.36); }
+
+        .highlight { background:var(--gold); color:var(--crimson-deep); padding:1px 4px; border-radius:4px; font-weight:700; }
+        .empty-state { text-align:center; padding:80px 20px; color:var(--text-muted); }
+        .empty-state .e-icon { font-size:56px; margin-bottom:16px; opacity:0.5; }
+
+        /* ── ABOUT SECTION ── */
+        .about-section {
+            padding:100px 0;
+            background:linear-gradient(160deg,var(--crimson-deep) 0%,var(--crimson) 60%,#7a4500 100%);
+            position:relative; overflow:hidden;
+        }
+        .about-section::before {
+            content:''; position:absolute; top:-100px; right:-100px; width:400px; height:400px;
+            border-radius:50%; background:radial-gradient(circle,rgba(201,151,44,0.15),transparent 70%); pointer-events:none;
+        }
+        .about-inner { max-width:820px; margin:0 auto; position:relative; text-align:center; }
+        .about-inner .section-eyebrow { color:var(--gold-light); justify-content:center; }
+        .about-inner .section-eyebrow::before { background:var(--gold-light); }
+        .about-inner .section-title { color:var(--white); margin-top:12px; margin-bottom:28px; }
+        .about-inner p { font-family:var(--font-serif); font-size:18px; line-height:1.9; color:rgba(255,255,255,0.88); text-align:justify; }
+        .about-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:44px; }
+        .about-metric { background:rgba(255,255,255,0.08); border:1px solid rgba(201,151,44,0.22); border-radius:14px; padding:22px 16px; text-align:center; }
+        .about-metric-num { font-family:var(--font-display); font-size:34px; font-weight:900; color:var(--gold-light); line-height:1; margin-bottom:5px; }
+        .about-metric-label { font-size:12px; color:rgba(255,255,255,0.6); font-weight:500; }
+
+        /* ── CONTACT SECTION ── */
+        .contact-section { padding:100px 0; background:var(--ivory-dark); }
+        .contact-header { text-align:center; margin-bottom:56px; }
+        .contact-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+        .contact-card {
+            background:var(--white); padding:34px 28px; border-radius:var(--radius-card);
+            border:1.5px solid var(--border); box-shadow:0 4px 20px rgba(122,0,0,0.06);
+            transition:all 0.3s var(--T);
+        }
+        .contact-card:hover { transform:translateY(-6px); box-shadow:0 18px 44px rgba(122,0,0,0.12); border-color:rgba(201,151,44,0.4); }
+        .contact-card-icon { font-size:30px; margin-bottom:14px; display:block; }
+        .contact-card h3 { font-family:var(--font-display); font-size:20px; font-weight:700; color:var(--crimson); margin-bottom:6px; }
+        .contact-card h3::after { content:''; display:block; width:32px; height:2.5px; background:linear-gradient(90deg,var(--gold),transparent); margin-top:10px; border-radius:2px; }
+        .contact-card p { font-size:14px; line-height:1.9; color:var(--text-muted); margin-top:14px; }
+
+        /* ── KNOW MORE MODAL ── */
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(13,13,13,0.85);
+            display:none; justify-content:center; align-items:center;
+            z-index:9000; backdrop-filter:blur(8px);
+        }
+        .modal-overlay.active { display:flex; }
+        .modal-box {
+            background:var(--white); padding:8px; border-radius:22px;
+            box-shadow:0 40px 100px rgba(0,0,0,0.55); max-width:92%; max-height:90%;
+            position:relative; border:3px solid var(--gold); animation:modalIn 0.35s var(--T);
+        }
+        @keyframes modalIn { from{opacity:0;transform:scale(0.9) translateY(24px)} to{opacity:1;transform:scale(1) translateY(0)} }
+        .modal-box img { max-width:100%; max-height:74vh; border-radius:16px; display:block; }
+        .close-btn {
+            position:absolute; top:-16px; right:-16px; width:36px; height:36px; border-radius:50%;
+            background:var(--crimson); color:var(--white); display:flex; align-items:center; justify-content:center;
+            font-size:16px; cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,0.35); transition:background 0.2s;
+        }
+        .close-btn:hover { background:var(--crimson-deep); }
+
+        /* ── ENQUIRY MODAL ── */
+        .enquiry-modal { display:none; position:fixed; inset:0; background:rgba(13,13,13,0.82); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(8px); }
+        .enquiry-modal.show { display:flex; }
+        .enquiry-box {
+            background:var(--white); padding:40px 34px; border-radius:var(--radius-lg);
+            width:90%; max-width:450px; max-height:92vh; overflow-y:auto;
+            box-shadow:0 40px 100px rgba(0,0,0,0.45); position:relative;
+            border:2px solid var(--border); animation:modalIn 0.35s var(--T);
+        }
+        .enquiry-box::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:4px;
+            border-radius:28px 28px 0 0; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--crimson-light));
+        }
+        .enquiry-box h2 { font-family:var(--font-display); font-size:28px; font-weight:700; color:var(--crimson); margin-bottom:8px; }
+        .enquiry-box > p { font-size:13.5px; color:var(--text-muted); margin-bottom:20px; line-height:1.6; }
+        .enquiry-box label {
+            display:block; margin-top:14px; font-weight:700; font-size:11px;
+            letter-spacing:0.8px; text-transform:uppercase; color:var(--text-muted); margin-bottom:5px;
+        }
+        .enquiry-box input, .enquiry-box select, .enquiry-box textarea {
+            width:100%; padding:11px 14px; border-radius:10px; border:1.5px solid var(--border);
+            background:var(--ivory); font-size:13.5px; font-family:var(--font-body); color:var(--text-dark);
+            outline:none; transition:all 0.22s;
+        }
+        .enquiry-box input:focus, .enquiry-box select:focus, .enquiry-box textarea:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,151,44,0.12); }
+        .enquiry-box textarea { min-height:80px; resize:vertical; }
+        .enquiry-box button[type="submit"] {
+            width:100%; margin-top:22px; padding:14px; border-radius:12px; border:none;
+            background:linear-gradient(135deg,var(--crimson),var(--crimson-light));
+            color:var(--white); font-weight:800; font-size:15px; cursor:pointer; letter-spacing:0.5px;
+            box-shadow:0 6px 20px rgba(122,0,0,0.30); transition:all 0.22s; font-family:var(--font-body);
+        }
+        .enquiry-box button[type="submit"]:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(122,0,0,0.42); }
+        .enquiry-box .close-btn {
+            position:absolute; right:16px; top:16px; width:30px; height:30px; border-radius:50%;
+            background:var(--ivory-dark); color:var(--text-muted); font-size:16px; transition:all 0.2s;
+        }
+        .enquiry-box .close-btn:hover { background:var(--ivory-mid); color:var(--crimson); }
+
+        /* ── CHATBOT ── */
+        #ai-chatbot {
+            position:fixed; bottom:24px; right:24px; width:330px; background:var(--white);
+            border-radius:18px; box-shadow:0 20px 60px rgba(0,0,0,0.20), 0 0 0 1px var(--border);
+            overflow:hidden; z-index:8000; font-family:var(--font-body);
+        }
+        #ai-header {
+            background:linear-gradient(135deg,var(--crimson-deep),var(--crimson),var(--gold));
+            color:var(--white); padding:14px 16px; font-weight:700; font-size:14px;
+            display:flex; align-items:center; justify-content:space-between; cursor:move; user-select:none;
+        }
+        .ai-online-dot {
+            width:8px; height:8px; border-radius:50%; background:#4ade80; flex-shrink:0;
+            animation:bpulse 2s ease-in-out infinite; box-shadow:0 0 0 2px rgba(74,222,128,0.3);
+        }
+        .ai-header-left { display:flex; align-items:center; gap:8px; }
+        #ai-header .minimize-btn { opacity:0.7; cursor:pointer; font-size:18px; transition:opacity 0.2s; flex-shrink:0; }
+        #ai-header .minimize-btn:hover { opacity:1; }
+        #ai-body { height:230px; padding:14px; overflow-y:auto; font-size:13px; background:var(--ivory); }
+        .msg-user { margin:8px 0; text-align:right; }
+        .msg-user b { color:var(--crimson); }
+        .msg-ai { margin:8px 0; text-align:left; }
+        .msg-ai b { color:var(--gold); }
+        .typing { font-style:italic; color:var(--text-muted); font-size:12.5px; }
+        #ai-input { width:100%; border:none; border-top:1px solid var(--border); padding:12px 14px; outline:none; font-family:var(--font-body); font-size:13px; color:var(--text-dark); background:var(--white); }
+
+        /* ── FLOATING EXPERT BUTTON ── */
+        #talkExpertFloat {
+            position:fixed; top:calc(var(--nav-h) + 56px); right:20px; z-index:90;
+            background:linear-gradient(135deg,#16a34a,#22c55e); color:var(--white); text-decoration:none;
+            padding:11px 18px; border-radius:var(--radius-pill);
+            font-weight:700; font-size:13px; letter-spacing:0.3px;
+            display:inline-flex; align-items:center; gap:8px;
+            box-shadow:0 8px 24px rgba(22,163,74,0.35); transition:all 0.22s;
+            animation:expertPulse 2.5s infinite;
+        }
+        #talkExpertFloat:hover { transform:translateY(-2px); box-shadow:0 14px 32px rgba(22,163,74,0.50); }
+        @keyframes expertPulse {
+            0%,100%{box-shadow:0 8px 24px rgba(22,163,74,0.35),0 0 0 0 rgba(34,197,94,0.5)}
+            70%{box-shadow:0 10px 30px rgba(22,163,74,0.45),0 0 0 12px rgba(34,197,94,0)}
+        }
+
+        /* ── FOOTER ── */
+        .footer { background:var(--crimson-deep); color:rgba(255,255,255,0.85); padding:80px 0 0; }
+        .footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1.5fr; gap:56px; padding-bottom:60px; }
+        .footer-brand p { font-size:14px; line-height:1.8; color:rgba(255,255,255,0.6); margin-top:16px; max-width:300px; }
+        .footer-certs { display:flex; flex-wrap:wrap; gap:6px; margin-top:18px; }
+        .footer-cert { background:rgba(201,151,44,0.12); border:1px solid rgba(201,151,44,0.22); color:var(--gold-light); font-size:10px; font-weight:700; padding:4px 12px; border-radius:var(--radius-pill); }
+        .footer-heading { font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--white); margin-bottom:20px; }
+        .footer-links { list-style:none; display:flex; flex-direction:column; gap:9px; }
+        .footer-links a { text-decoration:none; color:rgba(255,255,255,0.6); font-size:14px; transition:all 0.2s; display:inline-flex; align-items:center; gap:6px; }
+        .footer-links a:hover { color:var(--gold-light); padding-left:4px; }
+        .footer-contact p { font-size:14px; color:rgba(255,255,255,0.6); line-height:1.85; }
+        .footer-contact a { color:var(--gold-light); text-decoration:none; }
+        .footer-bottom {
+            border-top:1px solid rgba(255,255,255,0.07); padding:20px 0;
+            display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+        }
+        .footer-bottom p { font-size:12px; color:rgba(255,255,255,0.38); }
+
+        /* ── IMAGE MODAL (legacy compat) ── */
+        .image-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; }
+        .image-modal img { max-width:85%; max-height:85%; border-radius:14px; background:var(--white); padding:10px; }
+        .image-modal .close { position:absolute; top:20px; right:30px; font-size:38px; color:var(--white); cursor:pointer; font-weight:bold; }
+
+        /* ── MOBILE CART ── */
+        .mobile-cart { display:none; }
+        .mobile-cart-anchor { }
+        @media(max-width:900px) { .mobile-cart { display:flex; } .mobile-cart-anchor { display:none; } }
+
+        /* ── RESPONSIVE ── */
+        @media(max-width:1100px) {
+            .why-grid { grid-template-columns:repeat(2,1fr); }
+            .animal-grid { grid-template-columns:repeat(2,1fr); }
+            .mfg-grid { grid-template-columns:repeat(2,1fr); }
+            .footer-grid { grid-template-columns:1fr 1fr; gap:36px; }
+            .manufacture-diagram { grid-template-columns:1fr; }
+            .manufacture-center-circle { grid-column:1; grid-row:auto; margin:16px auto; }
+        }
+        @media(max-width:900px) {
+            :root { --nav-h:62px; }
+            .navbar { padding:0 20px; }
+            .desktop-nav { display:none; }
+            .hamburger { display:flex; }
+            .right-actions { gap:6px; flex-shrink:1; min-width:0; overflow:hidden; }
+            .search-wrap { display:none; }
+            .user-btn { padding:7px 10px; font-size:12px; max-width:44px; border-radius:50%; }
+            .user-btn span { display:none; }
+            .user-dropdown { max-width:44px; }
+            .hero-inner { grid-template-columns:1fr; gap:0; padding:120px 28px 80px; }
+            .hero-right { display:none; }
+            .about-metrics { grid-template-columns:repeat(2,1fr); }
+            .contact-grid { grid-template-columns:1fr; }
+            .faq-grid { grid-template-columns:1fr; }
+        }
+        @media(max-width:600px) {
+            :root { --nav-h:58px; }
+            .container { padding:0 20px; }
+            .hero-inner { padding:100px 20px 60px; }
+            .hero-stats { flex-direction:column; }
+            .stat-item { border-right:none; border-bottom:1px solid rgba(255,255,255,0.08); }
+            .stat-item:last-child { border-bottom:none; }
+            .animal-grid { grid-template-columns:1fr 1fr; }
+            .mfg-grid { grid-template-columns:1fr 1fr; }
+            .product-grid { grid-template-columns:1fr 1fr; gap:14px; }
+            .product-card h3 { font-size:15px; }
+            .card-img-wrap { height:150px; }
+            .trust-bar { gap:18px; padding:16px 20px; }
+            .trust-sep { display:none; }
+            .cert-badges-row { gap:14px; }
+            .cert-badge-circle { width:72px; height:72px; font-size:8.5px; }
+            #ai-chatbot { width:260px; right:12px; bottom:16px; border-radius:14px; }
+            #ai-header { padding:10px 13px; font-size:12.5px; }
+            #ai-body { height:160px; padding:10px; font-size:12px; }
+            #ai-input { padding:9px 12px; font-size:12px; }
+            #talkExpertFloat { right:10px; padding:9px 14px; font-size:12px; }
+            .footer-grid { grid-template-columns:1fr; gap:28px; }
+        }
+        @media(max-width:420px) {
+            .product-grid { grid-template-columns:1fr; }
+            .animal-grid { grid-template-columns:1fr; }
+            .mfg-grid { grid-template-columns:1fr; }
+        }
+        [id] { scroll-margin-top:calc(var(--nav-h) + 20px); }
+
+        /* ── FLOATING CART PILL (per product card) ── */
+        .float-cart-pill {
+            position:absolute; bottom:14px; right:14px; z-index:10;
+            display:flex; align-items:center; gap:8px;
+            background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));
+            color:var(--white); text-decoration:none;
+            padding:9px 16px 9px 12px;
+            border-radius:var(--radius-pill);
+            font-size:12.5px; font-weight:800; letter-spacing:0.3px;
+            box-shadow:0 6px 22px rgba(122,0,0,0.45);
+            opacity:0; transform:translateY(10px) scale(0.88);
+            transition:opacity 0.28s var(--T), transform 0.28s var(--T);
+            pointer-events:none; white-space:nowrap;
+            border:1.5px solid rgba(201,151,44,0.35);
+        }
+        .float-cart-pill .fcp-icon {
+            width:26px; height:26px; border-radius:50%;
+            background:rgba(255,255,255,0.18);
+            display:flex; align-items:center; justify-content:center;
+            font-size:14px; flex-shrink:0;
+        }
+        .float-cart-pill .fcp-count {
+            background:var(--gold); color:var(--obsidian);
+            font-size:10px; font-weight:900;
+            min-width:18px; height:18px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            padding:0 4px; margin-left:2px;
+            box-shadow:0 2px 6px rgba(0,0,0,0.25);
+            transition:transform 0.18s;
+        }
+        /* Show pill when card has qty > 0 */
+        .product-card.has-items .float-cart-pill {
+            opacity:1; transform:translateY(0) scale(1); pointer-events:all;
+        }
+        /* Bounce the count badge when qty changes */
+        .fcp-count.bump { animation:countBump 0.28s ease; }
+        @keyframes countBump {
+            0%   { transform:scale(1); }
+            40%  { transform:scale(1.5); }
+            100% { transform:scale(1); }
+        }
+        /* Keep card position:relative so pill anchors correctly */
+        .product-card { position:relative; }
+        /* ── SCROLL TO TOP BUTTON ── */
+        #scrollTopBtn {
+            position:fixed; left:20px; bottom:28px; z-index:8500;
+            width:46px; height:46px; border-radius:50%;
+            background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));
+            color:var(--white); border:none; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            font-size:20px; box-shadow:0 6px 22px rgba(122,0,0,0.35);
+            opacity:0; transform:translateY(16px) scale(0.85);
+            transition:all 0.32s var(--T); pointer-events:none;
+        }
+        #scrollTopBtn.visible {
+            opacity:1; transform:translateY(0) scale(1); pointer-events:all;
+        }
+        #scrollTopBtn:hover {
+            background:linear-gradient(135deg,var(--crimson),var(--gold));
+            transform:translateY(-3px) scale(1.08);
+            box-shadow:0 12px 30px rgba(122,0,0,0.45);
+        }
+        #scrollTopBtn svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+
+        /* ── MAP SECTION ── */
+        .map-section { padding:80px 0; background:var(--ivory-mid); }
+        .map-header { text-align:center; margin-bottom:44px; }
+        .map-wrapper { display:flex; flex-direction:column; gap:0; border-radius:22px; overflow:hidden; box-shadow:0 16px 56px rgba(122,0,0,0.14); border:1.5px solid var(--border); }
+        .map-wrapper iframe { border-radius:0; }
+        .map-info-bar {
+            background:linear-gradient(90deg,var(--crimson-deep),var(--crimson));
+            padding:24px 32px; display:flex; align-items:center; justify-content:space-between;
+            gap:24px; flex-wrap:wrap;
+        }
+        .map-info-item { display:flex; align-items:flex-start; gap:12px; color:rgba(255,255,255,0.85); flex:1; min-width:180px; }
+        .map-info-icon { font-size:22px; flex-shrink:0; margin-top:2px; }
+        .map-info-item strong { display:block; color:var(--gold-light); font-size:13px; font-weight:700; letter-spacing:0.3px; margin-bottom:3px; }
+        .map-info-item span, .map-info-item a { font-size:12.5px; line-height:1.5; }
+        .map-directions-btn {
+            display:inline-flex; align-items:center; gap:8px; flex-shrink:0;
+            background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--obsidian);
+            text-decoration:none; padding:12px 24px; border-radius:var(--radius-pill);
+            font-weight:800; font-size:13px; letter-spacing:0.3px;
+            box-shadow:0 4px 16px rgba(0,0,0,0.3); transition:all 0.25s;
+        }
+        .map-directions-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.4); }
+        @media(max-width:600px) {
+            .map-info-bar { flex-direction:column; gap:16px; padding:20px; }
+            .map-info-item { min-width:unset; }
+            .map-directions-btn { width:100%; justify-content:center; }
+            .map-wrapper iframe { height:280px; }
+        }
+
     </style>
 
-    <!-- ============================================================
-         ALL ORIGINAL JS — UNCHANGED
-    ============================================================ -->
     <script>
+        /* ======================================================
+           ALL ORIGINAL JS — BACKEND WIRED — UNCHANGED LOGIC
+        ====================================================== */
         function updateQty(productId, action) {
             fetch(`/cart/${action}/${productId}`, { method: 'POST' })
                 .then(res => {
-                    if (res.redirected || res.status === 401 || res.status === 403) {
-                        window.location.href = "/login";
-                        return null;
-                    }
-                    if (!res.ok) throw new Error("Network response was not ok");
+                    if (res.redirected || res.status === 401 || res.status === 403) { window.location.href = "/login"; return null; }
+                    if (!res.ok) throw new Error("Network error");
                     return res.text();
                 })
                 .then(qty => {
                     if (!qty) return;
-                    qty = parseInt(qty);
-                    if (isNaN(qty)) return;
+                    qty = parseInt(qty); if (isNaN(qty)) return;
+
+                    // Update qty display inside card
                     const qtyEl = document.getElementById(`qty-${productId}`);
                     if (qtyEl) qtyEl.innerText = qty;
-                    const badge = document.getElementById("cartCountBadge");
-                    let currentCount = badge ? parseInt(badge.innerText || "0") : 0;
-                    if (action === "increase") currentCount += 1;
-                    else if (action === "decrease" && currentCount > 0) currentCount -= 1;
-                    if (badge) {
-                        if (currentCount <= 0) { badge.style.display = "none"; }
-                        else { badge.style.display = "inline-block"; badge.innerText = currentCount; }
+
+                    // ── Floating cart pill logic ──
+                    const fcpEl = document.getElementById(`fcp-${productId}`);
+                    if (fcpEl) {
+                        fcpEl.innerText = qty;
+                        // bump animation
+                        fcpEl.classList.remove('bump');
+                        void fcpEl.offsetWidth; // reflow
+                        fcpEl.classList.add('bump');
+                        // show/hide pill on parent card
+                        const card = fcpEl.closest('.product-card');
+                        if (card) {
+                            if (qty > 0) card.classList.add('has-items');
+                            else card.classList.remove('has-items');
+                        }
                     }
+
+                    // ── Navbar cart badge ──
+                    ['cartCountBadge','cartCountBadgeMobile'].forEach(id => {
+                        const badge = document.getElementById(id);
+                        if (!badge) return;
+                        let count = parseInt(badge.innerText || '0');
+                        if (action === 'increase') count += 1;
+                        else if (action === 'decrease' && count > 0) count -= 1;
+                        if (count <= 0) badge.style.display = 'none';
+                        else { badge.style.display = 'inline-block'; badge.innerText = count; }
+                    });
                 })
-                .catch(err => { console.error("Cart update failed:", err); alert("⚠️ Cart update failed. Check console."); });
+                .catch(err => { console.error('Cart update failed:', err); alert('⚠️ Cart update failed.'); });
         }
+        function openDetailImage(url) { document.getElementById('modalImg').src = url; document.getElementById('imageModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('imageModal').style.display = 'none'; }
+        function openKnowMoreFromBtn(btn) {
+            document.getElementById('knowMoreImg').src = btn.getAttribute('data-img');
+            document.getElementById('knowMoreModal').classList.add('active');
+        }
+        function closeKnowMore() { document.getElementById('knowMoreModal').classList.remove('active'); }
+        function liveSearchProducts(query) {
+            query = query.toLowerCase().trim();
+            const cards = document.querySelectorAll('.product-card');
+            let firstMatch = null;
+            // Reset all filter tabs and show all cards first (undo any filter hiding)
+            cards.forEach(card => { card.style.display = ''; card.classList.remove('dim'); });
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            const allTab = document.querySelector('.filter-tab');
+            if (allTab) allTab.classList.add('active');
+            // Now apply search
+            cards.forEach(card => {
+                const nameEl = card.querySelector('.product-name');
+                const descEl = card.querySelector('.product-desc');
+                if (!nameEl || !descEl) return;
+                // Reset innerHTML to plain text before re-highlighting
+                nameEl.innerHTML = nameEl.textContent;
+                descEl.innerHTML = descEl.textContent;
+                if (!query) { card.classList.remove('dim'); return; }
+                const name = nameEl.textContent.toLowerCase();
+                const desc = descEl.textContent.toLowerCase();
+                if (name.includes(query) || desc.includes(query)) {
+                    card.classList.remove('dim');
+                    highlightText(nameEl, query);
+                    highlightText(descEl, query);
+                    if (!firstMatch) firstMatch = card;
+                } else {
+                    card.classList.add('dim');
+                }
+            });
+            if (firstMatch) {
+                document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400);
+            }
+        }
+        function highlightText(el, q) { const t = el.innerText; el.innerHTML = t.replace(new RegExp(`(${q})`, 'ig'), '<span class="highlight">$1</span>'); }
+        function filterProducts(cat) {
+            document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+            event.target.classList.add("active");
+            var keywords = { poultry: ["poultry","chicken","broiler","layer","hen","bird","chick"], livestock: ["livestock","cattle","cow","buffalo","dairy","goat","sheep","pig"], supplement: ["supplement","mineral","vitamin","calcium","probiotic","enzyme","tonic","liver"], injection: ["injection","inject","injectable","antibiotic","syrup"] };
+            document.querySelectorAll(".product-card").forEach(function(card) {
+                if (cat === "all") { card.style.display = ""; return; }
+                var text = ((card.getAttribute("data-name") || "") + " " + (card.getAttribute("data-desc") || "")).toLowerCase();
+                var match = (keywords[cat] || []).some(function(kw) { return text.includes(kw); });
+                card.style.display = match ? "" : "none";
+            });
+        }
+        function toggleUserMenu() { const m = document.getElementById('userMenu'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; }
+        function toggleMenu() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+            document.getElementById('mobileOverlay').classList.toggle('active');
+            document.getElementById('hamburgerBtn').classList.toggle('active');
+        }
+        function closeMenuAndEnquiry() {
+            ['mobileMenu','mobileOverlay','hamburgerBtn'].forEach(id => document.getElementById(id).classList.remove('active'));
+            setTimeout(() => openEnquiryModal(), 200);
+        }
+        function openEnquiryModal(prefill) {
+            if (prefill) { const s = document.getElementById('enquiryAnimalType'); if (s) s.value = prefill; }
+            document.getElementById('enquiryModal').classList.add('show');
+        }
+        function closeEnquiryModal() { document.getElementById('enquiryModal').classList.remove('show'); }
+        function backdropClose(e) { if (e.target.id === 'enquiryModal') closeEnquiryModal(); }
+        function submitEnquiry(e) {
+            e.preventDefault();
+            const form = document.getElementById('enquiryForm');
+            const data = new FormData(form);
+            const msg = encodeURIComponent(`Hello, I submitted an enquiry on MT Animal Care.\n\nAnimal: ${data.get('animalType')}\nNumber of Animals: ${data.get('animalCount')}\nMonthly Requirement: ${data.get('monthlyRequirement')}\nRequirement: ${data.get('requirement')}\nName: ${data.get('name')}\nContact: ${data.get('phone')}`);
+            fetch('/enquiry', { method:'POST', body:data }).catch(() => {});
+            alert('✅ Your enquiry has been sent.\n👉 Connecting you with our expert on WhatsApp!');
+            window.open(`https://wa.me/919021466362?text=${msg}`, '_blank');
+            form.reset(); closeEnquiryModal();
+        }
+        let chatbotMinimized = false;
+        function toggleChatbot() {
+            chatbotMinimized = !chatbotMinimized;
+            document.getElementById('ai-body').style.display = chatbotMinimized ? 'none' : 'block';
+            document.getElementById('ai-input').style.display = chatbotMinimized ? 'none' : 'block';
+        }
+        function toggleFaq(el) {
+            const item = el.closest('.faq-item');
+            const ans  = item.querySelector('.faq-a');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach(i => { i.classList.remove('open'); i.querySelector('.faq-a').classList.remove('open'); });
+            if (!isOpen) { item.classList.add('open'); ans.classList.add('open'); }
+        }
+        window.addEventListener('scroll', () => { document.querySelector('.navbar')?.classList.toggle('scrolled', window.scrollY > 40); });
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!sessionStorage.getItem('enquiryShown')) { setTimeout(() => { openEnquiryModal(); sessionStorage.setItem('enquiryShown','true'); }, 1600); }
+            // Mark cards that already have items (server-rendered)
+            document.querySelectorAll('.product-card').forEach(card => {
+                const fcpEl = card.querySelector('[id^="fcp-"]');
+                if (fcpEl && parseInt(fcpEl.innerText || '0') > 0) {
+                    card.classList.add('has-items');
+                }
+            });
+            document.getElementById('userMenu')?.addEventListener('click', e => e.stopPropagation());
+            document.querySelector('.user-dropdown')?.addEventListener('click', e => e.stopPropagation());
+            document.addEventListener('click', () => { const m = document.getElementById('userMenu'); if (m) m.style.display = 'none'; });
 
-        function openDetailImage(url) {
-            const modal = document.getElementById("imageModal");
-            const img = document.getElementById("modalImg");
-            img.src = url;
-            modal.style.display = "flex";
-        }
-
-        function closeModal() {
-            document.getElementById("imageModal").style.display = "none";
-        }
+            /* Scroll-to-top visibility */
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 400) scrollTopBtn.classList.add('visible');
+                else scrollTopBtn.classList.remove('visible');
+            });
+            /* Chatbot */
+            const aiBody = document.getElementById('ai-body');
+            const aiInput = document.getElementById('ai-input');
+            const chatbot = document.getElementById('ai-chatbot');
+            const header  = document.getElementById('ai-header');
+            function escH(t) { return t.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]); }
+            aiInput?.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } });
+            function sendMsg() {
+                const msg = aiInput.value.trim(); if (!msg) return;
+                aiBody.innerHTML += `<div class="msg-user"><b>You:</b> ${escH(msg)}</div>`;
+                aiInput.value = '';
+                const t = document.createElement('div'); t.className = 'typing'; t.innerText = 'MT Assistant is typing…';
+                aiBody.appendChild(t); aiBody.scrollTop = aiBody.scrollHeight;
+                fetch('/ai-chat', { method:'POST', headers:{'Content-Type':'text/plain'}, body:msg })
+                    .then(r => r.text()).then(reply => { t.remove(); aiBody.innerHTML += `<div class="msg-ai"><b>MT Assistant:</b> ${escH(reply)}</div>`; aiBody.scrollTop = aiBody.scrollHeight; })
+                    .catch(() => { t.innerText = 'Assistant unavailable right now.'; });
+            }
+            /* Drag chatbot */
+            let isDragging = false, offsetX = 0, offsetY = 0;
+            header?.addEventListener('mousedown', e => { const r = chatbot.getBoundingClientRect(); offsetX = e.clientX - r.left; offsetY = e.clientY - r.top; isDragging = true; e.preventDefault(); });
+            document.addEventListener('mousemove', e => { if (!isDragging) return; chatbot.style.left = (e.clientX - offsetX) + 'px'; chatbot.style.top = (e.clientY - offsetY) + 'px'; chatbot.style.right = 'auto'; chatbot.style.bottom = 'auto'; chatbot.style.position = 'fixed'; });
+            document.addEventListener('mouseup', () => isDragging = false);
+            header?.addEventListener('touchstart', e => { const t = e.touches[0]; const r = chatbot.getBoundingClientRect(); offsetX = t.clientX - r.left; offsetY = t.clientY - r.top; isDragging = true; });
+            document.addEventListener('touchmove', e => { if (!isDragging) return; const t = e.touches[0]; chatbot.style.left = (t.clientX - offsetX) + 'px'; chatbot.style.top = (t.clientY - offsetY) + 'px'; chatbot.style.right = 'auto'; chatbot.style.bottom = 'auto'; });
+            document.addEventListener('touchend', () => isDragging = false);
+            /* Scroll reveal */
+            const revEls = document.querySelectorAll('.why-card,.product-card,.animal-card,.mfg-img-card,.faq-item,.contact-card,.about-metric');
+            const ro = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = e.target.style.transform?.replace('translateY(20px)','translateY(0)') || ''; ro.unobserve(e.target); } }), { threshold:0.1 });
+            revEls.forEach(el => { el.style.opacity = '0'; el.style.transition = 'opacity 0.55s ease, transform 0.55s ease'; el.style.transform = (el.style.transform||'') + ' translateY(20px)'; ro.observe(el); });
+        });
     </script>
 </head>
 
 <body>
 
-<!-- ============================================================
-     NAVBAR
-============================================================ -->
+<!-- ANNOUNCEMENT BAR -->
+<div class="ann-bar">
+    <div class="ann-inner">
+        <span>🏭 WHO-GMP Certified Veterinary Contract Manufacturer</span>
+        <span class="ann-dot">◆</span>
+        <span>🌍 Exporting to <span class="hi">40+ Countries</span> Worldwide</span>
+        <span class="ann-dot">◆</span>
+        <span>🐔 Custom Poultry &amp; Livestock Formulations Available</span>
+        <span class="ann-dot">◆</span>
+        <span>✅ ISO 9001:2015 · WHO-GMP · MSME Certified</span>
+        <span class="ann-dot">◆</span>
+        <span>📦 Private Label &amp; Bulk Manufacturing — MOQ from 100 Units</span>
+        <span class="ann-dot">◆</span>
+        <span>🔬 <span class="hi">Veterinary Third Party Manufacturing in India</span> — Trusted Since 2006</span>
+    </div>
+</div>
+
+<!-- NAVBAR -->
 <nav class="navbar">
     <a href="/products" class="brand">
-        <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="MT Animal Care">
+        <div class="brand-logo-ring">
+            <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="MT Animal Care Logo">
+        </div>
         <div class="brand-text">
-            <span>MT Animal Care</span>
-            <span>Premium Veterinary</span>
+            <span class="brand-name">MT Animal Care</span>
+            <span class="brand-sub">Premium Veterinary</span>
         </div>
     </a>
 
-    <div class="desktop-nav">
+    <nav class="desktop-nav">
         <a href="/">Home</a>
         <a href="#shop">Shop</a>
+        <a href="#animal-range">Products</a>
         <a href="#about">About</a>
+        <a href="#find-us">Find Us</a>
+        <a href="#faq">FAQs</a>
         <a href="#contact">Contact</a>
-        <a href="javascript:void(0)" class="enquiry-link" onclick="openEnquiryModal()">Enquiry</a>
+        <a href="javascript:void(0)" onclick="openEnquiryModal()" class="nav-cta">📩 Enquiry</a>
         <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
-    </div>
+    </nav>
 
     <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
         <span></span><span></span><span></span>
     </div>
-
-    <!-- Mobile cart next to hamburger -->
     <a href="/cart" class="cart-btn mobile-cart" title="Cart">
         🛒
-        <span class="cart-count"
-              id="cartCountBadgeMobile"
-              th:if="${cartCount > 0}"
-              th:text="${cartCount}"></span>
+        <span class="cart-count" id="cartCountBadgeMobile" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
     </a>
 
     <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
-
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-header">
             <div class="brand">
-                <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="MT Animal Care">
-                <div class="brand-text">
-                    <span>MT Animal Care</span>
-                </div>
+                <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" style="width:38px;height:38px;border-radius:10px;" alt="Logo">
+                <span style="font-family:var(--font-display);font-weight:700;color:var(--crimson);font-size:15px;">MT Animal Care</span>
             </div>
             <span class="close-menu" onclick="toggleMenu()">✖</span>
         </div>
-
-        <!-- Search bar inside drawer -->
         <div class="mobile-search-wrap">
             <span class="mobile-search-icon">🔍</span>
-            <input type="text"
-                   id="liveSearchMobile"
-                   placeholder="Search products…"
-                   oninput="liveSearchProducts(this.value); document.getElementById('liveSearch').value=this.value;"
-            />
+            <input type="text" id="liveSearchMobile" placeholder="Search products…"
+                   oninput="liveSearchProducts(this.value); document.getElementById('liveSearch').value=this.value;"/>
         </div>
-
-        <a href="/">Home</a>
-        <a href="#shop" onclick="toggleMenu()">Shop</a>
-        <a href="#about" onclick="toggleMenu()">About</a>
-        <a href="#contact" onclick="toggleMenu()">Contact</a>
-        <a href="javascript:void(0)" onclick="closeMenuAndEnquiry()">Enquiry</a>
-        <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
-        <a th:if="${#authentication.authenticated}" href="/logout"
-           style="color:#b91c1c; border-color: rgba(185,28,28,0.2); background: rgba(185,28,28,0.05);">
-            🚪 Logout
-        </a>
+        <a href="/">🏠 Home</a>
+        <a href="#shop" onclick="toggleMenu()">🛍️ Shop</a>
+        <a href="#animal-range" onclick="toggleMenu()">🐔 Products</a>
+        <a href="#about" onclick="toggleMenu()">🏭 About</a>
+        <a href="#find-us" onclick="toggleMenu()">📍 Find Us</a>
+        <a href="#faq" onclick="toggleMenu()">❓ FAQs</a>
+        <a href="#contact" onclick="toggleMenu()">📞 Contact</a>
+        <a href="javascript:void(0)" onclick="closeMenuAndEnquiry()">📩 Enquiry</a>
+        <a th:if="${#authentication.authenticated}" href="/my-orders">📋 My Orders</a>
+        <a th:if="${#authentication.authenticated}" href="/logout" style="color:var(--crimson-light);border-color:rgba(185,28,28,0.2);background:rgba(185,28,28,0.04);">🚪 Logout</a>
     </div>
 
     <div class="right-actions">
         <div class="search-wrap">
-            <input type="text"
-                   id="liveSearch"
-                   placeholder="Search products…"
-                   oninput="liveSearchProducts(this.value)"/>
-            <button type="button" onclick="alert('Live search is enabled. Just start typing! 🔍')">🔍</button>
+            <input type="text" id="liveSearch" placeholder="Search products…" oninput="liveSearchProducts(this.value)"/>
+            <button type="button" title="Search">🔍</button>
         </div>
-
-        <a href="https://wa.me/919021466362" target="_blank" class="whatsapp-btn" title="Chat on WhatsApp">
-            <img src="/images/whatsapp.png" alt="WhatsApp" class="whatsapp-icon">
+        <a href="https://wa.me/919021466362" target="_blank" class="whatsapp-btn" title="WhatsApp">
+            <img src="/images/whatsapp.png" alt="WhatsApp" class="whatsapp-icon" onerror="this.parentElement.innerText='💬'">
         </a>
-
-        <a sec:authorize="!isAuthenticated()" href="/oauth2/authorization/google" class="login-btn">
-            🔐 Login
-        </a>
-
+        <a sec:authorize="!isAuthenticated()" href="/oauth2/authorization/google" class="login-btn">🔐 Login</a>
         <div class="user-dropdown" sec:authorize="isAuthenticated()">
-            <div class="user-btn" onclick="toggleUserMenu()">
-                👤 <span sec:authentication="name"></span> ⌄
-            </div>
+            <div class="user-btn" onclick="toggleUserMenu()">👤 <span sec:authentication="name"></span> ⌄</div>
             <div class="dropdown-menu" id="userMenu">
-                <a href="/logout">Logout</a>
+                <a href="/my-orders">📋 My Orders</a>
+                <a href="/logout">🚪 Logout</a>
             </div>
         </div>
         <a href="/cart" class="cart-btn mobile-cart-anchor" title="Cart">
             🛒
-            <span class="cart-count"
-                  id="cartCountBadge"
-                  th:if="${cartCount > 0}"
-                  th:text="${cartCount}"></span>
+            <span class="cart-count" id="cartCountBadge" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
         </a>
-
     </div>
 </nav>
 
-<!-- ============================================================
-     HERO
-============================================================ -->
+<!-- ============================================================ HERO ============================================================ -->
 <section class="hero-section">
-    <img src="/images/home-banner.png" alt="MT Animal Care Banner" class="hero-image">
-    <div class="hero-overlay">
-        <div class="hero-eyebrow">WHO · GMP · ISO Certified</div>
-        <h1>Leading Name in<br><em>Contract Manufacturing</em></h1>
-        <p>Premium veterinary formulations for poultry, livestock & animal healthcare. Global export-ready facility.</p>
-        <a href="/pdf/mt-animal-care-brochure.pdf" target="_blank" class="hero-btn">
-            📄 Download Brochure
-        </a>
-    </div>
-</section>
-
-<!-- ============================================================
-     WHY CHOOSE US
-============================================================ -->
-<section class="why-choose-us" id="why-us">
-    <h2>Why Choose MT Animal Care?</h2>
-    <div class="why-grid">
-        <div class="why-card">WHO-GMP Certified Facility</div>
-        <div class="why-card">Custom Formulation for Poultry &amp; Livestock</div>
-        <div class="why-card">Bulk Manufacturing &amp; Export Support</div>
-        <div class="why-card">Experienced Veterinary Team</div>
-    </div>
-
-    <!-- ============================================================
-         PRODUCTS
-    ============================================================ -->
-    <div class="page" id="shop">
-        <div class="section-header">
-            <div class="section-header-left">
-                <div class="section-eyebrow">Our Collection</div>
-                <h1 th:if="${searchQuery != null}">
-                    Results for "<span th:text="${searchQuery}"></span>"
-                </h1>
-                <h1 th:if="${searchQuery == null}">Available Products</h1>
+    <img src="/images/home-banner.png" alt="MT Animal Care Premium Veterinary Manufacturing" class="hero-image">
+    <div class="hero-inner container" style="max-width:1280px;padding-left:60px;padding-right:60px;">
+        <div class="hero-left">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                <span class="hero-badge-text">WHO · GMP · ISO 9001:2015 Certified</span>
+            </div>
+            <h1 class="hero-h1">
+                India's Trusted<br>
+                <em>Veterinary</em><br>
+                <span class="gold-grad">Contract Manufacturer</span>
+            </h1>
+            <p class="hero-p">Premium formulations for poultry, livestock &amp; animal healthcare. Export-ready facility supplying 40+ countries. Custom manufacturing for every scale.</p>
+            <div class="hero-actions">
+                <a href="#shop" class="btn-gold">🛍️ Explore Products</a>
+                <a href="/pdf/mt-animal-care-brochure.pdf" target="_blank" class="btn-outline-w">📄 Download Brochure</a>
+                <a href="javascript:void(0)" onclick="openEnquiryModal()" class="btn-outline-w">📩 Get Custom Quote</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item"><div class="stat-num">500+</div><div class="stat-label">Formulations</div></div>
+                <div class="stat-item"><div class="stat-num">18+</div><div class="stat-label">Years Exp.</div></div>
+                <div class="stat-item"><div class="stat-num">40+</div><div class="stat-label">Countries</div></div>
+                <div class="stat-item"><div class="stat-num">99.8%</div><div class="stat-label">QC Pass Rate</div></div>
             </div>
         </div>
-
-        <div th:if="${#lists.isEmpty(products)}" class="empty-state">
-            ❌ No products found.
+        <div class="hero-right">
+            <div class="hero-cert-strip">
+                <span class="hero-cert">WHO-GMP</span>
+                <span class="hero-cert">ISO 9001:2015</span>
+                <span class="hero-cert">MSME</span>
+                <span class="hero-cert">Vet Council</span>
+            </div>
+            <div class="hero-cat-grid">
+                <div class="hero-cat-card"><span class="hero-cat-icon">🐔</span><div class="hero-cat-name">Poultry Care</div><div class="hero-cat-count">120+ Products</div></div>
+                <div class="hero-cat-card"><span class="hero-cat-icon">🐄</span><div class="hero-cat-name">Livestock</div><div class="hero-cat-count">90+ Products</div></div>
+                <div class="hero-cat-card"><span class="hero-cat-icon">💉</span><div class="hero-cat-name">Injections</div><div class="hero-cat-count">60+ Products</div></div>
+                <div class="hero-cat-card"><span class="hero-cat-icon">🌾</span><div class="hero-cat-name">Feed Supplements</div><div class="hero-cat-count">150+ Products</div></div>
+                <div class="hero-cat-card" style="grid-column:span 2;"><span class="hero-cat-icon">🏭</span><div class="hero-cat-name">Custom Contract Manufacturing</div><div class="hero-cat-count">R&amp;D · White Label · Bulk Export</div></div>
+            </div>
         </div>
+    </div>
+    <div class="scroll-cue"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
 
-        <div class="product-grid" th:if="${!#lists.isEmpty(products)}">
-            <div class="product-card"
-                 th:each="product : ${products}"
-                 th:attr="data-name=${product.name}, data-desc=${product.description}">
+<!-- TRUST BAR -->
+<div class="trust-bar">
+    <div class="trust-item"><span class="trust-icon">🏆</span><span><strong>WHO-GMP</strong> Certified</span></div>
+    <div class="trust-sep"></div>
+    <div class="trust-item"><span class="trust-icon">🌍</span><span>Export to <strong>40+ Countries</strong></span></div>
+    <div class="trust-sep"></div>
+    <div class="trust-item"><span class="trust-icon">🔬</span><span><strong>R&amp;D Backed</strong> Formulations</span></div>
+    <div class="trust-sep"></div>
+    <div class="trust-item"><span class="trust-icon">📦</span><span><strong>500+</strong> Formulations</span></div>
+    <div class="trust-sep"></div>
+    <div class="trust-item"><span class="trust-icon">🏷️</span><span><strong>Custom</strong> Branding Available</span></div>
+    <div class="trust-sep"></div>
+    <div class="trust-item"><span class="trust-icon">⚡</span><span><strong>Quick</strong> Turnaround</span></div>
+</div>
 
-                <div class="card-img-wrap">
-                    <img th:src="${product.imageUrl}"
-                         alt="Product Image"
-                         onerror="this.src='/images/no-image.png'">
+<!-- ============================================================ ANIMAL PRODUCT RANGE ============================================================ -->
+<section class="animal-section" id="animal-range">
+    <div class="container">
+        <div class="animal-header">
+            <div class="section-eyebrow" style="justify-content:center;">Specialized Solutions</div>
+            <h2 class="section-title" style="text-align:center;margin-top:12px;">Products by <em>Animal Type</em></h2>
+            <p style="text-align:center;margin-top:14px;font-family:var(--font-serif);font-size:18px;color:var(--text-muted);max-width:560px;margin-left:auto;margin-right:auto;line-height:1.75;">
+                Tailored veterinary formulations for every species — from broiler chicks to dairy cattle. Click Enquire to get a custom quote.
+            </p>
+        </div>
+        <div class="animal-grid">
+            <!-- CHICKEN / POULTRY -->
+            <div class="animal-card">
+                <div class="animal-card-top">
+                    <span class="animal-emoji">🐔</span>
+                    <div class="animal-name">Poultry</div>
+                    <div class="animal-sub">Broiler · Layer · Breeder</div>
                 </div>
-
-                <div class="card-body">
-                    <h3 class="product-name" th:text="${product.name}"></h3>
-                    <p class="product-desc" th:text="${product.description}"></p>
-
-                    <div class="price-row">
-                        <div class="price">₹ <span th:text="${product.price}"></span></div>
-                        <div class="stock"
-                             th:classappend="${product.stock > 0 ? '' : 'out'}"
-                             th:text="${product.stock > 0 ? 'In Stock' : 'Out of Stock'}">
-                        </div>
-                    </div>
-
-                    <div class="qty-controls">
-                        <button type="button" class="qty-btn"
-                                th:attr="onclick=|updateQty(${product.id}, 'decrease')|">−</button>
-                        <span class="qty-value"
-                              th:id="'qty-' + ${product.id}"
-                              th:text="${cart[product.id] != null ? cart[product.id] : 0}">0</span>
-                        <button type="button" class="qty-btn"
-                                th:attr="onclick=|updateQty(${product.id}, 'increase')|">+</button>
-                    </div>
-
-                    <a href="javascript:void(0)"
-                       class="know-more-btn"
-                       th:attr="data-img=${product.knowMoreImageUrl}"
-                       onclick="openKnowMoreFromBtn(this)">
-                        🔍 Know More
+                <div class="animal-card-body">
+                    <ul class="animal-products">
+                        <li>Growth Promoters &amp; FCR Boosters</li>
+                        <li>Immunity Enhancers (Vitamins C, E, Selenium)</li>
+                        <li>Liver Tonic &amp; Hepato-Protectants</li>
+                        <li>Gut Health &amp; Probiotic Blends</li>
+                        <li>Anti-Stress Formulations (Heat Stress)</li>
+                        <li>Egg Quality Improvers for Layers</li>
+                        <li>Enzyme Supplements (Protease, Amylase)</li>
+                    </ul>
+                </div>
+                <div class="animal-card-footer">
+                    <a href="javascript:void(0)" class="animal-enquire-btn" onclick="openEnquiryModal('Chicken')">
+                        📩 ENQUIRE NOW
+                    </a>
+                </div>
+            </div>
+            <!-- COW / CATTLE -->
+            <div class="animal-card">
+                <div class="animal-card-top">
+                    <span class="animal-emoji">🐄</span>
+                    <div class="animal-name">Cattle</div>
+                    <div class="animal-sub">Cow · Buffalo · Dairy</div>
+                </div>
+                <div class="animal-card-body">
+                    <ul class="animal-products">
+                        <li>Milk Enhancers &amp; Lactation Boosters</li>
+                        <li>Chelated Mineral Mixtures</li>
+                        <li>Calcium Supplements (Liquid &amp; Bolus)</li>
+                        <li>Uterine Tonics &amp; Fertility Boosters</li>
+                        <li>Liver Support &amp; Detox Formulas</li>
+                        <li>Bypass Fat &amp; Energy Supplements</li>
+                        <li>Mastitis Control Powder &amp; Bolus</li>
+                    </ul>
+                </div>
+                <div class="animal-card-footer">
+                    <a href="javascript:void(0)" class="animal-enquire-btn" style="background:linear-gradient(135deg,#2d5c1a,#3d7a2a);" onclick="openEnquiryModal('Cow')">
+                        📩 ENQUIRE NOW
+                    </a>
+                </div>
+            </div>
+            <!-- GOAT / SHEEP -->
+            <div class="animal-card">
+                <div class="animal-card-top">
+                    <span class="animal-emoji">🐐</span>
+                    <div class="animal-name">Goat &amp; Sheep</div>
+                    <div class="animal-sub">Meat · Dairy · Breeding</div>
+                </div>
+                <div class="animal-card-body">
+                    <ul class="animal-products">
+                        <li>Weight Gain &amp; Muscle Growth Supplements</li>
+                        <li>Mineral Licks &amp; Premix Blends</li>
+                        <li>Dewormers &amp; Anti-Parasitic Formulas</li>
+                        <li>Vitamin B Complex Injections</li>
+                        <li>Reproductive Health Tonics</li>
+                        <li>Anthelmintic Bolus Formulations</li>
+                        <li>Calcium &amp; Phosphorus Supplements</li>
+                    </ul>
+                </div>
+                <div class="animal-card-footer">
+                    <a href="javascript:void(0)" class="animal-enquire-btn" style="background:linear-gradient(135deg,#4a2d00,#7a5200);" onclick="openEnquiryModal('Goat')">
+                        📩 ENQUIRE NOW
+                    </a>
+                </div>
+            </div>
+            <!-- CUSTOM / OTHER -->
+            <div class="animal-card">
+                <div class="animal-card-top">
+                    <span class="animal-emoji">🏭</span>
+                    <div class="animal-name">Custom Mfg</div>
+                    <div class="animal-sub">Any Species · Any Scale</div>
+                </div>
+                <div class="animal-card-body">
+                    <ul class="animal-products">
+                        <li>Aquaculture &amp; Fish Health Products</li>
+                        <li>Pig Health &amp; Growth Supplements</li>
+                        <li>Rabbit &amp; Small Animal Formulas</li>
+                        <li>Private Label — Your Brand, Our Quality</li>
+                        <li>Bulk Contract Manufacturing (Any MOQ)</li>
+                        <li>WHO-GMP Certified Custom Batches</li>
+                        <li>Full Regulatory &amp; Export Documentation</li>
+                    </ul>
+                </div>
+                <div class="animal-card-footer">
+                    <a href="javascript:void(0)" class="animal-enquire-btn" style="background:linear-gradient(135deg,#1a2d4a,#2a4a7a);" onclick="openEnquiryModal('Other')">
+                        📩 ENQUIRE NOW
                     </a>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- ============================================================
-         KNOW MORE MODAL
-    ============================================================ -->
-    <div id="knowMoreModal" class="modal-overlay">
-        <div class="modal-box">
-            <span class="close-btn" onclick="closeKnowMore()">✖</span>
-            <img id="knowMoreImg" src="" alt="Know More Image"/>
+<!-- ============================================================ MANUFACTURING IMAGES ============================================================ -->
+<section class="mfg-section" id="manufacturing">
+    <div class="container">
+        <div class="mfg-header">
+            <div class="section-eyebrow" style="justify-content:center;">State-of-the-Art Facility</div>
+            <h2 class="section-title" style="text-align:center;margin-top:12px;">Our <em>Manufacturing</em></h2>
+            <p style="text-align:center;margin-top:14px;font-family:var(--font-serif);font-size:18px;color:var(--text-muted);">WHO-GMP certified plant with in-house quality labs, sterile filling &amp; modern production lines</p>
+        </div>
+        <div class="mfg-grid">
+            <div class="mfg-img-card">
+                <img src="/images/manufacturing-1.jpg" alt="Liquid Filling Line" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                <div class="mfg-placeholder mfg-bg-1" style="display:none;">🏭</div>
+                <div class="mfg-img-label">Liquid Filling Line</div>
+            </div>
+            <div class="mfg-img-card">
+                <img src="/images/manufacturing-2.jpg" alt="Powder Blending Unit" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                <div class="mfg-placeholder mfg-bg-2" style="display:none;">⚗️</div>
+                <div class="mfg-img-label">Powder Blending Unit</div>
+            </div>
+            <div class="mfg-img-card">
+                <img src="/images/manufacturing-3.jpg" alt="Quality Control Lab" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                <div class="mfg-placeholder mfg-bg-3" style="display:none;">🔬</div>
+                <div class="mfg-img-label">Quality Control Lab</div>
+            </div>
+            <div class="mfg-img-card">
+                <img src="/images/manufacturing-4.jpg" alt="Packaging & Dispatch" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                <div class="mfg-placeholder mfg-bg-4" style="display:none;">📦</div>
+                <div class="mfg-img-label">Packaging &amp; Dispatch</div>
+            </div>
         </div>
     </div>
+</section>
 
-    <!-- ============================================================
-         ABOUT
-    ============================================================ -->
-    <section id="about" class="about-section">
+<!-- ============================================================ PRODUCTS WE MANUFACTURE (diagram style) ============================================================ -->
+<section class="manufacture-section">
+    <div class="container">
+        <div class="manufacture-header">
+            <div class="section-eyebrow" style="justify-content:center;">What We Make</div>
+            <h2 class="section-title" style="text-align:center;margin-top:12px;">Products <em>We Manufacture</em></h2>
+        </div>
+        <div class="manufacture-center">
+            <div class="manufacture-diagram">
+                <!-- TOP LEFT -->
+                <div class="mfg-hexagon">
+                    <span class="mfg-hex-icon">🔍</span>
+                    <ul class="mfg-hex-list">
+                        <li>Mineral Mixture Manufacturing</li>
+                        <li>Liquid Feed Supplement Manufacturing</li>
+                        <li>Gluco-Energy Booster Manufacturing</li>
+                        <li>Vitamin-H Manufacturing</li>
+                    </ul>
+                </div>
+                <!-- CENTER CIRCLE (spans 2 rows) -->
+                <div class="manufacture-center-circle">
+                    <div class="mfg-circle-label">Products</div>
+                    <div class="mfg-circle-big">We<br>Manufacture</div>
+                    <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;">MT ANIMAL CARE</div>
+                </div>
+                <!-- TOP RIGHT -->
+                <div class="mfg-hexagon">
+                    <span class="mfg-hex-icon">⚙️</span>
+                    <ul class="mfg-hex-list">
+                        <li>Uterine Tonic Manufacturing</li>
+                        <li>Bypass Fat Supplement Manufacturing</li>
+                        <li>Neurologic Feed Supplement Manufacturing</li>
+                        <li>Liver Tonic Manufacturing</li>
+                    </ul>
+                </div>
+                <!-- BOTTOM LEFT -->
+                <div class="mfg-hexagon">
+                    <span class="mfg-hex-icon">💡</span>
+                    <ul class="mfg-hex-list">
+                        <li>Enzyme Manufacturing</li>
+                        <li>Chelated Mineral Mixture Manufacturing</li>
+                        <li>Powder Feed Supplement Manufacturing</li>
+                        <li>Calcium Liquid Manufacturing</li>
+                    </ul>
+                </div>
+                <!-- BOTTOM RIGHT -->
+                <div class="mfg-hexagon">
+                    <span class="mfg-hex-icon">🎯</span>
+                    <ul class="mfg-hex-list">
+                        <li>Antimastitis Powder Manufacturing</li>
+                        <li>Ionic Calcium Gel Manufacturing</li>
+                        <li>Rumen Bypass Fat Powder Manufacturing</li>
+                        <li>Bolus Manufacturing</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Certification badges row -->
+            <div class="cert-badges-row">
+                <div class="cert-badge-item">
+                    <div class="cert-badge-circle iso"><span class="cert-badge-icon">🏅</span>ISO 9001:2015</div>
+                    <span class="cert-badge-name">ISO Certified</span>
+                </div>
+                <div class="cert-badge-item">
+                    <div class="cert-badge-circle who"><span class="cert-badge-icon">🌐</span>WHO-GMP</div>
+                    <span class="cert-badge-name">WHO-GMP</span>
+                </div>
+                <div class="cert-badge-item">
+                    <div class="cert-badge-circle gmp"><span class="cert-badge-icon">✅</span>GMP Quality</div>
+                    <span class="cert-badge-name">GMP Certified</span>
+                </div>
+                <div class="cert-badge-item">
+                    <div class="cert-badge-circle msme"><span class="cert-badge-icon">🇮🇳</span>Make in India</div>
+                    <span class="cert-badge-name">MSME Registered</span>
+                </div>
+                <div class="cert-badge-item">
+                    <div class="cert-badge-circle fssai"><span class="cert-badge-icon">📋</span>FSSAI</div>
+                    <span class="cert-badge-name">FSSAI</span>
+                </div>
+                <div class="cert-badge-item">
+                    <div class="cert-badge-circle vet"><span class="cert-badge-icon">🐾</span>Vet Council</div>
+                    <span class="cert-badge-name">Vet Council</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ WHY CHOOSE US ============================================================ -->
+<section class="why-section" id="why-us">
+    <div class="container">
+        <div class="why-header">
+            <div class="section-eyebrow">Our Strengths</div>
+            <h2 class="section-title">Why Choose <em style="color:var(--gold-light);">MT Animal Care?</em></h2>
+        </div>
+        <div class="why-grid">
+            <div class="why-card"><span class="why-icon">🏭</span><div class="why-title">WHO-GMP Certified Plant</div><div class="why-desc">International-grade manufacturing with validated processes, environmental monitoring &amp; stringent QC at every stage.</div></div>
+            <div class="why-card"><span class="why-icon">🧪</span><div class="why-title">Custom Formulation</div><div class="why-desc">Our veterinary R&amp;D team designs proprietary blends to your exact specifications — any species, any indication.</div></div>
+            <div class="why-card"><span class="why-icon">🚢</span><div class="why-title">Bulk Mfg &amp; Export</div><div class="why-desc">Export-ready infrastructure. Serving 40+ countries across Asia, Africa, Middle East &amp; Europe with global logistics support.</div></div>
+            <div class="why-card"><span class="why-icon">👨‍⚕️</span><div class="why-title">Expert Vet Team</div><div class="why-desc">Qualified veterinarians and pharmacologists guiding every formulation, dosage protocol &amp; clinical efficacy study.</div></div>
+            <div class="why-card"><span class="why-icon">🏷️</span><div class="why-title">Private Label Ready</div><div class="why-desc">Launch your own brand effortlessly. We handle manufacturing, labeling, packaging &amp; regulatory documentation.</div></div>
+            <div class="why-card"><span class="why-icon">⚡</span><div class="why-title">Fast Turnaround</div><div class="why-desc">Streamlined production with 100% in-process QC ensures rapid dispatch without compromising quality standards.</div></div>
+            <div class="why-card"><span class="why-icon">🔬</span><div class="why-title">In-House Quality Lab</div><div class="why-desc">Advanced analytical lab with HPLC, microbiology &amp; stability testing — zero compromise on every batch.</div></div>
+            <div class="why-card"><span class="why-icon">🤝</span><div class="why-title">Dedicated Support</div><div class="why-desc">Dedicated account managers &amp; technical experts ensuring your success from formulation through post-sales.</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ PRODUCTS SHOP ============================================================ -->
+<section class="products-section" id="shop">
+    <div class="container">
+        <div class="products-header">
+            <div>
+                <div class="section-eyebrow">Our Collection</div>
+                <h2 class="section-title" th:if="${searchQuery != null}">Results for "<em th:text="${searchQuery}"></em>"</h2>
+                <h2 class="section-title" th:if="${searchQuery == null}">Available <em>Products</em></h2>
+            </div>
+            <a href="/products" class="view-all-link">View All Products →</a>
+        </div>
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterProducts('all')">All Products</button>
+            <button class="filter-tab" onclick="filterProducts('poultry')">🐔 Poultry</button>
+            <button class="filter-tab" onclick="filterProducts('livestock')">🐄 Livestock</button>
+            <button class="filter-tab" onclick="filterProducts('supplement')">🌾 Supplements</button>
+            <button class="filter-tab" onclick="filterProducts('injection')">💉 Injections</button>
+        </div>
+        <div th:if="${#lists.isEmpty(products)}" class="empty-state">
+            <div class="e-icon">🔍</div>
+            <p style="font-size:18px;font-weight:600;">No products found.</p>
+        </div>
+        <div class="product-grid" th:if="${!#lists.isEmpty(products)}">
+            <div class="product-card"
+                 th:each="product : ${products}"
+                 th:attr="data-name=${product.name}, data-desc=${product.description}">
+                <div class="card-img-wrap">
+                    <span class="card-badge" th:if="${product.stock > 0}">In Stock</span>
+                    <img th:src="${product.imageUrl}" alt="Product Image" onerror="this.src='/images/no-image.png'">
+                </div>
+                <a href="/cart" class="float-cart-pill" title="Go to Cart">
+                    <span class="fcp-icon">🛒</span>
+                    <span>View Cart</span>
+                    <span class="fcp-count" th:id="'fcp-' + ${product.id}" th:text="${cart[product.id] != null ? cart[product.id] : 0}">0</span>
+                </a>
+                <div class="card-body">
+                    <h3 class="product-name" th:text="${product.name}"></h3>
+                    <p class="product-desc" th:text="${product.description}"></p>
+                    <div class="price-row">
+                        <div class="price">₹ <span th:text="${product.price}"></span></div>
+                        <div class="stock" th:classappend="${product.stock > 0 ? '' : 'out'}" th:text="${product.stock > 0 ? 'In Stock' : 'Out of Stock'}"></div>
+                    </div>
+                    <div class="qty-controls">
+                        <button type="button" class="qty-btn" th:attr="onclick=|updateQty(${product.id}, 'decrease')|">−</button>
+                        <span class="qty-value" th:id="'qty-' + ${product.id}" th:text="${cart[product.id] != null ? cart[product.id] : 0}">0</span>
+                        <button type="button" class="qty-btn" th:attr="onclick=|updateQty(${product.id}, 'increase')|">+</button>
+                    </div>
+                    <a href="javascript:void(0)" class="know-more-btn" th:attr="data-img=${product.knowMoreImageUrl}" onclick="openKnowMoreFromBtn(this)">🔍 Know More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Know More Modal -->
+<div id="knowMoreModal" class="modal-overlay">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeKnowMore()">✖</span>
+        <img id="knowMoreImg" src="" alt="Know More"/>
+    </div>
+</div>
+
+<!-- ============================================================ FAQ SECTION ============================================================ -->
+<section class="faq-section" id="faq">
+    <div class="container">
+        <div class="faq-header">
+            <div class="section-eyebrow" style="justify-content:center;">Got Questions?</div>
+            <h2 class="section-title" style="text-align:center;margin-top:12px;">Frequently Asked <em>Questions</em></h2>
+            <p style="text-align:center;margin-top:14px;font-family:var(--font-serif);font-size:18px;color:var(--text-muted);">Everything you need to know about our manufacturing, custom formulations &amp; export services.</p>
+        </div>
+        <div class="faq-grid">
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    Can you custom-build any veterinary medicine or supplement?
+                    <span class="faq-q-icon">+</span>
+                </button>
+                <div class="faq-divider"></div>
+                <div class="faq-a">
+                    <strong>Absolutely yes — both small scale and large scale bulk manufacturing.</strong> Whether you need 100 units for a local vet clinic or 100,000 units for export, our WHO-GMP certified facility can handle it. Our in-house R&amp;D team formulates from scratch or works from your existing formula. We manufacture across all categories: powders, liquids, boluses, premixes, injections, and more. Just share your target species, indication, and desired pack size — we handle the rest.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    What is the minimum order quantity (MOQ) for contract manufacturing?
+                    <span class="faq-q-icon">+</span>
+                </button>
+                <div class="faq-divider"></div>
+                <div class="faq-a">
+                    Our MOQ starts from as low as <strong>100 units</strong> for small-batch custom production. For bulk export orders, standard MOQ is typically 500–1000 units per SKU depending on formulation complexity. We are flexible and accommodate startups, growing distributors, and large integrators alike. Contact us and we'll suggest the most cost-efficient order size for your business model.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    Do you provide private label / white-label manufacturing?
+                    <span class="faq-q-icon">+</span>
+                </button>
+                <div class="faq-divider"></div>
+                <div class="faq-a">
+                    <strong>Yes, private label is one of our core services.</strong> You bring your brand, we handle everything else — formulation development, regulatory compliance, WHO-GMP production, custom packaging design, labeling, and export documentation. Your product will carry your brand name while being backed by our certified manufacturing quality. We've launched 50+ private-label brands across India and internationally.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    What certifications does your manufacturing facility hold?
+                    <span class="faq-q-icon">+</span>
+                </button>
+                <div class="faq-divider"></div>
+                <div class="faq-a">
+                    Our facility is certified by: <strong>WHO-GMP</strong> (Good Manufacturing Practice), <strong>ISO 9001:2015</strong> Quality Management, <strong>MSME</strong> (UDYAM-MH-19-0395860), <strong>GST</strong> (27ACFFM7590J1ZN), and <strong>Veterinary Council of India</strong>. All our products are manufactured under strict standard operating procedures with complete batch traceability and in-house analytical testing.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    Can you manufacture products for export outside India?
+                    <span class="faq-q-icon">+</span>
+                </button>
+                <div class="faq-divider"></div>
+                <div class="faq-a">
+                    <strong>Yes, we actively export to 40+ countries</strong> across Asia, Africa, Middle East, and Europe. We prepare all necessary documentation including Certificate of Analysis (CoA), Certificate of Origin, product registration dossiers, and country-specific labeling compliance. Our products meet international quality standards making them export-ready. We can also help you register products in your target markets.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    How long does it take to develop and manufacture a new product?
+                    <span class="faq-q-icon">+</span>
+                </button>
+                <div class="faq-divider"></div>
+                <div class="faq-a">
+                    For a completely new formulation: R&amp;D and prototype development takes <strong>2–4 weeks</strong>, stability testing 2–4 weeks additional, and regulatory filing if required 4–8 weeks. For products matching existing formulations in our library (500+ formulas), we can produce in <strong>7–15 working days</strong>. Rush orders are accommodated. Contact us with your requirement and we'll provide a precise timeline.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    What types of veterinary products can you manufacture?
+                    <span class="faq-q-icon">+</span>
+                </button>
+                <div class="faq-divider"></div>
+                <div class="faq-a">
+                    We manufacture the complete range of veterinary products: <strong>Feed Supplements</strong> (powder, liquid, premix), <strong>Veterinary Injections</strong> (antibiotics, vitamins, anti-inflammatories), <strong>Bolus</strong> (slow-release mineral bolus), <strong>Herbal Formulations</strong>, <strong>Mineral Mixtures</strong>, <strong>Liver Tonics</strong>, <strong>Probiotics &amp; Prebiotics</strong>, <strong>Pesticides &amp; Disinfectants</strong>, and <strong>Veterinary Soaps</strong> — for poultry, cattle, goat, aquaculture, and more.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    Do you offer quality testing and certificates for each batch?
+                    <span class="faq-q-icon">+</span>
+                </button>
+                <div class="faq-divider"></div>
+                <div class="faq-a">
+                    <strong>Yes, every batch comes with a full Certificate of Analysis (CoA).</strong> Our in-house quality control lab performs HPLC testing, microbiological analysis, moisture content, pH, viscosity, and stability checks. Third-party testing from NABL-accredited labs is available on request. We maintain batch records for full traceability and provide complete manufacturing documentation with each order.
+                </div>
+            </div>
+
+        </div>
+        <div style="text-align:center;margin-top:44px;">
+            <p style="font-size:16px;color:var(--text-muted);margin-bottom:18px;">Still have questions? Our veterinary experts are ready to help.</p>
+            <a href="javascript:void(0)" onclick="openEnquiryModal()" class="btn-gold" style="display:inline-flex;">
+                📩 Ask Our Expert Team
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ ABOUT ============================================================ -->
+<section class="about-section" id="about">
+    <div class="container">
         <div class="about-inner">
-            <h2>About Our Manufacturing Unit</h2>
+            <div class="section-eyebrow">Our Story</div>
+            <h2 class="section-title">Built on Science, <em>Driven by Care</em></h2>
             <p>
                 We are a quality-driven manufacturing unit specializing in poultry nutrition, veterinary medicines,
                 and animal healthcare products designed to enhance growth, immunity, and overall farm productivity.
@@ -1407,266 +1731,263 @@
                 and disease-prevention formulations to healthcare solutions for other livestock and animals, we are committed
                 to delivering reliable, effective, and scientifically developed products that support farmers, integrators,
                 and veterinary professionals across the industry. Our focus on innovation, hygiene, and consistency helps
-                build healthier flocks and sustainable farming outcomes.
+                build healthier flocks and sustainable farming outcomes — manufactured in association with Uniray Lifesciences.
+            </p>
+            <div class="about-metrics">
+                <div class="about-metric"><div class="about-metric-num">500+</div><div class="about-metric-label">Product Formulations</div></div>
+                <div class="about-metric"><div class="about-metric-num">18+</div><div class="about-metric-label">Years of Excellence</div></div>
+                <div class="about-metric"><div class="about-metric-num">40+</div><div class="about-metric-label">Countries Served</div></div>
+                <div class="about-metric"><div class="about-metric-num">99.8%</div><div class="about-metric-label">QC Pass Rate</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ TOP SEARCH TERMS ============================================================ -->
+<section class="search-terms-section">
+    <div class="container">
+        <div class="search-terms-inner">
+            <h2 class="search-terms-title">Top Search Terms</h2>
+            <div class="search-terms-cloud">
+                <a href="/products?q=veterinary+companies+india" class="search-term">Top 10 Veterinary Companies In India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=veterinary+medicine+manufacturers" class="search-term">Top 10 Veterinary Medicine Manufacturers In India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=cattle+feed+manufacturers" class="search-term">Cattle Feed Manufacturers in India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=poultry+feed+manufacturers" class="search-term">Poultry Feed Manufacturers in India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=veterinary+pcd+company" class="search-term">Veterinary PCD Company in India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=mineral+mixture+cow" class="search-term">Best Mineral Mixture for Cow</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=veterinary+medicine+company+india" class="search-term">Veterinary Medicine Company in India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=veterinary+feed+supplements" class="search-term">Veterinary Feed Supplements</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=veterinary+mineral+mixture" class="search-term">Veterinary Mineral Mixture</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=poultry+feed+india" class="search-term">Best Poultry Feed in India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=animal+feed+supplement" class="search-term">Animal Feed Supplement in India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=top+poultry+company+india" class="search-term">Top Poultry Company in India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=veterinary+products+list" class="search-term">Veterinary Products List</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=veterinary+third+party+manufacturing" class="search-term">Veterinary Third Party Manufacturing in India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=veterinary+calcium+syrup" class="search-term">Veterinary Calcium Syrup in India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=veterinary+medicine+price+list" class="search-term">Veterinary Medicine Price List</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=top+pesticide+companies+india" class="search-term">Top 10 Pesticide Companies in India</a>
+                <span class="search-sep">|</span>
+                <a href="/products?q=veterinary+pharmaceutical+companies" class="search-term">Veterinary Pharmaceutical Companies</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ GOOGLE MAP ============================================================ -->
+<section class="map-section" id="find-us">
+    <div class="container">
+        <div class="map-header">
+            <div class="section-eyebrow" style="justify-content:center;">Visit Us</div>
+            <h2 class="section-title" style="text-align:center;margin-top:12px;">Find <em>Our Office</em></h2>
+            <p style="text-align:center;margin-top:12px;font-family:var(--font-serif);font-size:17px;color:var(--text-muted);">
+                📍 Shop No. 2, Mahalaxmi Welfare Society, Gurukrupa Complex, Vasai-Virar (Mumbai), Maharashtra – 401203
             </p>
         </div>
-    </section>
+        <div class="map-wrapper">
+            <iframe
+                    title="MT Animal Care Location"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3760.123456789!2d72.8292!3d19.3822!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a9b55c54e7b9%3A0x1234567890abcdef!2sGurukrupa+Complex%2C+Vasai-Virar%2C+Maharashtra+401203!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin&q=Mahalaxmi+Welfare+Society+Gurukrupa+Complex+Vasai+Virar+Maharashtra+401203"
+                    width="100%" height="420"
+                    style="border:0; border-radius:18px; display:block;"
+                    allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+            <div class="map-info-bar">
+                <div class="map-info-item">
+                    <span class="map-info-icon">📍</span>
+                    <div>
+                        <strong>MT Animal Care</strong><br>
+                        <span>Shop No. 2, Mahalaxmi Welfare Society, Gurukrupa Complex, Vasai-Virar, Maharashtra 401203</span>
+                    </div>
+                </div>
+                <div class="map-info-item">
+                    <span class="map-info-icon">🕐</span>
+                    <div>
+                        <strong>Business Hours</strong><br>
+                        <span>Mon – Sat: 9:00 AM – 7:00 PM</span>
+                    </div>
+                </div>
+                <div class="map-info-item">
+                    <span class="map-info-icon">📞</span>
+                    <div>
+                        <strong>Call Us</strong><br>
+                        <a href="tel:+919503569405" style="color:var(--crimson);font-weight:700;">9503569405</a>
+                    </div>
+                </div>
+                <a href="https://maps.google.com/?q=Mahalaxmi+Welfare+Society+Gurukrupa+Complex+Vasai+Virar+Maharashtra+401203" target="_blank" class="map-directions-btn">
+                    🗺️ Get Directions
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <!-- ============================================================
-         CONTACT
-    ============================================================ -->
-    <section id="contact" class="contact-section">
-        <h2>Contact Us</h2>
+<!-- ============================================================ CONTACT ============================================================ -->
+<section class="contact-section" id="contact">
+    <div class="container">
+        <div class="contact-header">
+            <div class="section-eyebrow" style="justify-content:center;">Get In Touch</div>
+            <h2 class="section-title" style="text-align:center;margin-top:12px;">Contact <em>Our Team</em></h2>
+        </div>
         <div class="contact-grid">
             <div class="contact-card">
-                <h3>Registered Address</h3>
+                <span class="contact-card-icon">📍</span>
+                <h3>Our Location</h3>
                 <p>
-                    B/201, Mauli Apartment 3, Manvel Pada Road,<br>
-                    Nearby Landmark: Jaydeep English Primary School,<br>
-                    Kargil Nagar, Vasai Virar, District: Palghar,<br>
-                    Maharashtra – 401305
+                    Shop No. 2, Mahalaxmi Welfare Society,<br>
+                    Gurukrupa Complex,<br>
+                    Vasai-Virar (Mumbai),<br>
+                    Maharashtra – 401203<br><br>
+                    <a href="https://maps.google.com/?q=Shop+No+2+Mahalaxmi+Welfare+Society+Gurukrupa+Complex+Vasai+Virar+Maharashtra+401203" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:var(--crimson);color:#fff;padding:8px 18px;border-radius:100px;font-weight:700;font-size:12px;text-decoration:none;margin-top:4px;">🗺️ Open in Google Maps</a>
                 </p>
             </div>
             <div class="contact-card">
+                <span class="contact-card-icon">📞</span>
                 <h3>Contact</h3>
                 <p>
-                    📞 9503569405<br>
-                    📞 97734 05980<br><br>
-                    ✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fc91889d9295919d9094999d9088949f9d8e99bc9b919d9590d29f9391">[email&#160;protected]</a>
+                    <a href="tel:+919503569405" style="color:var(--crimson);font-weight:600;">📞 9503569405</a><br>
+                    <a href="tel:+919773405980" style="color:var(--crimson);font-weight:600;">📞 97734 05980</a><br><br>
+                    <a href="/cdn-cgi/l/email-protection#274e494148674a5346494e4a464b444655420944484a" style="color:var(--gold);">✉️ <span class="__cf_email__" data-cfemail="fd94939b92bd90899c9394909c919e9c8f98d39e9290">[email&#160;protected]</span></a><br><br>
+                    <a href="https://wa.me/919021466362" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#25d366;color:#fff;padding:8px 18px;border-radius:100px;font-weight:700;font-size:13px;text-decoration:none;margin-top:4px;">💬 WhatsApp Us</a>
                 </p>
             </div>
             <div class="contact-card">
+                <span class="contact-card-icon">🏢</span>
                 <h3>Registrations</h3>
                 <p>
-                    MSME: UDYAM-MH-19-0395860<br>
-                    GST: 27ACFFM7590J1ZN
+                    <strong style="color:var(--crimson);">MSME:</strong> UDYAM-MH-19-0395860<br>
+                    <strong style="color:var(--crimson);">GST:</strong> 27ACFFM7590J1ZN<br><br>
+                    <span style="font-size:12px;color:var(--text-muted);">Certified by:</span><br>
+                    🏆 WHO-GMP &nbsp;|&nbsp; ISO 9001:2015<br>
+                    🐾 Veterinary Council of India
                 </p>
             </div>
         </div>
-    </section>
-
-    <!-- ============================================================
-         ALL SCRIPTS — LOGIC UNCHANGED
-    ============================================================ -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    /* Know More Modal */
-    function openKnowMoreFromBtn(btn) {
-        const imgUrl = btn.getAttribute("data-img");
-        document.getElementById("knowMoreImg").src = imgUrl;
-        document.getElementById("knowMoreModal").style.display = "flex";
-    }
-    function closeKnowMore() {
-        document.getElementById("knowMoreModal").style.display = "none";
-    }
-
-    /* Live Search */
-    function liveSearchProducts(query) {
-        query = query.toLowerCase().trim();
-        const cards = document.querySelectorAll(".product-card");
-        let firstMatch = null;
-        cards.forEach(card => {
-            const nameEl = card.querySelector(".product-name");
-            const descEl = card.querySelector(".product-desc");
-            const name = nameEl.innerText.toLowerCase();
-            const desc = descEl.innerText.toLowerCase();
-            nameEl.innerHTML = nameEl.innerText;
-            descEl.innerHTML = descEl.innerText;
-            if (!query) { card.classList.remove("dim"); return; }
-            if (name.includes(query) || desc.includes(query)) {
-                card.classList.remove("dim");
-                highlightText(nameEl, query);
-                highlightText(descEl, query);
-                if (!firstMatch) firstMatch = card;
-            } else {
-                card.classList.add("dim");
-            }
-        });
-        if (firstMatch) firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-    function highlightText(element, query) {
-        const text = element.innerText;
-        const regex = new RegExp(`(${query})`, "ig");
-        element.innerHTML = text.replace(regex, `<span class="highlight">$1</span>`);
-    }
-
-    /* User Dropdown */
-    function toggleUserMenu() {
-        const menu = document.getElementById("userMenu");
-        menu.style.display = (menu.style.display === "block") ? "none" : "block";
-    }
-    document.getElementById("userMenu")?.addEventListener("click", function(e) { e.stopPropagation(); });
-    document.addEventListener("click", function(e) {
-        const dropdown = document.querySelector(".user-dropdown");
-        const menu = document.getElementById("userMenu");
-        if (dropdown && menu && !dropdown.contains(e.target)) menu.style.display = "none";
-    });
-
-    /* Mobile Menu */
-    function toggleMenu() {
-        document.getElementById("mobileMenu").classList.toggle("active");
-        document.getElementById("mobileOverlay").classList.toggle("active");
-        document.getElementById("hamburgerBtn").classList.toggle("active");
-    }
-
-    /* Close menu then open enquiry */
-    function closeMenuAndEnquiry() {
-        document.getElementById("mobileMenu").classList.remove("active");
-        document.getElementById("mobileOverlay").classList.remove("active");
-        document.getElementById("hamburgerBtn").classList.remove("active");
-        setTimeout(() => openEnquiryModal(), 200);
-    }
-
-    /* Enquiry Modal */
-    function openEnquiryModal() {
-        document.getElementById("enquiryModal").classList.add("show");
-    }
-    function closeEnquiryModal() {
-        document.getElementById("enquiryModal").classList.remove("show");
-    }
-    function backdropClose(e) {
-        if (e.target.id === "enquiryModal") closeEnquiryModal();
-    }
-    function submitEnquiry(e) {
-        e.preventDefault();
-        const form = document.getElementById("enquiryForm");
-        const data = new FormData(form);
-        const whatsappMsg = encodeURIComponent(
-            `Hello, I submitted an enquiry on MT Animal Care.\n\n` +
-            `Animal: ${data.get("animalType")}\n` +
-            `Number of Animals: ${data.get("animalCount")}\n` +
-            `Monthly Requirement: ${data.get("monthlyRequirement")}\n` +
-            `Requirement: ${data.get("requirement")}\n` +
-            `Name: ${data.get("name")}\n` +
-            `Contact: ${data.get("phone")}`
-        );
-        const whatsappNumber = "919021466362";
-        fetch("/enquiry", { method: "POST", body: data }).catch(() => {});
-        alert("✅ Your enquiry has been sent.\n👉 Chat instantly with our expert on WhatsApp.");
-        window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`, "_blank");
-        form.reset();
-        closeEnquiryModal();
-    }
-
-    /* Chatbot minimize */
-    let chatbotMinimized = false;
-    function toggleChatbot() {
-        const body = document.getElementById("ai-body");
-        const input = document.getElementById("ai-input");
-        chatbotMinimized = !chatbotMinimized;
-        body.style.display = chatbotMinimized ? "none" : "block";
-        input.style.display = chatbotMinimized ? "none" : "block";
-    }
-
-    /* DOMContentLoaded */
-    document.addEventListener("DOMContentLoaded", function () {
-        /* Auto enquiry popup once per session */
-        if (!sessionStorage.getItem("enquiryShown")) {
-            setTimeout(() => { openEnquiryModal(); sessionStorage.setItem("enquiryShown", "true"); }, 1200);
-        }
-
-        /* Floating button position handled by CSS calc(var(--nav-h) + 16px) */
-
-        /* ---- CHATBOT ---- */
-        const aiBody = document.getElementById("ai-body");
-        const aiInput = document.getElementById("ai-input");
-        const chatbot = document.getElementById("ai-chatbot");
-        const header = document.getElementById("ai-header");
-
-        function escapeHtml(text) {
-            return text.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]);
-        }
-
-        aiInput.addEventListener("keydown", function(e) {
-            if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-        });
-
-        function sendMessage() {
-            const msg = aiInput.value.trim();
-            if (!msg) return;
-            aiBody.innerHTML += `<div class="msg-user"><b>You:</b> ${escapeHtml(msg)}</div>`;
-            aiInput.value = "";
-            const typingEl = document.createElement("div");
-            typingEl.className = "typing"; typingEl.innerText = "AI is typing…";
-            aiBody.appendChild(typingEl);
-            aiBody.scrollTop = aiBody.scrollHeight;
-            fetch("/ai-chat", { method: "POST", headers: { "Content-Type": "text/plain" }, body: msg })
-                .then(res => res.text())
-                .then(reply => {
-                    typingEl.remove();
-                    aiBody.innerHTML += `<div class="msg-ai"><b>AI:</b> ${escapeHtml(reply)}</div>`;
-                    aiBody.scrollTop = aiBody.scrollHeight;
-                })
-                .catch(() => { typingEl.innerText = "AI is not available right now."; });
-        }
-
-        /* Drag */
-        let isDragging = false, offsetX = 0, offsetY = 0;
-        function startDrag(x, y) {
-            const rect = chatbot.getBoundingClientRect();
-            offsetX = x - rect.left; offsetY = y - rect.top; isDragging = true;
-        }
-        function moveDrag(x, y) {
-            if (!isDragging) return;
-            chatbot.style.left = (x - offsetX) + "px"; chatbot.style.top = (y - offsetY) + "px";
-            chatbot.style.right = "auto"; chatbot.style.bottom = "auto"; chatbot.style.position = "fixed";
-        }
-        function stopDrag() { isDragging = false; }
-
-        header.addEventListener("mousedown", e => { startDrag(e.clientX, e.clientY); e.preventDefault(); });
-        document.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
-        document.addEventListener("mouseup", stopDrag);
-        header.addEventListener("touchstart", e => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); });
-        document.addEventListener("touchmove", e => { const t = e.touches[0]; moveDrag(t.clientX, t.clientY); });
-        document.addEventListener("touchend", stopDrag);
-    });
-</script>
-
-    <!-- FLOATING CALL BUTTON -->
-    <a href="tel:+919503569405" id="talkExpertFloat" title="Call Poultry Expert">
-        📞 Talk to an Expert
-    </a>
-
-    <!-- ============================================================
-         AI CHATBOT WIDGET
-    ============================================================ -->
-    <div id="ai-chatbot">
-        <div id="ai-header">
-            🤖 Ask MT Assistant <span onclick="toggleChatbot()">➖</span>
-        </div>
-        <div id="ai-body"></div>
-        <input type="text" id="ai-input" placeholder="Ask about products, GST, delivery…"/>
     </div>
+</section>
 
-    <!-- ============================================================
-         ENQUIRY MODAL
-    ============================================================ -->
-    <div id="enquiryModal" class="enquiry-modal" onclick="backdropClose(event)">
-        <div class="enquiry-box">
-            <span class="close-btn" onclick="closeEnquiryModal()">✖</span>
-            <h2>📩 Custom Enquiry</h2>
-            <p>Tell us your requirement and we'll design a custom solution for your animals.</p>
-            <form id="enquiryForm" onsubmit="submitEnquiry(event)">
-                <label>Animal Type</label>
-                <select name="animalType" required>
-                    <option value="">Select Animal</option>
-                    <option value="Chicken">Chicken</option>
-                    <option value="Cow">Cow</option>
-                    <option value="Goat">Goat</option>
-                    <option value="Pig">Pig</option>
-                    <option value="Other">Other</option>
-                </select>
-                <label>Requirement (Medicine / Supplement)</label>
-                <textarea name="requirement" placeholder="Describe the problem or supplement needed…" required></textarea>
-                <label>Your Name</label>
-                <input type="text" name="name" required/>
-                <label>Contact Number</label>
-                <input type="tel" name="phone" required/>
-                <label>Number of Animals</label>
-                <input type="number" name="animalCount" placeholder="e.g. 500" min="1" required/>
-                <label>Expected Monthly Requirement</label>
-                <input type="text" name="monthlyRequirement" placeholder="e.g. 10 kg / 100 bottles" required/>
-                <button type="submit">Send Enquiry →</button>
-            </form>
+<!-- ============================================================ FOOTER ============================================================ -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="brand" style="gap:12px;">
+                    <img src="/images/mt-animal-care-logo.jpeg" style="width:44px;height:44px;border-radius:12px;border:2px solid var(--gold);" alt="MT Animal Care">
+                    <div><div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--white);">MT Animal Care</div><div style="font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;">Premium Veterinary</div></div>
+                </div>
+                <p>WHO-GMP certified veterinary contract manufacturer. Custom formulations for poultry, livestock &amp; animal healthcare. Trusted by farmers, integrators &amp; veterinary professionals in 40+ countries.</p>
+                <div class="footer-certs">
+                    <span class="footer-cert">WHO-GMP</span>
+                    <span class="footer-cert">ISO 9001:2015</span>
+                    <span class="footer-cert">MSME</span>
+                    <span class="footer-cert">Vet Council</span>
+                    <span class="footer-cert">GST Reg.</span>
+                </div>
+            </div>
+            <div>
+                <div class="footer-heading">Quick Links</div>
+                <ul class="footer-links">
+                    <li><a href="/">→ Home</a></li>
+                    <li><a href="#shop">→ Shop</a></li>
+                    <li><a href="#animal-range">→ Products by Animal</a></li>
+                    <li><a href="#manufacturing">→ Manufacturing</a></li>
+                    <li><a href="#about">→ About Us</a></li>
+                    <li><a href="#find-us">→ Find Us</a></li>
+                    <li><a href="#faq">→ FAQs</a></li>
+                    <li><a href="#contact">→ Contact</a></li>
+                    <li><a href="javascript:void(0)" onclick="openEnquiryModal()">→ Send Enquiry</a></li>
+                    <li><a href="/cart">→ Cart</a></li>
+                    <li><a href="/my-orders">→ My Orders</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="footer-heading">Product Range</div>
+                <ul class="footer-links">
+                    <li><a href="#shop">→ Poultry Supplements</a></li>
+                    <li><a href="#shop">→ Livestock Formulas</a></li>
+                    <li><a href="#shop">→ Vet Injections</a></li>
+                    <li><a href="#shop">→ Feed Supplements</a></li>
+                    <li><a href="#shop">→ Liver Tonics</a></li>
+                    <li><a href="#shop">→ Mineral Mixtures</a></li>
+                    <li><a href="#shop">→ Bolus Formulations</a></li>
+                    <li><a href="#shop">→ Herbal Products</a></li>
+                    <li><a href="javascript:void(0)" onclick="openEnquiryModal()">→ Custom White Label</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <div class="footer-heading">Contact</div>
+                <p>
+                    📍 Shop No. 2, Mahalaxmi Welfare Society,<br>Gurukrupa Complex, Vasai-Virar (Mumbai),<br>Maharashtra – 401203<br><br>
+                    📞 <a href="tel:+919503569405">9503569405</a><br>
+                    📞 <a href="tel:+919773405980">97734 05980</a><br><br>
+                    ✉️ <a href="/cdn-cgi/l/email-protection#4d24232b220d20392c2324202c212e2c3f28632e2220"><span class="__cf_email__" data-cfemail="eb82858d84ab869f8a8582868a87888a998ec5888486">[email&#160;protected]</span></a><br><br>
+                    <a href="https://wa.me/919021466362" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#25d366;color:#fff;padding:7px 16px;border-radius:100px;font-weight:700;font-size:12px;text-decoration:none;margin-top:4px;">💬 WhatsApp Expert</a>
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 MT Animal Care. All rights reserved. MSME: UDYAM-MH-19-0395860 | GST: 27ACFFM7590J1ZN</p>
+            <p>Manufactured in association with Uniray Lifesciences | WHO-GMP Certified</p>
         </div>
     </div>
+</footer>
 
+<!-- FLOATING EXPERT BUTTON -->
+<a href="tel:+919503569405" id="talkExpertFloat" title="Call Poultry Expert">📞 Talk to an Expert</a>
+
+<!-- AI CHATBOT -->
+<div id="ai-chatbot">
+    <div id="ai-header">
+        <div class="ai-header-left"><span class="ai-online-dot"></span>🤖 MT Assistant</div>
+        <span class="minimize-btn" onclick="toggleChatbot()">➖</span>
+    </div>
+    <div id="ai-body">
+        <div class="msg-ai"><b>MT Assistant:</b> Hello! Ask me about products, custom manufacturing, pricing, or export services. 🐾</div>
+    </div>
+    <input type="text" id="ai-input" placeholder="Ask about products, custom mfg, export…"/>
+</div>
+
+<!-- ENQUIRY MODAL -->
+<div id="enquiryModal" class="enquiry-modal" onclick="backdropClose(event)">
+    <div class="enquiry-box">
+        <span class="close-btn" onclick="closeEnquiryModal()">✖</span>
+        <h2>📩 Custom Enquiry</h2>
+        <p>Tell us your requirement and our expert team will design a custom solution. Response within 24 hours.</p>
+        <form id="enquiryForm" onsubmit="submitEnquiry(event)">
+            <label>Animal Type</label>
+            <select name="animalType" id="enquiryAnimalType" required>
+                <option value="">Select Animal</option>
+                <option value="Chicken">🐔 Chicken / Broiler / Layer</option>
+                <option value="Cow">🐄 Cow / Buffalo (Dairy)</option>
+                <option value="Goat">🐐 Goat / Sheep</option>
+                <option value="Pig">🐷 Pig</option>
+                <option value="Fish">🐟 Fish / Aquaculture</option>
+                <option value="Other">🏭 Custom / Other</option>
+            </select>
+            <label>Requirement (Medicine / Supplement)</label>
+            <textarea name="requirement" placeholder="Describe the product or problem — e.g. liver tonic for broilers, milk enhancer for dairy cattle…" required></textarea>
+            <label>Your Name</label>
+            <input type="text" name="name" placeholder="Full Name" required/>
+            <label>Contact Number</label>
+            <input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required/>
+            <label>Number of Animals</label>
+            <input type="number" name="animalCount" placeholder="e.g. 5000" min="1" required/>
+            <label>Expected Monthly Requirement</label>
+            <input type="text" name="monthlyRequirement" placeholder="e.g. 50 kg / 200 bottles" required/>
+            <button type="submit">Send Enquiry &rarr; Connect on WhatsApp</button>

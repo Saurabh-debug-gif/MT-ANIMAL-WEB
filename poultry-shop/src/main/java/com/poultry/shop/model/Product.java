@@ -18,6 +18,12 @@ public class Product {
     @Column(length = 1000)
     private String description;
 
+    // ===== CATEGORY =====
+    // Values: "poultry", "livestock", "supplement", "injection"
+    // Used by the frontend filter tabs on the products page.
+    @Column(length = 100)
+    private String category;
+
     // ===== PRICING =====
 
     // MRP without GST
@@ -48,75 +54,33 @@ public class Product {
 
     // ===== GETTERS & SETTERS =====
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
-    public String getDescription() {
-        return description;
-    }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public int getGstPercent() { return gstPercent; }
+    public void setGstPercent(int gstPercent) { this.gstPercent = gstPercent; }
 
-    public double getPrice() {
-        return price;
-    }
+    public int getStock() { return stock; }
+    public void setStock(int stock) { this.stock = stock; }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
 
-    public int getGstPercent() {
-        return gstPercent;
-    }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public void setGstPercent(int gstPercent) {
-        this.gstPercent = gstPercent;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getKnowMoreImageUrl() {
-        return knowMoreImageUrl;
-    }
-
-    public void setKnowMoreImageUrl(String knowMoreImageUrl) {
-        this.knowMoreImageUrl = knowMoreImageUrl;
-    }
+    public String getKnowMoreImageUrl() { return knowMoreImageUrl; }
+    public void setKnowMoreImageUrl(String knowMoreImageUrl) { this.knowMoreImageUrl = knowMoreImageUrl; }
 }
