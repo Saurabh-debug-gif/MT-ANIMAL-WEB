@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
@@ -71,7 +70,7 @@
         .navbar {
             position: sticky; top:0; z-index:500; height:var(--nav-h);
             display:flex; align-items:center; justify-content:space-between;
-            padding:0 44px; overflow:hidden;
+            padding:0 44px;
             background: rgba(253,248,240,0.97);
             backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
             border-bottom:1px solid var(--border);
@@ -180,13 +179,13 @@
         .hamburger.active span:nth-child(2) { opacity:0; }
         .hamburger.active span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
 
-        .mobile-overlay { display:none; position:fixed; inset:0; background:rgba(13,13,13,0.55); z-index:998; }
+        .mobile-overlay { display:none; position:fixed; inset:0; background:rgba(13,13,13,0.65); z-index:9100; backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
         .mobile-overlay.active { display:block; }
         .mobile-menu {
-            position:fixed; top:0; left:-88%; width:88%; max-width:310px; height:100vh;
-            background:var(--ivory); z-index:999; padding:22px 18px;
+            position:fixed; top:0; left:-100%; width:82%; max-width:300px; height:100vh;
+            background:var(--ivory); z-index:9200; padding:22px 18px;
             display:flex; flex-direction:column; gap:5px;
-            box-shadow:5px 0 36px rgba(0,0,0,0.22); transition:left 0.38s var(--T); overflow-y:auto;
+            box-shadow:8px 0 48px rgba(0,0,0,0.35); transition:left 0.38s var(--T); overflow-y:auto;
         }
         .mobile-menu.active { left:0; }
         .mobile-menu-header {
@@ -1044,12 +1043,23 @@
         }
         function toggleUserMenu() { const m = document.getElementById('userMenu'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; }
         function toggleMenu() {
-            document.getElementById('mobileMenu').classList.toggle('active');
+            const isOpen = document.getElementById('mobileMenu').classList.toggle('active');
             document.getElementById('mobileOverlay').classList.toggle('active');
             document.getElementById('hamburgerBtn').classList.toggle('active');
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+            // Hide floating elements behind menu, restore on close
+            const floaters = ['ai-chatbot','talkExpertFloat','scrollTopBtn'];
+            floaters.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = isOpen ? 'none' : '';
+            });
         }
         function closeMenuAndEnquiry() {
             ['mobileMenu','mobileOverlay','hamburgerBtn'].forEach(id => document.getElementById(id).classList.remove('active'));
+            document.body.style.overflow = '';
+            ['ai-chatbot','talkExpertFloat','scrollTopBtn'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.style.display = '';
+            });
             setTimeout(() => openEnquiryModal(), 200);
         }
         function openEnquiryModal(prefill) {
@@ -1097,10 +1107,12 @@
 
             /* Scroll-to-top visibility */
             const scrollTopBtn = document.getElementById('scrollTopBtn');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 400) scrollTopBtn.classList.add('visible');
-                else scrollTopBtn.classList.remove('visible');
-            });
+            if (scrollTopBtn) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 400) scrollTopBtn.classList.add('visible');
+                    else scrollTopBtn.classList.remove('visible');
+                });
+            }
             /* Chatbot */
             const aiBody = document.getElementById('ai-body');
             const aiInput = document.getElementById('ai-input');
@@ -1185,32 +1197,6 @@
         <span class="cart-count" id="cartCountBadgeMobile" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
     </a>
 
-    <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu-header">
-            <div class="brand">
-                <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" style="width:38px;height:38px;border-radius:10px;" alt="Logo">
-                <span style="font-family:var(--font-display);font-weight:700;color:var(--crimson);font-size:15px;">MT Animal Care</span>
-            </div>
-            <span class="close-menu" onclick="toggleMenu()">✖</span>
-        </div>
-        <div class="mobile-search-wrap">
-            <span class="mobile-search-icon">🔍</span>
-            <input type="text" id="liveSearchMobile" placeholder="Search products…"
-                   oninput="liveSearchProducts(this.value); document.getElementById('liveSearch').value=this.value;"/>
-        </div>
-        <a href="/">🏠 Home</a>
-        <a href="#shop" onclick="toggleMenu()">🛍️ Shop</a>
-        <a href="#animal-range" onclick="toggleMenu()">🐔 Products</a>
-        <a href="#about" onclick="toggleMenu()">🏭 About</a>
-        <a href="#find-us" onclick="toggleMenu()">📍 Find Us</a>
-        <a href="#faq" onclick="toggleMenu()">❓ FAQs</a>
-        <a href="#contact" onclick="toggleMenu()">📞 Contact</a>
-        <a href="javascript:void(0)" onclick="closeMenuAndEnquiry()">📩 Enquiry</a>
-        <a th:if="${#authentication.authenticated}" href="/my-orders">📋 My Orders</a>
-        <a th:if="${#authentication.authenticated}" href="/logout" style="color:var(--crimson-light);border-color:rgba(185,28,28,0.2);background:rgba(185,28,28,0.04);">🚪 Logout</a>
-    </div>
-
     <div class="right-actions">
         <div class="search-wrap">
             <input type="text" id="liveSearch" placeholder="Search products…" oninput="liveSearchProducts(this.value)"/>
@@ -1233,6 +1219,33 @@
         </a>
     </div>
 </nav>
+
+<!-- MOBILE OVERLAY + DRAWER — outside navbar so fixed positioning works correctly -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <div class="brand">
+            <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" style="width:38px;height:38px;border-radius:10px;" alt="Logo">
+            <span style="font-family:var(--font-display);font-weight:700;color:var(--crimson);font-size:15px;">MT Animal Care</span>
+        </div>
+        <span class="close-menu" onclick="toggleMenu()">✖</span>
+    </div>
+    <div class="mobile-search-wrap">
+        <span class="mobile-search-icon">🔍</span>
+        <input type="text" id="liveSearchMobile" placeholder="Search products…"
+               oninput="liveSearchProducts(this.value); document.getElementById('liveSearch').value=this.value;"/>
+    </div>
+    <a href="/">🏠 Home</a>
+    <a href="#shop" onclick="toggleMenu()">🛍️ Shop</a>
+    <a href="#animal-range" onclick="toggleMenu()">🐔 Products</a>
+    <a href="#about" onclick="toggleMenu()">🏭 About</a>
+    <a href="#find-us" onclick="toggleMenu()">📍 Find Us</a>
+    <a href="#faq" onclick="toggleMenu()">❓ FAQs</a>
+    <a href="#contact" onclick="toggleMenu()">📞 Contact</a>
+    <a href="javascript:void(0)" onclick="closeMenuAndEnquiry()">📩 Enquiry</a>
+    <a th:if="${#authentication.authenticated}" href="/my-orders">📋 My Orders</a>
+    <a th:if="${#authentication.authenticated}" href="/logout" style="color:var(--crimson-light);border-color:rgba(185,28,28,0.2);background:rgba(185,28,28,0.04);">🚪 Logout</a>
+</div>
 
 <!-- ============================================================ HERO ============================================================ -->
 <section class="hero-section">
