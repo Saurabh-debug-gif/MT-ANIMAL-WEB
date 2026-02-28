@@ -113,7 +113,8 @@
         .nav-cta:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(122,0,0,0.45) !important; }
         .nav-cta::after { display:none !important; }
 
-        .right-actions { display:flex !important; align-items:center; gap:8px; flex-shrink:0; flex-wrap:nowrap; }
+        .nav-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+        .right-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }/* alias */
 
         .search-wrap { position:relative; display:flex; align-items:center; }
         .search-wrap input {
@@ -790,9 +791,8 @@
         .image-modal .close { position:absolute; top:20px; right:30px; font-size:38px; color:var(--white); cursor:pointer; font-weight:bold; }
 
         /* ── MOBILE CART ── */
-        .mobile-cart { display:none; }
-        .mobile-cart-anchor { }
-        @media(max-width:900px) { .mobile-cart { display:flex; } .mobile-cart-anchor { display:none; } }
+        /* mobile-cart consolidated into .mobile-actions */
+        .mobile-actions { display:none; align-items:center; gap:8px; flex-shrink:0; }
 
         /* ── RESPONSIVE ── */
         @media(max-width:1100px) {
@@ -808,6 +808,8 @@
             .navbar { padding:0 20px; }
             .desktop-nav { display:none; }
             .hamburger { display:flex; }
+            .nav-right { display:none; }
+            .mobile-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
             .right-actions { gap:6px; flex-shrink:0; overflow:visible; }
             .search-wrap { display:none; }
             .right-actions .whatsapp-btn { display:none; }
@@ -1120,7 +1122,7 @@
             });
             document.getElementById('userMenu')?.addEventListener('click', e => e.stopPropagation());
             document.querySelector('.user-dropdown')?.addEventListener('click', e => e.stopPropagation());
-            document.addEventListener('click', () => { const m = document.getElementById('userMenu'); if (m) m.style.display = 'none'; });
+            document.addEventListener('click', () => { ['userMenu','userMenuMobile'].forEach(id => { const m = document.getElementById(id); if(m) m.style.display='none'; }); });
 
             /* Auth handled purely by Thymeleaf th:if/th:unless — no JS needed */
             /* Scroll-to-top visibility */
@@ -1185,6 +1187,8 @@
 
 <!-- NAVBAR -->
 <nav class="navbar">
+
+    <!-- ① BRAND -->
     <a href="/products" class="brand">
         <div class="brand-logo-ring">
             <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" alt="MT Animal Care Logo">
@@ -1195,6 +1199,7 @@
         </div>
     </a>
 
+    <!-- ② DESKTOP NAV LINKS (hidden on mobile) -->
     <nav class="desktop-nav">
         <a href="/">Home</a>
         <a href="#shop">Shop</a>
@@ -1207,15 +1212,8 @@
         <a th:if="${isLoggedIn}" href="/my-orders">My Orders</a>
     </nav>
 
-    <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
-    </div>
-    <a href="/cart" class="cart-btn mobile-cart" title="Cart">
-        🛒
-        <span class="cart-count" id="cartCountBadgeMobile" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
-    </a>
-
-    <div class="right-actions">
+    <!-- ③ DESKTOP RIGHT ACTIONS (hidden on mobile) -->
+    <div class="nav-right">
         <div class="search-wrap">
             <input type="text" id="liveSearch" placeholder="Search products…" oninput="liveSearchProducts(this.value)"/>
             <button type="button" title="Search">🔍</button>
@@ -1223,8 +1221,9 @@
         <a href="https://wa.me/919021466362" target="_blank" class="whatsapp-btn" title="WhatsApp">
             <img src="/images/whatsapp.png" alt="WhatsApp" class="whatsapp-icon" onerror="this.parentElement.innerText='💬'">
         </a>
-        <!-- LOGIN BUTTON: shown by default, hidden only when Thymeleaf confirms logged in -->
-        <a th:unless="${isLoggedIn}" href="/oauth2/authorization/google" class="login-btn">🔐 Login</a>
+        <!-- Login shown when NOT logged in (covers null case too) -->
+        <a th:if="${isLoggedIn == null or !isLoggedIn}" href="/oauth2/authorization/google" class="login-btn">🔐 Login</a>
+        <!-- User dropdown shown when logged in -->
         <div class="user-dropdown" th:if="${isLoggedIn}">
             <div class="user-btn" onclick="toggleUserMenu()">👤 <span th:text="${userName}"></span> ⌄</div>
             <div class="dropdown-menu" id="userMenu">
@@ -1232,13 +1231,35 @@
                 <a href="/logout">🚪 Logout</a>
             </div>
         </div>
-        <!-- FALLBACK: if isLoggedIn not in model, this shows login by default -->
-        <a th:if="${isLoggedIn == null}" href="/oauth2/authorization/google" class="login-btn">🔐 Login</a>
-        <a href="/cart" class="cart-btn mobile-cart-anchor" title="Cart">
+        <a href="/cart" class="cart-btn" title="Cart">
             🛒
             <span class="cart-count" id="cartCountBadge" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
         </a>
     </div>
+
+    <!-- ④ MOBILE ACTIONS (shown only on mobile — always visible) -->
+    <div class="mobile-actions">
+        <!-- Login shown when NOT logged in -->
+        <a th:if="${isLoggedIn == null or !isLoggedIn}" href="/oauth2/authorization/google" class="login-btn" style="padding:7px 13px;font-size:12px;">🔐 Login</a>
+        <!-- User icon shown when logged in -->
+        <div class="user-dropdown" th:if="${isLoggedIn}" style="position:relative;">
+            <div class="user-btn" onclick="toggleUserMenu()" style="padding:7px 10px;border-radius:50%;max-width:40px;">👤</div>
+            <div class="dropdown-menu" id="userMenuMobile">
+                <a href="/my-orders">📋 My Orders</a>
+                <a href="/logout">🚪 Logout</a>
+            </div>
+        </div>
+        <!-- Cart -->
+        <a href="/cart" class="cart-btn" title="Cart" style="width:40px;height:40px;font-size:17px;">
+            🛒
+            <span class="cart-count" id="cartCountBadgeMobile" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
+        </a>
+        <!-- Hamburger -->
+        <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
 </nav>
 
 <!-- MOBILE OVERLAY + DRAWER — outside navbar so fixed positioning works correctly -->
@@ -1268,8 +1289,7 @@
     <a th:unless="${isLoggedIn}" href="/oauth2/authorization/google" onclick="toggleMenu()" style="background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));color:white;border-radius:10px;font-weight:700;">🔐 Login with Google</a>
     <a th:if="${isLoggedIn}" href="/my-orders" onclick="toggleMenu()">📋 My Orders</a>
     <a th:if="${isLoggedIn}" href="/logout" style="color:var(--crimson-light);border-color:rgba(185,28,28,0.2);background:rgba(185,28,28,0.04);">🚪 Logout</a>
-    <!-- Fallback: if model not set, always show login -->
-    <a th:if="${isLoggedIn == null}" href="/oauth2/authorization/google" onclick="toggleMenu()" style="background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));color:white;border-radius:10px;font-weight:700;">🔐 Login with Google</a>
+
 </div>
 
 <!-- ============================================================ HERO ============================================================ -->
