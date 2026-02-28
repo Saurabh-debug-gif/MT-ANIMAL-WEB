@@ -38,10 +38,7 @@ public class ProductController {
 
     // ================= SEARCH PRODUCTS =================
     @GetMapping("/products/search")
-    public String searchProducts(@RequestParam("q") String query,
-                                 Model model,
-                                 HttpSession session,
-                                 Authentication authentication) {
+    public String searchProducts(@RequestParam("q") String query, Model model, HttpSession session, Authentication authentication) {
 
         List<Product> products = productService.search(query);
         model.addAttribute("products", products);
@@ -55,9 +52,7 @@ public class ProductController {
 
     // ================= AUTH INFO =================
     private void addAuthInfoToModel(Model model, Authentication authentication) {
-        boolean isLoggedIn = authentication != null
-                && authentication.isAuthenticated()
-                && !authentication.getName().equals("anonymousUser");
+        boolean isLoggedIn = authentication != null && authentication.isAuthenticated() && !authentication.getName().equals("anonymousUser");
 
         model.addAttribute("isLoggedIn", isLoggedIn);
         model.addAttribute("userName", isLoggedIn ? authentication.getName() : "");
@@ -66,8 +61,7 @@ public class ProductController {
     // ================= COMMON CART LOGIC =================
     private void addCartInfoToModel(Model model, HttpSession session) {
 
-        @SuppressWarnings("unchecked")
-        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+        @SuppressWarnings("unchecked") List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 
         Map<Long, Integer> cartQtyMap = new HashMap<>();
         int cartCount = 0;
