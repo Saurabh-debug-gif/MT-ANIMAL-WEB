@@ -4,6 +4,7 @@ import com.poultry.shop.model.CartItem;
 import com.poultry.shop.model.Product;
 import com.poultry.shop.service.ProductService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +25,13 @@ public class ProductController {
 
     // ================= SHOW PRODUCTS =================
     @GetMapping("/products")
-    public String showProducts(Model model, HttpSession session) {
+    public String showProducts(Model model, HttpSession session, Authentication authentication) {
 
         List<Product> products = productService.getAllActiveProducts();
         model.addAttribute("products", products);
 
         addCartInfoToModel(model, session);
+        addAuthInfoToModel(model, authentication);
 
         return "products";
     }
@@ -38,15 +40,27 @@ public class ProductController {
     @GetMapping("/products/search")
     public String searchProducts(@RequestParam("q") String query,
                                  Model model,
-                                 HttpSession session) {
+                                 HttpSession session,
+                                 Authentication authentication) {
 
         List<Product> products = productService.search(query);
         model.addAttribute("products", products);
         model.addAttribute("searchQuery", query);
 
         addCartInfoToModel(model, session);
+        addAuthInfoToModel(model, authentication);
 
         return "products";
+    }
+
+    // ================= AUTH INFO =================
+    private void addAuthInfoToModel(Model model, Authentication authentication) {
+        boolean isLoggedIn = authentication != null
+                && authentication.isAuthenticated()
+                && !authentication.getName().equals("anonymousUser");
+
+        model.addAttribute("isLoggedIn", isLoggedIn);
+        model.addAttribute("userName", isLoggedIn ? authentication.getName() : "");
     }
 
     // ================= COMMON CART LOGIC =================
@@ -61,7 +75,7 @@ public class ProductController {
         if (cart != null) {
             for (CartItem item : cart) {
                 cartQtyMap.put(item.getProduct().getId(), item.getQuantity());
-                cartCount += item.getQuantity();  // ✅ total qty, not item count
+                cartCount += item.getQuantity();
             }
         }
 
