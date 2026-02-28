@@ -113,7 +113,7 @@
         .nav-cta:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(122,0,0,0.45) !important; }
         .nav-cta::after { display:none !important; }
 
-        .right-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+        .right-actions { display:flex !important; align-items:center; gap:8px; flex-shrink:0; flex-wrap:nowrap; }
 
         .search-wrap { position:relative; display:flex; align-items:center; }
         .search-wrap input {
@@ -133,10 +133,14 @@
         .whatsapp-icon { width:20px; height:20px; object-fit:contain; }
 
         .login-btn {
-            display:flex; align-items:center; gap:6px; text-decoration:none;
+            display:flex !important; align-items:center; gap:6px; text-decoration:none;
             padding:9px 20px; border-radius:var(--radius-pill); border:1.5px solid var(--border);
             color:var(--text-dark); font-weight:600; font-size:13px; background:var(--white); transition:all 0.22s;
+            visibility:visible !important; opacity:1 !important;
+            position:relative; z-index:10; flex-shrink:0;
         }
+        /* Login btn hidden ONLY when JS confirms user is logged in */
+        .login-btn.hide-when-logged-in { display:none !important; }
         .login-btn:hover { border-color:var(--gold); background:var(--gold-pale); color:var(--crimson); }
 
         .user-dropdown { position:relative; max-width:180px; }
@@ -1118,37 +1122,7 @@
             document.querySelector('.user-dropdown')?.addEventListener('click', e => e.stopPropagation());
             document.addEventListener('click', () => { const m = document.getElementById('userMenu'); if (m) m.style.display = 'none'; });
 
-            /* Auth UI — dual approach: Thymeleaf attr + fetch fallback */
-            (function() {
-                function applyAuth(loggedIn, name) {
-                    var loginBtn = document.getElementById('loginBtn');
-                    var userDropdown = document.getElementById('userDropdown');
-                    var userNameDisplay = document.getElementById('userNameDisplay');
-                    if (!loginBtn || !userDropdown) return;
-                    if (loggedIn) {
-                        loginBtn.style.display = 'none';
-                        userDropdown.style.display = 'flex';
-                        if (userNameDisplay) userNameDisplay.textContent = name || '';
-                    } else {
-                        loginBtn.style.display = 'flex';
-                        userDropdown.style.display = 'none';
-                    }
-                }
-                // Try Thymeleaf-set attribute first
-                var authEl = document.getElementById('authState');
-                var attrLogged = authEl ? authEl.getAttribute('data-logged') : null;
-                var attrName   = authEl ? authEl.getAttribute('data-name')   : '';
-                if (attrLogged === 'true' || attrLogged === 'false') {
-                    applyAuth(attrLogged === 'true', attrName);
-                }
-                // Always also fetch from server as fallback (covers all devices)
-                fetch('/api/auth-status', { credentials: 'include' })
-                    .then(r => r.ok ? r.json() : null)
-                    .then(data => {
-                        if (data) applyAuth(data.loggedIn, data.name);
-                    })
-                    .catch(() => {});
-            })();
+            /* Auth handled purely by Thymeleaf th:if/th:unless — no JS needed */
             /* Scroll-to-top visibility */
             const scrollTopBtn = document.getElementById('scrollTopBtn');
             if (scrollTopBtn) {
@@ -1249,20 +1223,17 @@
         <a href="https://wa.me/919021466362" target="_blank" class="whatsapp-btn" title="WhatsApp">
             <img src="/images/whatsapp.png" alt="WhatsApp" class="whatsapp-icon" onerror="this.parentElement.innerText='💬'">
         </a>
-        <!-- Auth: Thymeleaf sets data-logged directly from Principal — no controller needed -->
-        <span id="authState"
-              th:with="principal=${#authentication.getPrincipal()}"
-              th:attr="data-logged=${#authentication.getName() != 'anonymousUser'}, data-name=${#authentication.getName()}"
-              style="display:none;"></span>
-
-        <a href="/oauth2/authorization/google" class="login-btn" id="loginBtn">🔐 Login</a>
-        <div class="user-dropdown" id="userDropdown" style="display:none;">
-            <div class="user-btn" onclick="toggleUserMenu()">👤 <span id="userNameDisplay"></span> ⌄</div>
+        <!-- LOGIN BUTTON: shown by default, hidden only when Thymeleaf confirms logged in -->
+        <a th:unless="${isLoggedIn}" href="/oauth2/authorization/google" class="login-btn">🔐 Login</a>
+        <div class="user-dropdown" th:if="${isLoggedIn}">
+            <div class="user-btn" onclick="toggleUserMenu()">👤 <span th:text="${userName}"></span> ⌄</div>
             <div class="dropdown-menu" id="userMenu">
                 <a href="/my-orders">📋 My Orders</a>
                 <a href="/logout">🚪 Logout</a>
             </div>
         </div>
+        <!-- FALLBACK: if isLoggedIn not in model, this shows login by default -->
+        <a th:if="${isLoggedIn == null}" href="/oauth2/authorization/google" class="login-btn">🔐 Login</a>
         <a href="/cart" class="cart-btn mobile-cart-anchor" title="Cart">
             🛒
             <span class="cart-count" id="cartCountBadge" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
@@ -1293,8 +1264,12 @@
     <a href="#faq" onclick="toggleMenu()">❓ FAQs</a>
     <a href="#contact" onclick="toggleMenu()">📞 Contact</a>
     <a href="javascript:void(0)" onclick="closeMenuAndEnquiry()">📩 Enquiry</a>
-    <a th:if="${isLoggedIn}" href="/my-orders">📋 My Orders</a>
+    <!-- Mobile Login/Logout links -->
+    <a th:unless="${isLoggedIn}" href="/oauth2/authorization/google" onclick="toggleMenu()" style="background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));color:white;border-radius:10px;font-weight:700;">🔐 Login with Google</a>
+    <a th:if="${isLoggedIn}" href="/my-orders" onclick="toggleMenu()">📋 My Orders</a>
     <a th:if="${isLoggedIn}" href="/logout" style="color:var(--crimson-light);border-color:rgba(185,28,28,0.2);background:rgba(185,28,28,0.04);">🚪 Logout</a>
+    <!-- Fallback: if model not set, always show login -->
+    <a th:if="${isLoggedIn == null}" href="/oauth2/authorization/google" onclick="toggleMenu()" style="background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));color:white;border-radius:10px;font-weight:700;">🔐 Login with Google</a>
 </div>
 
 <!-- ============================================================ HERO ============================================================ -->
@@ -1865,7 +1840,7 @@
         <div class="map-wrapper">
             <iframe
                     title="MT Animal Care Location"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3760.123456789!2d72.8292!3d19.3822!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a9b55c54e7b9%3A0x1234567890abcdef!2sGurukrupa+Complex%2C+Vasai-Virar%2C+Maharashtra+401203!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin&q=Mahalaxmi+Welfare+Society+Gurukrupa+Complex+Vasai+Virar+Maharashtra+401203"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3773.8!2d72.8311!3d19.3831!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a9c0e6f9b1e7%3A0x9f3d7a1c2b4e5d8f!2sVasai-Virar%2C+Maharashtra+401203!5e0!3m2!1sen!2sin!4v1709100000000!5m2!1sen!2sin"
                     width="100%" height="420"
                     style="border:0; border-radius:18px; display:block;"
                     allowfullscreen="" loading="lazy"
