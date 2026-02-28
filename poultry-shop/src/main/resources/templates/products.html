@@ -70,7 +70,7 @@
         .navbar {
             position: sticky; top:0; z-index:500; height:var(--nav-h);
             display:flex; align-items:center; justify-content:space-between;
-            padding:0 44px; overflow:visible;
+            padding:0 28px; overflow:visible;
             background: rgba(253,248,240,0.97);
             backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
             border-bottom:1px solid var(--border);
@@ -113,17 +113,22 @@
         .nav-cta:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(122,0,0,0.45) !important; }
         .nav-cta::after { display:none !important; }
 
-        .nav-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+        .nav-right { display:flex; align-items:center; gap:6px; flex-shrink:0; max-width:420px; }
         .right-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }/* alias */
 
         .search-wrap { position:relative; display:flex; align-items:center; }
         .search-wrap input {
-            font-family:var(--font-body); width:160px; padding:9px 38px 9px 14px;
-            border-radius:var(--radius-pill); border:1.5px solid var(--border);
-            background:var(--white); font-size:13px; color:var(--text-dark); outline:none; transition:all 0.25s;
+            font-family:var(--font-body); width:0; padding:0;
+            border-radius:var(--radius-pill); border:1.5px solid transparent;
+            background:var(--white); font-size:13px; color:var(--text-dark); outline:none;
+            transition:all 0.3s ease; overflow:hidden; opacity:0;
         }
-        .search-wrap input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,151,44,0.12); width:200px; }
-        .search-wrap button { position:absolute; right:10px; background:none; border:none; cursor:pointer; font-size:14px; color:var(--text-muted); padding:0; }
+        .search-wrap.open input {
+            width:160px; padding:8px 34px 8px 12px;
+            border-color:var(--border); opacity:1;
+        }
+        .search-wrap.open input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,151,44,0.12); }
+        .search-wrap button { background:none; border:none; cursor:pointer; font-size:16px; color:var(--text-muted); padding:6px; flex-shrink:0; }
 
         .whatsapp-btn {
             width:40px; height:40px; border-radius:50%; background:#25D366;
@@ -179,6 +184,7 @@
         }
 
         .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:6px; }
+        .mobile-actions .hamburger { display:flex !important; flex-direction:column; }
         .hamburger span { width:24px; height:2px; background:var(--crimson); border-radius:2px; transition:0.3s; }
         .hamburger.active span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
         .hamburger.active span:nth-child(2) { opacity:0; }
@@ -1050,6 +1056,26 @@
             });
         }
         function toggleUserMenu() { const m = document.getElementById('userMenu'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; }
+        function toggleMoreMenu() {
+            document.getElementById('moreMenu').classList.toggle('open');
+        }
+        function closeMoreMenu() {
+            const m = document.getElementById('moreMenu');
+            if (m) m.classList.remove('open');
+        }
+        // Close more menu on outside click
+        document.addEventListener('click', function(e) {
+            const dd = document.getElementById('moreDropdown');
+            if (dd && !dd.contains(e.target)) closeMoreMenu();
+        });
+        function toggleDesktopSearch() {
+            const wrap = document.getElementById('desktopSearchWrap');
+            const input = document.getElementById('liveSearch');
+            if (wrap) {
+                wrap.classList.toggle('open');
+                if (wrap.classList.contains('open') && input) input.focus();
+            }
+        }
         function toggleMenu() {
             const isOpen = document.getElementById('mobileMenu').classList.toggle('active');
             document.getElementById('mobileOverlay').classList.toggle('active');
@@ -1203,25 +1229,29 @@
     <nav class="desktop-nav">
         <a href="/">Home</a>
         <a href="#shop">Shop</a>
-        <a href="#animal-range">Products</a>
         <a href="#about">About</a>
-        <a href="#find-us">Find Us</a>
-        <a href="#faq">FAQs</a>
         <a href="#contact">Contact</a>
+        <!-- More dropdown -->
+        <div class="more-dropdown" id="moreDropdown">
+            <span class="more-btn" onclick="toggleMoreMenu()">More ⌄</span>
+            <div class="more-menu" id="moreMenu">
+                <a href="#animal-range" onclick="closeMoreMenu()">🐔 Products</a>
+                <a href="#find-us" onclick="closeMoreMenu()">📍 Find Us</a>
+                <a href="#faq" onclick="closeMoreMenu()">❓ FAQs</a>
+                <a th:if="${isLoggedIn}" href="/my-orders" onclick="closeMoreMenu()">📋 My Orders</a>
+            </div>
+        </div>
         <a href="javascript:void(0)" onclick="openEnquiryModal()" class="nav-cta">📩 Enquiry</a>
-        <a th:if="${isLoggedIn}" href="/my-orders">My Orders</a>
     </nav>
 
     <!-- ③ DESKTOP RIGHT ACTIONS (hidden on mobile) -->
     <div class="nav-right">
-        <div class="search-wrap">
-            <input type="text" id="liveSearch" placeholder="Search products…" oninput="liveSearchProducts(this.value)"/>
-            <button type="button" title="Search">🔍</button>
+        <!-- Search icon — expands on click -->
+        <div class="search-wrap" id="desktopSearchWrap">
+            <input type="text" id="liveSearch" placeholder="Search…" oninput="liveSearchProducts(this.value)"/>
+            <button type="button" title="Search" onclick="toggleDesktopSearch()">🔍</button>
         </div>
-        <a href="https://wa.me/919021466362" target="_blank" class="whatsapp-btn" title="WhatsApp">
-            <img src="/images/whatsapp.png" alt="WhatsApp" class="whatsapp-icon" onerror="this.parentElement.innerText='💬'">
-        </a>
-        <!-- Login shown when NOT logged in (covers null case too) -->
+        <!-- Login shown when NOT logged in -->
         <a th:if="${isLoggedIn == null or !isLoggedIn}" href="/oauth2/authorization/google" class="login-btn">🔐 Login</a>
         <!-- User dropdown shown when logged in -->
         <div class="user-dropdown" th:if="${isLoggedIn}">
@@ -1231,6 +1261,11 @@
                 <a href="/logout">🚪 Logout</a>
             </div>
         </div>
+        <!-- WhatsApp -->
+        <a href="https://wa.me/919021466362" target="_blank" class="whatsapp-btn" title="WhatsApp">
+            <img src="/images/whatsapp.png" alt="WhatsApp" class="whatsapp-icon" onerror="this.parentElement.innerText='💬'">
+        </a>
+        <!-- Cart -->
         <a href="/cart" class="cart-btn" title="Cart">
             🛒
             <span class="cart-count" id="cartCountBadge" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
