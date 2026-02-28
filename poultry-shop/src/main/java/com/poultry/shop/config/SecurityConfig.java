@@ -5,7 +5,13 @@ import com.poultry.shop.service.CustomOAuthUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -24,9 +30,17 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
 
+                // ── Allow cross-device access (same network, deployed URL) ──
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // ── Session must be created and shared properly ──
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
+
                 .authorizeHttpRequests(auth -> auth
 
-                        // 🌍 Public pages (Homepage MUST be public)
+                        // 🌍 Public pages
                         .requestMatchers(
                                 "/",
                                 "/products",
@@ -37,6 +51,7 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/pdf/**",
                                 "/ai-chat",
+                                "/enquiry",
                                 "/error",
                                 "/sitemap.xml",
                                 "/google491b0d2ab3dfd7d4.html",
@@ -48,7 +63,7 @@ public class SecurityConfig {
                         // 🔐 Admin only
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                        // 🔐 Login required only for these
+                        // 🔐 Login required for these
                         .requestMatchers("/cart/**", "/checkout/**", "/my-orders").authenticated()
 
                         // 🌍 Everything else public
@@ -73,9 +88,22 @@ public class SecurityConfig {
                         .permitAll()
                 )
 
-                // ❌ Important: Disable default login redirect
+                // ❌ Disable default form login
                 .formLogin(form -> form.disable());
 
         return http.build();
+    }
+
+    // ── CORS: allow access from any device on the network ──
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of("*")); // allows localhost, IPs, deployed URL
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true); // required for session cookies cross-device
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
