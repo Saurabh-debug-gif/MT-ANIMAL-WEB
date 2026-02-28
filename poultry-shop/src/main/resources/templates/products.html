@@ -70,7 +70,7 @@
         .navbar {
             position: sticky; top:0; z-index:500; height:var(--nav-h);
             display:flex; align-items:center; justify-content:space-between;
-            padding:0 44px;
+            padding:0 44px; overflow:visible;
             background: rgba(253,248,240,0.97);
             backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
             border-bottom:1px solid var(--border);
@@ -113,7 +113,7 @@
         .nav-cta:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(122,0,0,0.45) !important; }
         .nav-cta::after { display:none !important; }
 
-        .right-actions { display:flex; align-items:center; gap:8px; flex-shrink:1; min-width:0; overflow:hidden; }
+        .right-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
 
         .search-wrap { position:relative; display:flex; align-items:center; }
         .search-wrap input {
@@ -804,11 +804,13 @@
             .navbar { padding:0 20px; }
             .desktop-nav { display:none; }
             .hamburger { display:flex; }
-            .right-actions { gap:6px; flex-shrink:1; min-width:0; overflow:hidden; }
+            .right-actions { gap:6px; flex-shrink:0; overflow:visible; }
             .search-wrap { display:none; }
+            .right-actions .whatsapp-btn { display:none; }
+            .login-btn { padding:7px 12px; font-size:12px; white-space:nowrap; }
             .user-btn { padding:7px 10px; font-size:12px; max-width:44px; border-radius:50%; }
             .user-btn span { display:none; }
-            .user-dropdown { max-width:44px; }
+            .user-dropdown { max-width:44px; overflow:visible; }
             .hero-inner { grid-template-columns:1fr; gap:0; padding:120px 28px 80px; }
             .hero-right { display:none; }
             .about-metrics { grid-template-columns:repeat(2,1fr); }
@@ -1083,6 +1085,16 @@
             chatbotMinimized = !chatbotMinimized;
             document.getElementById('ai-body').style.display = chatbotMinimized ? 'none' : 'block';
             document.getElementById('ai-input').style.display = chatbotMinimized ? 'none' : 'block';
+            document.getElementById('ai-header').querySelector('.minimize-btn').innerText = chatbotMinimized ? '➕' : '➖';
+        }
+        // Auto-minimize on mobile so it does not block content
+        function initChatbot() {
+            if (window.innerWidth <= 900) {
+                chatbotMinimized = true;
+                document.getElementById('ai-body').style.display = 'none';
+                document.getElementById('ai-input').style.display = 'none';
+                document.getElementById('ai-header').querySelector('.minimize-btn').innerText = '➕';
+            }
         }
         function toggleFaq(el) {
             const item = el.closest('.faq-item');
@@ -1093,6 +1105,7 @@
         }
         window.addEventListener('scroll', () => { document.querySelector('.navbar')?.classList.toggle('scrolled', window.scrollY > 40); });
         document.addEventListener('DOMContentLoaded', function () {
+            initChatbot();
             if (!sessionStorage.getItem('enquiryShown')) { setTimeout(() => { openEnquiryModal(); sessionStorage.setItem('enquiryShown','true'); }, 1600); }
             // Mark cards that already have items (server-rendered)
             document.querySelectorAll('.product-card').forEach(card => {
@@ -1105,6 +1118,37 @@
             document.querySelector('.user-dropdown')?.addEventListener('click', e => e.stopPropagation());
             document.addEventListener('click', () => { const m = document.getElementById('userMenu'); if (m) m.style.display = 'none'; });
 
+            /* Auth UI — dual approach: Thymeleaf attr + fetch fallback */
+            (function() {
+                function applyAuth(loggedIn, name) {
+                    var loginBtn = document.getElementById('loginBtn');
+                    var userDropdown = document.getElementById('userDropdown');
+                    var userNameDisplay = document.getElementById('userNameDisplay');
+                    if (!loginBtn || !userDropdown) return;
+                    if (loggedIn) {
+                        loginBtn.style.display = 'none';
+                        userDropdown.style.display = 'flex';
+                        if (userNameDisplay) userNameDisplay.textContent = name || '';
+                    } else {
+                        loginBtn.style.display = 'flex';
+                        userDropdown.style.display = 'none';
+                    }
+                }
+                // Try Thymeleaf-set attribute first
+                var authEl = document.getElementById('authState');
+                var attrLogged = authEl ? authEl.getAttribute('data-logged') : null;
+                var attrName   = authEl ? authEl.getAttribute('data-name')   : '';
+                if (attrLogged === 'true' || attrLogged === 'false') {
+                    applyAuth(attrLogged === 'true', attrName);
+                }
+                // Always also fetch from server as fallback (covers all devices)
+                fetch('/api/auth-status', { credentials: 'include' })
+                    .then(r => r.ok ? r.json() : null)
+                    .then(data => {
+                        if (data) applyAuth(data.loggedIn, data.name);
+                    })
+                    .catch(() => {});
+            })();
             /* Scroll-to-top visibility */
             const scrollTopBtn = document.getElementById('scrollTopBtn');
             if (scrollTopBtn) {
@@ -1186,7 +1230,7 @@
         <a href="#faq">FAQs</a>
         <a href="#contact">Contact</a>
         <a href="javascript:void(0)" onclick="openEnquiryModal()" class="nav-cta">📩 Enquiry</a>
-        <a th:if="${#authentication.authenticated}" href="/my-orders">My Orders</a>
+        <a th:if="${isLoggedIn}" href="/my-orders">My Orders</a>
     </nav>
 
     <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
@@ -1205,9 +1249,15 @@
         <a href="https://wa.me/919021466362" target="_blank" class="whatsapp-btn" title="WhatsApp">
             <img src="/images/whatsapp.png" alt="WhatsApp" class="whatsapp-icon" onerror="this.parentElement.innerText='💬'">
         </a>
-        <a sec:authorize="!isAuthenticated()" href="/oauth2/authorization/google" class="login-btn">🔐 Login</a>
-        <div class="user-dropdown" sec:authorize="isAuthenticated()">
-            <div class="user-btn" onclick="toggleUserMenu()">👤 <span sec:authentication="name"></span> ⌄</div>
+        <!-- Auth: Thymeleaf sets data-logged directly from Principal — no controller needed -->
+        <span id="authState"
+              th:with="principal=${#authentication.getPrincipal()}"
+              th:attr="data-logged=${#authentication.getName() != 'anonymousUser'}, data-name=${#authentication.getName()}"
+              style="display:none;"></span>
+
+        <a href="/oauth2/authorization/google" class="login-btn" id="loginBtn">🔐 Login</a>
+        <div class="user-dropdown" id="userDropdown" style="display:none;">
+            <div class="user-btn" onclick="toggleUserMenu()">👤 <span id="userNameDisplay"></span> ⌄</div>
             <div class="dropdown-menu" id="userMenu">
                 <a href="/my-orders">📋 My Orders</a>
                 <a href="/logout">🚪 Logout</a>
@@ -1243,8 +1293,8 @@
     <a href="#faq" onclick="toggleMenu()">❓ FAQs</a>
     <a href="#contact" onclick="toggleMenu()">📞 Contact</a>
     <a href="javascript:void(0)" onclick="closeMenuAndEnquiry()">📩 Enquiry</a>
-    <a th:if="${#authentication.authenticated}" href="/my-orders">📋 My Orders</a>
-    <a th:if="${#authentication.authenticated}" href="/logout" style="color:var(--crimson-light);border-color:rgba(185,28,28,0.2);background:rgba(185,28,28,0.04);">🚪 Logout</a>
+    <a th:if="${isLoggedIn}" href="/my-orders">📋 My Orders</a>
+    <a th:if="${isLoggedIn}" href="/logout" style="color:var(--crimson-light);border-color:rgba(185,28,28,0.2);background:rgba(185,28,28,0.04);">🚪 Logout</a>
 </div>
 
 <!-- ============================================================ HERO ============================================================ -->
