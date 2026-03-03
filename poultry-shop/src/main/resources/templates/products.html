@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="WHO-GMP Certified veterinary contract manufacturer. Premium formulations for poultry, livestock & animal healthcare. Custom manufacturing available.">
     <meta name="keywords" content="Top 10 Veterinary Companies In India, Veterinary Medicine Manufacturers In India, Cattle Feed Manufacturers, Poultry Feed Manufacturers India, Veterinary Third Party Manufacturing, Veterinary Feed Supplements, Veterinary Medicine Company India, Contract Manufacturing Veterinary, Custom Veterinary Formulation, Poultry Health Products, Livestock Supplements India">
+    <!-- Favicon — shows MT Animal Care logo in browser tab and Google search results -->
+    <link rel="icon" type="image/jpeg" href="/images/mt-animal-care-logo.jpeg">
+    <link rel="apple-touch-icon" href="/images/mt-animal-care-logo.jpeg">
+    <link rel="shortcut icon" type="image/jpeg" href="/images/mt-animal-care-logo.jpeg">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
@@ -180,6 +185,8 @@
         .login-btn:hover { border-color:var(--gold); background:var(--gold-pale); color:var(--crimson); }
 
         .user-dropdown { position:relative; max-width:180px; }
+        .user-dropdown.active .dropdown-menu { display:block !important; animation:dropIn 0.18s ease; }
+        @keyframes dropIn { from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);} }
         .user-btn {
             display:flex; align-items:center; gap:6px; cursor:pointer;
             padding:9px 14px; border-radius:var(--radius-pill); border:1.5px solid var(--border);
@@ -191,7 +198,7 @@
         .dropdown-menu {
             display:none; position:absolute; right:0; top:calc(100% + 8px);
             background:var(--white); border:1px solid var(--border); border-radius:14px;
-            min-width:160px; box-shadow:var(--shadow-dark); z-index:600; overflow:hidden;
+            min-width:160px; box-shadow:var(--shadow-dark); z-index:9400; overflow:hidden;
         }
         .dropdown-menu a {
             display:block; padding:12px 18px; text-decoration:none; color:var(--text-dark);
@@ -1085,7 +1092,14 @@
                 card.style.display = match ? "" : "none";
             });
         }
-        function toggleUserMenu() { const m = document.getElementById('userMenu'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; }
+        function toggleUserMenu(e) {
+            if (e) { e.stopPropagation(); }
+            var parent = e ? e.currentTarget.closest('.user-dropdown') : null;
+            document.querySelectorAll('.user-dropdown').forEach(function(dd) {
+                if (dd === parent) { dd.classList.toggle('active'); }
+                else { dd.classList.remove('active'); }
+            });
+        }
         function toggleMoreMenu() {
             const dd = document.getElementById('moreDropdown');
             if (dd) dd.classList.toggle('open');
@@ -1286,7 +1300,7 @@
         <a th:if="${isLoggedIn == null or !isLoggedIn}" href="/oauth2/authorization/google" class="login-btn">🔐 Login</a>
         <!-- User dropdown shown when logged in -->
         <div class="user-dropdown" th:if="${isLoggedIn}">
-            <div class="user-btn" onclick="toggleUserMenu()">👤 <span th:text="${userName}"></span> ⌄</div>
+            <div class="user-btn" onclick="toggleUserMenu(event)">👤 <span th:text="${userName}"></span> ⌄</div>
             <div class="dropdown-menu" id="userMenu">
                 <a href="/my-orders">📋 My Orders</a>
                 <a href="/logout">🚪 Logout</a>
@@ -1309,7 +1323,7 @@
         <a th:if="${isLoggedIn == null or !isLoggedIn}" href="/oauth2/authorization/google" class="login-btn" style="padding:7px 13px;font-size:12px;">🔐 Login</a>
         <!-- User icon shown when logged in -->
         <div class="user-dropdown" th:if="${isLoggedIn}" style="position:relative;">
-            <div class="user-btn" onclick="toggleUserMenu()" style="padding:7px 10px;border-radius:50%;max-width:40px;">👤</div>
+            <div class="user-btn" onclick="toggleUserMenu(event)" style="padding:7px 10px;border-radius:50%;max-width:40px;">👤</div>
             <div class="dropdown-menu" id="userMenuMobile">
                 <a href="/my-orders">📋 My Orders</a>
                 <a href="/logout">🚪 Logout</a>
@@ -1929,7 +1943,7 @@
         <div class="map-wrapper">
             <iframe
                     title="MT Animal Care Location"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3768.2!2d72.80!3d19.42!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a9f3e3c7a5b1%3A0xf3e3c7a5b1234567!2sMahalaxmi+Welfare+Society%2C+Vasai+West%2C+Vasai-Virar%2C+Maharashtra+401202!5e0!3m2!1sen!2sin!4v1740000000000!5m2!1sen!2sin"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d821!2d72.8139061!3d19.4121113!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a95c444d7a8d%3A0xc9ce393b277e4e26!2sMT+ANIMAL+CARE!5e0!3m2!1sen!2sin!4v1740500000000!5m2!1sen!2sin"
                     width="100%" height="420"
                     style="border:0; border-radius:18px; display:block;"
                     allowfullscreen="" loading="lazy"
@@ -1957,7 +1971,7 @@
                         <a href="tel:+919503569405" style="color:var(--crimson);font-weight:700;">9503569405</a>
                     </div>
                 </div>
-                <a href="https://maps.google.com/?q=Mahalaxmi+Welfare+Society+Gurukrupa+Complex+Vasai+Virar+Maharashtra+401203" target="_blank" class="map-directions-btn">
+                <a href="https://www.google.com/maps/place/MT+ANIMAL+CARE/@19.4121113,72.816481,17z" target="_blank" class="map-directions-btn">
                     🗺️ Get Directions
                 </a>
             </div>
@@ -1981,7 +1995,7 @@
                     Gurukrupa Complex,<br>
                     Vasai-Virar (Mumbai),<br>
                     Maharashtra – 401203<br><br>
-                    <a href="https://maps.google.com/?q=Shop+No+2+Mahalaxmi+Welfare+Society+Gurukrupa+Complex+Vasai+Virar+Maharashtra+401203" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:var(--crimson);color:#fff;padding:8px 18px;border-radius:100px;font-weight:700;font-size:12px;text-decoration:none;margin-top:4px;">🗺️ Open in Google Maps</a>
+                    <a href="https://www.google.com/maps/place/MT+ANIMAL+CARE/@19.4121113,72.816481,17z" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:var(--crimson);color:#fff;padding:8px 18px;border-radius:100px;font-weight:700;font-size:12px;text-decoration:none;margin-top:4px;">🗺️ Open in Google Maps</a>
                 </p>
             </div>
             <div class="contact-card">
