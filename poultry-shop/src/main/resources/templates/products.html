@@ -114,6 +114,36 @@
         .nav-cta::after { display:none !important; }
 
         .nav-right { display:flex; align-items:center; gap:6px; flex-shrink:0; max-width:420px; }
+
+        /* ── MORE DROPDOWN ── */
+        .more-dropdown { position:relative; display:flex; align-items:center; }
+        .more-btn {
+            display:flex; align-items:center; gap:5px; cursor:pointer; user-select:none;
+            font-size:13px; font-weight:600; color:var(--text-dark);
+            padding:7px 12px; border-radius:9px; border:1px solid transparent;
+            transition:all 0.22s; white-space:nowrap;
+        }
+        .more-btn:hover, .more-dropdown.open .more-btn {
+            color:var(--crimson); background:var(--ivory-dark); border-color:var(--border);
+        }
+        .more-btn .chevron { display:inline-block; font-size:9px; color:var(--gold); transition:transform 0.25s ease; margin-left:2px; }
+        .more-dropdown.open .chevron { transform:rotate(180deg); }
+        .more-menu {
+            display:none; position:absolute; top:calc(100% + 12px); left:50%;
+            transform:translateX(-50%);
+            background:var(--white); border:1px solid var(--border); border-radius:16px;
+            min-width:200px; box-shadow:0 20px 60px rgba(122,0,0,0.15); z-index:9300;
+            overflow:hidden; padding:8px 0;
+        }
+        .more-dropdown.open .more-menu { display:block; animation:moreIn 0.2s ease; }
+        @keyframes moreIn { from { opacity:0; transform:translateX(-50%) translateY(-8px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+        .more-menu a {
+            display:flex; align-items:center; gap:10px; padding:11px 18px;
+            text-decoration:none; color:var(--text-dark); font-size:13.5px; font-weight:500;
+            transition:all 0.18s; border-left:3px solid transparent;
+        }
+        .more-menu a:hover { background:var(--ivory-mid); color:var(--crimson); border-left-color:var(--gold); padding-left:21px; }
+        .more-menu a .menu-icon { font-size:15px; }
         .right-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }/* alias */
 
         .search-wrap { position:relative; display:flex; align-items:center; }
@@ -1057,16 +1087,17 @@
         }
         function toggleUserMenu() { const m = document.getElementById('userMenu'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; }
         function toggleMoreMenu() {
-            document.getElementById('moreMenu').classList.toggle('open');
+            const dd = document.getElementById('moreDropdown');
+            if (dd) dd.classList.toggle('open');
         }
         function closeMoreMenu() {
-            const m = document.getElementById('moreMenu');
-            if (m) m.classList.remove('open');
+            const dd = document.getElementById('moreDropdown');
+            if (dd) dd.classList.remove('open');
         }
         // Close more menu on outside click
         document.addEventListener('click', function(e) {
             const dd = document.getElementById('moreDropdown');
-            if (dd && !dd.contains(e.target)) closeMoreMenu();
+            if (dd && !dd.contains(e.target)) dd.classList.remove('open');
         });
         function toggleDesktopSearch() {
             const wrap = document.getElementById('desktopSearchWrap');
@@ -1109,7 +1140,7 @@
             const msg = encodeURIComponent(`Hello, I submitted an enquiry on MT Animal Care.\n\nAnimal: ${data.get('animalType')}\nNumber of Animals: ${data.get('animalCount')}\nMonthly Requirement: ${data.get('monthlyRequirement')}\nRequirement: ${data.get('requirement')}\nName: ${data.get('name')}\nContact: ${data.get('phone')}`);
             fetch('/enquiry', { method:'POST', body:data }).catch(() => {});
             alert('✅ Your enquiry has been sent.\n👉 Connecting you with our expert on WhatsApp!');
-            window.open(`https://wa.me/919021466362?text=${msg}`, '_blank');
+            window.open(`https://wa.me/918009819900?text=${msg}`, '_blank');
             form.reset(); closeEnquiryModal();
         }
         let chatbotMinimized = false;
@@ -1233,12 +1264,12 @@
         <a href="#contact">Contact</a>
         <!-- More dropdown -->
         <div class="more-dropdown" id="moreDropdown">
-            <span class="more-btn" onclick="toggleMoreMenu()">More ⌄</span>
+            <span class="more-btn" onclick="toggleMoreMenu()">More <span class="chevron">▼</span></span>
             <div class="more-menu" id="moreMenu">
-                <a href="#animal-range" onclick="closeMoreMenu()">🐔 Products</a>
-                <a href="#find-us" onclick="closeMoreMenu()">📍 Find Us</a>
-                <a href="#faq" onclick="closeMoreMenu()">❓ FAQs</a>
-                <a th:if="${isLoggedIn}" href="/my-orders" onclick="closeMoreMenu()">📋 My Orders</a>
+                <a href="#animal-range" onclick="closeMoreMenu()"><span class="menu-icon">🐔</span> Products</a>
+                <a href="#find-us" onclick="closeMoreMenu()"><span class="menu-icon">📍</span> Find Us</a>
+                <a href="#faq" onclick="closeMoreMenu()"><span class="menu-icon">❓</span> FAQs</a>
+                <a th:if="${isLoggedIn}" href="/my-orders" onclick="closeMoreMenu()"><span class="menu-icon">📋</span> My Orders</a>
             </div>
         </div>
         <a href="javascript:void(0)" onclick="openEnquiryModal()" class="nav-cta">📩 Enquiry</a>
@@ -1262,7 +1293,7 @@
             </div>
         </div>
         <!-- WhatsApp -->
-        <a href="https://wa.me/919021466362" target="_blank" class="whatsapp-btn" title="WhatsApp">
+        <a href="https://wa.me/918009819900" target="_blank" class="whatsapp-btn" title="WhatsApp">
             <img src="/images/whatsapp.png" alt="WhatsApp" class="whatsapp-icon" onerror="this.parentElement.innerText='💬'">
         </a>
         <!-- Cart -->
@@ -1321,7 +1352,10 @@
     <a href="#contact" onclick="toggleMenu()">📞 Contact</a>
     <a href="javascript:void(0)" onclick="closeMenuAndEnquiry()">📩 Enquiry</a>
     <!-- Mobile Login/Logout links -->
-    <a th:unless="${isLoggedIn}" href="/oauth2/authorization/google" onclick="toggleMenu()" style="background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));color:white;border-radius:10px;font-weight:700;">🔐 Login with Google</a>
+    <a th:unless="${isLoggedIn}" href="/oauth2/authorization/google" style="background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));color:white;border-radius:10px;font-weight:700;display:flex;align-items:center;gap:8px;">
+        <img src="https://www.google.com/favicon.ico" style="width:16px;height:16px;border-radius:2px;" onerror="this.style.display='none'">
+        🔐 Login with Google
+    </a>
     <a th:if="${isLoggedIn}" href="/my-orders" onclick="toggleMenu()">📋 My Orders</a>
     <a th:if="${isLoggedIn}" href="/logout" style="color:var(--crimson-light);border-color:rgba(185,28,28,0.2);background:rgba(185,28,28,0.04);">🚪 Logout</a>
 
@@ -1895,7 +1929,7 @@
         <div class="map-wrapper">
             <iframe
                     title="MT Animal Care Location"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3773.8!2d72.8311!3d19.3831!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a9c0e6f9b1e7%3A0x9f3d7a1c2b4e5d8f!2sVasai-Virar%2C+Maharashtra+401203!5e0!3m2!1sen!2sin!4v1709100000000!5m2!1sen!2sin"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3768.2!2d72.80!3d19.42!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a9f3e3c7a5b1%3A0xf3e3c7a5b1234567!2sMahalaxmi+Welfare+Society%2C+Vasai+West%2C+Vasai-Virar%2C+Maharashtra+401202!5e0!3m2!1sen!2sin!4v1740000000000!5m2!1sen!2sin"
                     width="100%" height="420"
                     style="border:0; border-radius:18px; display:block;"
                     allowfullscreen="" loading="lazy"
@@ -1957,7 +1991,7 @@
                     <a href="tel:+919503569405" style="color:var(--crimson);font-weight:600;">📞 9503569405</a><br>
                     <a href="tel:+919773405980" style="color:var(--crimson);font-weight:600;">📞 97734 05980</a><br><br>
                     <a href="/cdn-cgi/l/email-protection#274e494148674a5346494e4a464b444655420944484a" style="color:var(--gold);">✉️ <span class="__cf_email__" data-cfemail="fd94939b92bd90899c9394909c919e9c8f98d39e9290">[email&#160;protected]</span></a><br><br>
-                    <a href="https://wa.me/919021466362" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#25d366;color:#fff;padding:8px 18px;border-radius:100px;font-weight:700;font-size:13px;text-decoration:none;margin-top:4px;">💬 WhatsApp Us</a>
+                    <a href="https://wa.me/918009819900" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#25d366;color:#fff;padding:8px 18px;border-radius:100px;font-weight:700;font-size:13px;text-decoration:none;margin-top:4px;">💬 WhatsApp Us</a>
                 </p>
             </div>
             <div class="contact-card">
@@ -2030,7 +2064,7 @@
                     📞 <a href="tel:+919503569405">9503569405</a><br>
                     📞 <a href="tel:+919773405980">97734 05980</a><br><br>
                     ✉️ <a href="/cdn-cgi/l/email-protection#4d24232b220d20392c2324202c212e2c3f28632e2220"><span class="__cf_email__" data-cfemail="eb82858d84ab869f8a8582868a87888a998ec5888486">[email&#160;protected]</span></a><br><br>
-                    <a href="https://wa.me/919021466362" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#25d366;color:#fff;padding:7px 16px;border-radius:100px;font-weight:700;font-size:12px;text-decoration:none;margin-top:4px;">💬 WhatsApp Expert</a>
+                    <a href="https://wa.me/918009819900" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#25d366;color:#fff;padding:7px 16px;border-radius:100px;font-weight:700;font-size:12px;text-decoration:none;margin-top:4px;">💬 WhatsApp Expert</a>
                 </p>
             </div>
         </div>
