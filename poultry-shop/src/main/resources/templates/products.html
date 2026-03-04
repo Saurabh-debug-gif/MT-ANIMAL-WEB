@@ -222,31 +222,115 @@
         .hamburger.active span:nth-child(2) { opacity:0; }
         .hamburger.active span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
 
-        .mobile-overlay { display:none; position:fixed; inset:0; background:rgba(13,13,13,0.65); z-index:9100; backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
+        /* ── MOBILE OVERLAY ── */
+        .mobile-overlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(10,10,10,0.7);
+            z-index:9100; backdrop-filter:blur(4px);
+            -webkit-backdrop-filter:blur(4px);
+        }
         .mobile-overlay.active { display:block; }
+
+        /* ── MOBILE DRAWER — Premium slide-in ── */
         .mobile-menu {
-            position:fixed; top:0; left:-100%; width:82%; max-width:300px; height:100vh;
-            background:var(--ivory); z-index:9200; padding:22px 18px;
-            display:flex; flex-direction:column; gap:5px;
-            box-shadow:8px 0 48px rgba(0,0,0,0.35); transition:left 0.38s var(--T); overflow-y:auto;
+            position:fixed; top:0; left:-100%;
+            width:80%; max-width:320px; height:100vh;
+            background:var(--ivory); z-index:9200;
+            display:flex; flex-direction:column;
+            box-shadow:12px 0 60px rgba(0,0,0,0.4);
+            transition:left 0.35s cubic-bezier(0.4,0,0.2,1);
+            overflow-y:auto; overflow-x:hidden;
         }
         .mobile-menu.active { left:0; }
+
+        /* Drawer header */
         .mobile-menu-header {
             display:flex; align-items:center; justify-content:space-between;
-            padding-bottom:18px; border-bottom:1px solid var(--border); margin-bottom:8px;
+            padding:20px 20px 16px;
+            background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));
+            flex-shrink:0;
+        }
+        .mobile-menu-header .brand span {
+            color:#fff !important;
+        }
+
+        /* Close button */
+        .close-menu {
+            width:36px; height:36px; border-radius:50%;
+            background:rgba(255,255,255,0.15);
+            display:flex; align-items:center; justify-content:center;
+            font-size:16px; cursor:pointer; color:#fff;
+            transition:background 0.2s; flex-shrink:0;
+        }
+        .close-menu:hover { background:rgba(255,255,255,0.28); }
+
+        /* Search inside drawer */
+        .mobile-search-wrap {
+            display:flex; align-items:center; gap:10px;
+            background:var(--white); border:1.5px solid var(--border);
+            border-radius:12px; padding:10px 14px;
+            margin:16px 16px 8px;
+        }
+        .mobile-search-icon { font-size:15px; flex-shrink:0; color:var(--text-muted); }
+        .mobile-search-wrap input {
+            border:none; background:none; outline:none;
+            font-family:var(--font-body); font-size:14px;
+            color:var(--text-dark); width:100%;
+        }
+
+        /* Nav links section */
+        .mobile-menu-links {
+            display:flex; flex-direction:column;
+            padding:8px 12px; flex:1;
         }
         .mobile-menu a {
-            padding:13px 16px; text-decoration:none; color:var(--crimson); font-size:15px; font-weight:600;
-            border-radius:10px; border:1px solid transparent; transition:all 0.22s;
+            display:flex; align-items:center; gap:12px;
+            padding:13px 14px; text-decoration:none;
+            color:var(--text-dark); font-size:14.5px; font-weight:500;
+            border-radius:12px; transition:all 0.2s;
+            border-left:3px solid transparent;
         }
-        .mobile-menu a:hover { background:var(--gold-pale); border-color:var(--border); padding-left:22px; }
-        .close-menu { font-size:22px; cursor:pointer; color:var(--text-muted); }
-        .mobile-search-wrap {
-            display:flex; align-items:center; gap:8px; background:var(--ivory-dark);
-            border:1.5px solid var(--border); border-radius:10px; padding:8px 12px; margin-bottom:4px;
+        .mobile-menu a:hover, .mobile-menu a:active {
+            background:var(--ivory-dark);
+            color:var(--crimson);
+            border-left-color:var(--gold);
+            padding-left:18px;
         }
-        .mobile-search-icon { font-size:14px; flex-shrink:0; }
-        .mobile-search-wrap input { border:none; background:none; outline:none; font-family:var(--font-body); font-size:14px; color:var(--text-dark); width:100%; }
+
+        /* Divider in drawer */
+        .mobile-menu-divider {
+            height:1px; background:var(--border);
+            margin:8px 14px;
+        }
+
+        /* Login button in drawer — full width */
+        .mobile-menu .mobile-login-link {
+            margin:12px 12px 8px;
+            padding:14px 18px !important;
+            background:linear-gradient(135deg,var(--crimson-deep),var(--crimson)) !important;
+            color:#fff !important;
+            border-radius:14px !important;
+            font-weight:700 !important;
+            font-size:14.5px !important;
+            justify-content:center;
+            box-shadow:0 4px 16px rgba(122,0,0,0.28);
+            border-left:none !important;
+        }
+        .mobile-menu .mobile-login-link:hover {
+            background:linear-gradient(135deg,var(--crimson),var(--crimson-light)) !important;
+            padding-left:18px !important;
+            transform:translateY(-1px);
+            box-shadow:0 8px 24px rgba(122,0,0,0.36);
+        }
+
+        /* Logout link */
+        .mobile-menu .mobile-logout-link {
+            color:var(--crimson) !important;
+            background:rgba(185,28,28,0.06) !important;
+            border:1px solid rgba(185,28,28,0.15) !important;
+            border-left:3px solid var(--crimson) !important;
+            border-radius:12px;
+        }
 
         /* ── HERO ── */
         .hero-section {
@@ -842,20 +926,83 @@
             .manufacture-center-circle { grid-column:1; grid-row:auto; margin:16px auto; }
         }
         @media(max-width:900px) {
-            :root { --nav-h:62px; }
-            .navbar { padding:0 20px; }
+            :root { --nav-h:64px; }
+
+            /* Hide desktop elements */
             .desktop-nav { display:none; }
-            .hamburger { display:flex; }
-            .nav-right { display:none; }
-            .mobile-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-            .right-actions { gap:6px; flex-shrink:0; overflow:visible; }
-            .search-wrap { display:none; }
-            .right-actions .whatsapp-btn { display:none; }
-            .login-btn { padding:7px 12px; font-size:12px; white-space:nowrap; }
-            .user-btn { padding:7px 10px; font-size:12px; max-width:44px; border-radius:50%; }
-            .user-btn span { display:none; }
-            .user-dropdown { max-width:44px; overflow:visible; }
-            .hero-inner { grid-template-columns:1fr; gap:0; padding:120px 28px 80px; }
+            .nav-right { display:none !important; }
+
+            /* Navbar layout */
+            .navbar { padding:0 16px; gap:0; justify-content:space-between; }
+
+            /* Brand stays left, shrinks text slightly */
+            .brand-name { font-size:15px; }
+            .brand-sub { display:none; }
+            .brand-logo { width:38px; height:38px; }
+            .brand-logo-ring { width:38px; height:38px; }
+
+            /* Mobile actions — RIGHT side of navbar */
+            .mobile-actions {
+                display:flex !important;
+                align-items:center;
+                gap:4px;
+                flex-shrink:0;
+            }
+
+            /* Login button — compact pill, always visible */
+            .mobile-actions .login-btn {
+                display:flex !important;
+                align-items:center;
+                gap:5px;
+                padding:8px 14px;
+                font-size:12px;
+                font-weight:700;
+                border-radius:100px;
+                background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));
+                color:#fff !important;
+                border:none;
+                white-space:nowrap;
+                box-shadow:0 3px 12px rgba(122,0,0,0.28);
+                text-decoration:none;
+            }
+
+            /* Cart button — compact */
+            .mobile-actions .cart-btn {
+                width:38px; height:38px; border-radius:10px; font-size:16px;
+            }
+
+            /* User button — circular avatar style */
+            .mobile-actions .user-dropdown { max-width:none; overflow:visible; position:relative; }
+            .mobile-actions .user-btn {
+                width:38px; height:38px; border-radius:50%;
+                padding:0; justify-content:center;
+                background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));
+                border:2px solid var(--gold);
+                color:#fff; font-size:16px; max-width:none;
+            }
+            .mobile-actions .user-btn span { display:none; }
+            .mobile-actions .dropdown-menu {
+                right:0; left:auto; min-width:160px; z-index:9500;
+            }
+
+            /* Hamburger — clean lines */
+            .mobile-actions .hamburger {
+                display:flex !important;
+                width:38px; height:38px;
+                border-radius:10px;
+                background:var(--ivory-dark);
+                border:1.5px solid var(--border);
+                align-items:center; justify-content:center;
+                flex-direction:column; gap:4px; padding:8px;
+            }
+            .mobile-actions .hamburger span {
+                width:18px; height:2px;
+                background:var(--crimson);
+                border-radius:2px;
+            }
+
+            /* Page layout */
+            .hero-inner { grid-template-columns:1fr; gap:0; padding:100px 20px 60px; }
             .hero-right { display:none; }
             .about-metrics { grid-template-columns:repeat(2,1fr); }
             .contact-grid { grid-template-columns:1fr; }
@@ -1305,26 +1452,32 @@
         </a>
     </div>
 
-    <!-- ④ MOBILE ACTIONS (shown only on mobile — always visible) -->
+    <!-- ④ MOBILE ACTIONS — Brand on left, these on right -->
     <div class="mobile-actions">
-        <!-- Hamburger FIRST -->
-        <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
-            <span></span><span></span><span></span>
-        </div>
-        <!-- Cart -->
-        <a href="/cart" class="cart-btn" title="Cart" style="width:40px;height:40px;font-size:17px;">
-            🛒
-            <span class="cart-count" id="cartCountBadgeMobile" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
-        </a>
-        <!-- Login shown when NOT logged in -->
-        <a th:if="${isLoggedIn == null or !isLoggedIn}" href="/oauth2/authorization/google" class="login-btn" style="padding:7px 13px;font-size:12px;">🔐 Login</a>
-        <!-- User icon shown when logged in -->
-        <div class="user-dropdown" th:if="${isLoggedIn}" style="position:relative;">
-            <div class="user-btn" onclick="toggleUserMenu(event)" style="padding:7px 10px;border-radius:50%;max-width:40px;">👤</div>
+        <!-- LOGIN: always visible when not logged in, crimson pill -->
+        <a th:if="${isLoggedIn == null or !isLoggedIn}"
+           href="/oauth2/authorization/google"
+           class="login-btn">🔐 Login</a>
+
+        <!-- USER AVATAR: shown when logged in -->
+        <div class="user-dropdown" th:if="${isLoggedIn}">
+            <div class="user-btn" onclick="toggleUserMenu(event)">👤</div>
             <div class="dropdown-menu" id="userMenuMobile">
                 <a href="/my-orders">📋 My Orders</a>
                 <a href="/logout">🚪 Logout</a>
             </div>
+        </div>
+
+        <!-- CART -->
+        <a href="/cart" class="cart-btn" title="Cart">
+            🛒
+            <span class="cart-count" id="cartCountBadgeMobile"
+                  th:if="${cartCount > 0}" th:text="${cartCount}"></span>
+        </a>
+
+        <!-- HAMBURGER: opens slide-out drawer -->
+        <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
         </div>
     </div>
 
@@ -1333,33 +1486,49 @@
 <!-- MOBILE OVERLAY + DRAWER — outside navbar so fixed positioning works correctly -->
 <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
 <div class="mobile-menu" id="mobileMenu">
+
+    <!-- Drawer Header — crimson gradient background -->
     <div class="mobile-menu-header">
         <div class="brand">
-            <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo" style="width:38px;height:38px;border-radius:10px;" alt="Logo">
-            <span style="font-family:var(--font-display);font-weight:700;color:var(--crimson);font-size:15px;">MT Animal Care</span>
+            <img src="/images/mt-animal-care-logo.jpeg" class="brand-logo"
+                 style="width:40px;height:40px;border-radius:10px;border:2px solid rgba(255,255,255,0.3);" alt="Logo">
+            <div style="display:flex;flex-direction:column;gap:2px;">
+                <span style="font-family:var(--font-display);font-weight:700;color:#fff;font-size:15px;letter-spacing:0.3px;">MT Animal Care</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.7);letter-spacing:1.5px;text-transform:uppercase;">Premium Veterinary</span>
+            </div>
         </div>
-        <span class="close-menu" onclick="toggleMenu()">✖</span>
+        <span class="close-menu" onclick="toggleMenu()">✕</span>
     </div>
+
+    <!-- Search -->
     <div class="mobile-search-wrap">
         <span class="mobile-search-icon">🔍</span>
         <input type="text" id="liveSearchMobile" placeholder="Search products…"
                oninput="liveSearchProducts(this.value); document.getElementById('liveSearch').value=this.value;"/>
     </div>
-    <a href="/">🏠 Home</a>
-    <a href="#shop" onclick="toggleMenu()">🛍️ Shop</a>
-    <a href="#animal-range" onclick="toggleMenu()">🐔 Products</a>
-    <a href="#about" onclick="toggleMenu()">🏭 About</a>
-    <a href="#find-us" onclick="toggleMenu()">📍 Find Us</a>
-    <a href="#faq" onclick="toggleMenu()">❓ FAQs</a>
-    <a href="#contact" onclick="toggleMenu()">📞 Contact</a>
-    <a href="javascript:void(0)" onclick="closeMenuAndEnquiry()">📩 Enquiry</a>
-    <!-- Mobile Login/Logout links -->
-    <a th:unless="${isLoggedIn}" href="/oauth2/authorization/google" style="background:linear-gradient(135deg,var(--crimson-deep),var(--crimson));color:white;border-radius:10px;font-weight:700;display:flex;align-items:center;gap:8px;">
-        <img src="https://www.google.com/favicon.ico" style="width:16px;height:16px;border-radius:2px;" onerror="this.style.display='none'">
-        🔐 Login with Google
-    </a>
-    <a th:if="${isLoggedIn}" href="/my-orders" onclick="toggleMenu()">📋 My Orders</a>
-    <a th:if="${isLoggedIn}" href="/logout" style="color:var(--crimson-light);border-color:rgba(185,28,28,0.2);background:rgba(185,28,28,0.04);">🚪 Logout</a>
+
+    <!-- Nav Links -->
+    <div class="mobile-menu-links">
+        <a href="/" onclick="toggleMenu()">🏠 Home</a>
+        <a href="#shop" onclick="toggleMenu()">🛍️ Shop</a>
+        <a href="#animal-range" onclick="toggleMenu()">🐔 Products</a>
+        <a href="#about" onclick="toggleMenu()">🏭 About Us</a>
+        <a href="#find-us" onclick="toggleMenu()">📍 Find Us</a>
+        <a href="#faq" onclick="toggleMenu()">❓ FAQs</a>
+        <a href="#contact" onclick="toggleMenu()">📞 Contact</a>
+        <a href="javascript:void(0)" onclick="closeMenuAndEnquiry()">📩 Get Enquiry</a>
+
+        <div class="mobile-menu-divider"></div>
+
+        <!-- Auth section -->
+        <a th:if="${isLoggedIn}" href="/my-orders" onclick="toggleMenu()">📋 My Orders</a>
+        <a th:if="${isLoggedIn}" href="/logout" class="mobile-logout-link">🚪 Logout</a>
+        <a th:unless="${isLoggedIn}"
+           href="/oauth2/authorization/google"
+           class="mobile-login-link">
+            🔐 Login with Google
+        </a>
+    </div>
 
 </div>
 
